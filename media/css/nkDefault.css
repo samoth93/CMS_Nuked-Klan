@@ -9,9 +9,45 @@
     margin: 0;
 }
 
-.nkErrorMod{
-    margin:15px 0;
+.nkNotificationMod{
+    margin:15px auto;
     text-align: center;
+    border-radius:3px;
+    line-height: 25px;
+    padding:4px;
+    width:70%;
+    font-weight: bold;
+    font-size:12px;
+    position: relative;
+}
+
+.nkNotificationMod:before{
+    content:'';
+    display: block;
+    width:24px;
+    height: 24px;
+    position:absolute;
+    top:5px;
+    left:5px;
+    background:url(../images/spriteIcons_24.png);
+}
+
+.nkErrorMod{
+    background:rgba(255,0,0,.2);
+    border:1px solid #BD0D11;
+}
+
+.nkErrorMod:before{
+    background-position:0 0;
+}
+
+.nkSuccessMod{
+    background:rgba(0,255,0,.2);
+    border:1px solid #00B700;
+}
+
+.nkSuccessMod:before{
+    background-position:-24px 0;
 }
 
 .nkAlert{

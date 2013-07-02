@@ -62,7 +62,7 @@ if ($visiteur >= $level_admin && $level_admin > -1){
         while (list($cid, $nom, $ordre) = mysql_fetch_row($sql)){
             $nom = printSecuTags($nom);
 
-           
+
             echo "<tr>\n"
             . "<td align=\"center\">" . $nom . "</td>\n"
             . "<td align=\"center\">" . $ordre . "</td>\n"
@@ -127,7 +127,7 @@ if ($visiteur >= $level_admin && $level_admin > -1){
 
     function del_cat($cid){
         global $nuked, $user;
-        
+
         $sql2 = mysql_query("SELECT nom FROM " . FORUM_CAT_TABLE . " WHERE id = '" . $cid . "'");
         list($nom) = mysql_fetch_array($sql2);
         $nom = mysql_real_escape_string($nom);
@@ -205,14 +205,53 @@ if ($visiteur >= $level_admin && $level_admin > -1){
             ."</script>\n";
     }
 
-    function select_forum_cat(){
+    function select_forum_cat($catIdSelected = null, $forumIdSelected = null, $forumPrimaryId = null){
         global $nuked;
 
-        $sql = mysql_query("SELECT id, nom FROM " . FORUM_CAT_TABLE . " ORDER BY ordre, nom");
-        while (list($cid, $nom) = mysql_fetch_row($sql)){
-            $nom = printSecuTags($nom);
+        if(!is_null($forumPrimaryId)){
+            $dbsForumCat = "SELECT id as catId, nom as catName FROM " . FORUM_CAT_TABLE . " ORDER BY ordre, nom";
+        }
+        else{
+            $forumPrimaryId = '';
+            $dbsForumCat = "SELECT A.id as catId, A.nom as catName, B.id as forumId, B.nom as forumName, B.parentid as parentid
+                                    FROM " . FORUM_CAT_TABLE . " AS A
+                                    LEFT JOIN ".FORUM_TABLE." AS B
+                                    ON B.cat = A.id
+                                    WHERE B.parentid = 0
+                                    ORDER BY A.ordre, A.nom, B.ordre, B.nom";
+        }
 
-            echo "<option value=\"" . $cid . "\">" . $nom . "</option>\n";
+        $dbeForumCat = mysql_query($dbsForumCat);
+
+        $oldCid = '';
+        while ($data = mysql_fetch_assoc($dbeForumCat)){
+            $data['catName'] = printSecuTags($data['catName']);
+
+            if($oldCid == '' || $oldCid != $data['catId']){
+                $oldCid = $data['catId'];
+
+                if($catIdSelected == $data['catId']){
+                    $selected = ' selected="selected" ';
+                }
+                else{
+                    $selected = '';
+                }
+
+                echo '<option value="'.$data['catId'].'" '.$selected.' >'.$data['catName'].'</option>'."\n";
+            }
+
+            if(isset($data['forumId'])){
+
+                if($forumIdSelected == $data['forumId']){
+                    $selected = ' selected="selected" ';
+                }
+                else{
+                    $selected = '';
+                }
+
+                $data['forumName'] = printSecuTags($data['forumName']);
+                echo '<option value="' . $data['catId'] . '|' . $data['forumId'] . '" '.$selected.'  >&emsp;' . $data['forumName'] . '</option>'."\n";
+            }
         }
     }
 
@@ -303,7 +342,11 @@ if ($visiteur >= $level_admin && $level_admin > -1){
         $titre = mysql_real_escape_string(stripslashes($titre));
         $description = mysql_real_escape_string(stripslashes($description));
 
-        $sql = mysql_query("INSERT INTO " . FORUM_TABLE . " ( `id` , `cat` , `nom` , `comment` , `moderateurs` , `niveau` , `level` , `ordre` , `level_poll` , `level_vote` ) VALUES ( '' , '" . $cat . "' , '" . $titre . "' , '" . $description . "' , '" . $modo . "' , '" . $niveau . "' , '" . $level . "' , '" . $ordre . "' , '" . $level_poll . "' , '" . $level_vote . "' )");
+        $forumCat = explode("|", $cat);
+        $mainCat = $forumCat[0];
+        $mainSubForum = $forumCat[1];
+
+        $sql = mysql_query("INSERT INTO " . FORUM_TABLE . " ( `id` , `cat` , `parentid` , `nom` , `comment` , `moderateurs` , `niveau` , `level` , `ordre` , `level_poll` , `level_vote` ) VALUES ( '' , '" . $mainCat . "' , '" . $mainSubForum . "' , '" . $titre . "' , '" . $description . "' , '" . $modo . "' , '" . $niveau . "' , '" . $level . "' , '" . $ordre . "' , '" . $level_poll . "' , '" . $level_vote . "' )");
         // Action
         $texteaction = "". _ACTIONADDFO .": ".$titre."";
         $acdate = time();
@@ -364,12 +407,32 @@ if ($visiteur >= $level_admin && $level_admin > -1){
     function edit_forum($id){
         global $nuked, $language;
 
-        $sql = mysql_query("SELECT nom, comment, cat, moderateurs, niveau, level, ordre, level_poll, level_vote FROM " . FORUM_TABLE . " WHERE id = '" . $id . "'");
-        list($titre, $description, $cat, $modo, $niveau, $level, $ordre, $level_poll, $level_vote) = mysql_fetch_array($sql);
+        $sql = mysql_query("SELECT nom, comment, cat, parentid, moderateurs, niveau, level, ordre, level_poll, level_vote,
+                                (SELECT count(*) FROM " . FORUM_TABLE . " WHERE parentid = '".$id."')
+                            FROM " . FORUM_TABLE . "
+                            WHERE id = '" . $id . "'");
+        list($titre, $description, $mainCat, $mainSubForum, $modo, $niveau, $level, $ordre, $level_poll, $level_vote, $nbParentId) = mysql_fetch_array($sql);
 
-        $categorie = mysql_query("select nom FROM " . FORUM_CAT_TABLE . " WHERE id = '" . $cat . "'");
-        list($cat_name) = mysql_fetch_array($categorie);
-        $cat_name = printSecuTags($cat_name);
+        if($nbParentId > 0){
+            $isForumPrimary = true;
+        }
+        else{
+            $isForumPrimary = null;
+        }
+
+        if ($mainSubForum == 0){
+            $categorie = mysql_query("SELECT nom FROM " . FORUM_CAT_TABLE . " WHERE id = '" . $mainCat . "'");
+            list($cat_name) = mysql_fetch_array($categorie);
+            $cat_name = printSecuTags($cat_name);
+            $cat = $mainCat;
+        }
+        else {
+            $categorie = mysql_query("SELECT nom FROM " . FORUM_TABLE . " WHERE id = '" . $mainSubForum . "'");
+            list($cat_name) = mysql_fetch_array($categorie);
+            $cat_name = printSecuTags($cat_name);
+            $array = array("$mainCat", "$mainSubForum");
+            $cat = implode("|", $array);
+        }
 
         if ($modo != ""){
             $moderateurs = explode('|', $modo);
@@ -392,9 +455,9 @@ if ($visiteur >= $level_admin && $level_admin > -1){
         . "<div class=\"tab-content\" id=\"tab2\"><form method=\"post\" action=\"index.php?file=Forum&amp;page=admin&amp;op=modif_forum\">\n"
         . "<table style=\"margin-left: auto;margin-right: auto;text-align: left;\" cellspacing=\"1\" cellpadding=\"2\" border=\"0\">\n"
         . "<tr><td><b>" . _NAME . " :</b> <input type=\"text\" name=\"titre\" size=\"30\" value=\"" . $titre . "\" /></td></tr>\n"
-        . "<tr><td><b>" . _CAT . " :</b> <select name=\"cat\"><option value=\"" . $cat . "\">" . $cat_name . "</option>\n";
+        . "<tr><td><b>" . _CAT . " :</b> <select name=\"cat\">\n";
 
-        select_forum_cat();
+        select_forum_cat($cat,  $mainSubForum, $isForumPrimary);
 
         echo"</select></td></tr>\n"
         . "<tr><td align=\"left\"><b>" . _DESCR . " : </b><br /><textarea class=\"editor\" name=\"description\" rows=\"10\" cols=\"69\">" . $description . "</textarea></td></tr>\n"
@@ -462,6 +525,10 @@ if ($visiteur >= $level_admin && $level_admin > -1){
         $titre = mysql_real_escape_string(stripslashes($titre));
         $description = mysql_real_escape_string(stripslashes($description));
 
+        $forumCat = explode("|", $cat);
+        $mainCat = $forumCat[0];
+        $mainSubForum = $forumCat[1];
+
         if ($modo != ""){
             $sql = mysql_query("SELECT moderateurs FROM " . FORUM_TABLE . " WHERE id = '" . $id . "'");
             list($listmodo) = mysql_fetch_row($sql);
@@ -472,28 +539,39 @@ if ($visiteur >= $level_admin && $level_admin > -1){
             $upd_modo = mysql_query("UPDATE " . FORUM_TABLE . " SET moderateurs = '" . $modos . "' WHERE id = '" . $id . "'");
         }
 
-        $upd = mysql_query("UPDATE " . FORUM_TABLE . " SET nom = '" . $titre . "', comment = '" . $description . "', cat = '" . $cat . "', niveau = '" . $niveau . "', level = '" . $level . "', ordre = '" . $ordre . "', level_poll = '" . $level_poll . "', level_vote = '" . $level_vote . "' WHERE id = '" . $id . "'");
-        // Action
-        $texteaction = "". _ACTIONMODIFFO .": ".$titre."";
-        $acdate = time();
-        $sqlaction = mysql_query("INSERT INTO ". $nuked['prefix'] ."_action  (`date`, `pseudo`, `action`)  VALUES ('".$acdate."', '".$user[0]."', '".$texteaction."')");
-        //Fin action
-        echo "<div class=\"notification success png_bg\">\n"
-            . "<div>\n"
-            . "" . _FORUMMODIF . "\n"
-            . "</div>\n"
-            . "</div>\n";
-        echo "<script>\n"
-            ."setTimeout('screen()','3000');\n"
-            ."function screen() { \n"
-            ."screenon('index.php?file=Forum', 'index.php?file=Forum&page=admin');\n"
-            ."}\n"
-            ."</script>\n";
+        if ($id != $mainSubForum){
+
+            $upd = mysql_query("UPDATE " . FORUM_TABLE . " SET nom = '" . $titre . "', comment = '" . $description . "', cat = '" . $mainCat . "', parentid = '" . $mainSubForum . "', niveau = '" . $niveau . "', level = '" . $level . "', ordre = '" . $ordre . "', level_poll = '" . $level_poll . "', level_vote = '" . $level_vote . "' WHERE id = '" . $id . "'");
+            // Action
+            $texteaction = "". _ACTIONMODIFFO .": ".$titre."";
+            $acdate = time();
+            $sqlaction = mysql_query("INSERT INTO ". $nuked['prefix'] ."_action  (`date`, `pseudo`, `action`)  VALUES ('".$acdate."', '".$user[0]."', '".$texteaction."')");
+            //Fin action
+            echo "<div class=\"notification success png_bg\">\n"
+                . "<div>\n"
+                . "" . _FORUMMODIF . "\n"
+                . "</div>\n"
+                . "</div>\n";
+            echo "<script>\n"
+                ."setTimeout('screen()','3000');\n"
+                ."function screen() { \n"
+                ."screenon('index.php?file=Forum', 'index.php?file=Forum&page=admin');\n"
+                ."}\n"
+                ."</script>\n";
+        }
+        else{
+            echo "<div class=\"notification error png_bg\">\n"
+                . "<div>\n"
+                . "" . _NOSUBFORUMWITHSAMEID . "\n"
+                . "</div>\n"
+                . "</div>\n";
+                redirect("index.php?file=Forum&page=admin", 3);
+        }
     }
 
     function del_modo($uid, $forum_id){
         global $nuked, $user;
-        
+
         $sql = mysql_query("SELECT moderateurs FROM " . FORUM_TABLE . " WHERE id = '" . $forum_id . "'");
         list($listmodo) = mysql_fetch_row($sql);
         $list = explode("|", $listmodo);
@@ -511,7 +589,7 @@ if ($visiteur >= $level_admin && $level_admin > -1){
         }
 
         $upd = mysql_query("UPDATE " . FORUM_TABLE . " SET moderateurs = '" . $modos . "' WHERE id = '" . $forum_id . "'");
-        
+
         $sql = mysql_query("SELECT pseudo FROM " . USER_TABLE . " WHERE id = '".$uid."'");
         list($pseudo) = mysql_fetch_array($sql);
         $pseudo = mysql_real_escape_string($pseudo);
@@ -525,7 +603,7 @@ if ($visiteur >= $level_admin && $level_admin > -1){
         . "" . _MODODEL . "\n"
         . "</div>\n"
         . "</div>\n";
-        
+
         $url = "index.php?file=Forum&page=admin&op=edit_forum&id=" . $forum_id;
         redirect($url, 2);
     }
@@ -558,26 +636,39 @@ if ($visiteur >= $level_admin && $level_admin > -1){
         . "<a href=\"index.php?file=Forum&amp;page=admin&amp;op=main_pref\">" . _PREFS . "</a></b></div><br />\n"
         . "<table width=\"100%\" border=\"0\" cellspacing=\"1\" cellpadding=\"2\">\n"
         . "<tr>\n"
-        . "<td style=\"width: 20%;\" align=\"center\"><b>" . _NAME . "</b></td>\n"
-        . "<td style=\"width: 20%;\" align=\"center\"><b>" . _CAT . "</b></td>\n"
-        . "<td style=\"width: 20%;\" align=\"center\"><b>" . _LEVELACCES . "</b></td>\n"
-        . "<td style=\"width: 20%;\" align=\"center\"><b>" . _LEVELPOST . "</b></td>\n"
-        . "<td style=\"width: 10%;\" align=\"center\"><b>" . _EDIT . "</b></td>\n"
-        . "<td style=\"width: 10%;\" align=\"center\"><b>" . _DEL . "</b></td></tr>\n";
+        . "<td style=\"width: 20%;\"><b>" . _NAME . "</b></td>\n"
+        . "<td style=\"width: 20%;\"><b>" . _CAT . "</b></td>\n"
+        . "<td style=\"width: 12%; text-align:center;\"><b>" . _LEVELACCES . "</b></td>\n"
+        . "<td style=\"width: 12%; text-align:center;\"><b>" . _LEVELPOST . "</b></td>\n"
+        . "<td style=\"width: 12%; text-align:center;\"><b>" . _ORDER . "</b></td>\n"
+        . "<td style=\"width: 12%; text-align:center;\"><b>" . _EDIT . "</b></td>\n"
+        . "<td style=\"width: 12%; text-align:center;\"><b>" . _DEL . "</b></td></tr>\n";
 
-        $sql = mysql_query("SELECT A.id, A.nom, A.niveau, A.level, A.cat, B.nom FROM " . FORUM_TABLE . " AS A LEFT JOIN " . FORUM_CAT_TABLE . " AS B ON B.id = A.cat ORDER BY B.ordre, B.nom, A.ordre, A.nom");
-        while (list($id, $titre, $niveau, $level, $cat, $cat_name) = mysql_fetch_row($sql)){
+        $sql = mysql_query("SELECT A.id, A.nom, A.niveau, A.level, A.cat, A.parentid, A.ordre, B.nom FROM " . FORUM_TABLE . " AS A LEFT JOIN " . FORUM_CAT_TABLE . " AS B ON B.id = A.cat ORDER BY B.ordre, B.nom, A.ordre, A.nom");
+        while (list($id, $titre, $niveau, $level, $cat, $mainSubForum, $order, $cat_name) = mysql_fetch_row($sql)){
+
+            $dbsSubForumName = mysql_query("SELECT nom FROM " . FORUM_TABLE . " WHERE id = '" . $mainSubForum . "'");
+            list($mainSubForum_name) = mysql_fetch_array($dbsSubForumName);
 
             $titre = printSecuTags($titre);
             $cat_name = printSecuTags($cat_name);
+            $mainSubForum_name = printSecuTags($mainSubForum_name);
+
+            if ($mainSubForum != 0){
+                $arrow = "&nbsp;&rArr;&nbsp;";
+            }
+            else {
+                $arrow = "";
+            }
 
             echo "<tr>\n"
             . "<td style=\"width: 20%;\">" . $titre . "</td>\n"
-            . "<td style=\"width: 20%;\" align=\"center\">" . $cat_name . "</td>\n"
-            . "<td style=\"width: 20%;\" align=\"center\">" . $niveau . "</td>\n"
-            . "<td style=\"width: 20%;\" align=\"center\">" . $level . "</td>\n"
-            . "<td style=\"width: 10%;\" align=\"center\"><a href=\"index.php?file=Forum&amp;page=admin&amp;op=edit_forum&amp;id=" . $id . "\"><img style=\"border: 0;\" src=\"images/edit.gif\" alt=\"\" title=\"" . _EDITTHISFORUM . "\" /></a></td>\n"
-            . "<td style=\"width: 10%;\" align=\"center\"><a href=\"javascript:delforum('" . mysql_real_escape_string(stripslashes($titre)) . "', '" . $id . "');\"><img style=\"border: 0;\" src=\"images/del.gif\" alt=\"\" title=\"" . _DELTHISFORUM . "\" /></a></td></tr>\n";
+            . "<td style=\"width: 20%;\">" . $cat_name . "" . $arrow . "" . $mainSubForum_name . "</td>\n"
+            . "<td style=\"width: 12%; text-align:center;\">" . $niveau . "</td>\n"
+            . "<td style=\"width: 12%; text-align:center;\">" . $level . "</td>\n"
+            . "<td style=\"width: 12%; text-align:center;\">" . $order . "</td>\n"
+            . "<td style=\"width: 12%; text-align:center;\"><a href=\"index.php?file=Forum&amp;page=admin&amp;op=edit_forum&amp;id=" . $id . "\"><img style=\"border: 0;\" src=\"images/edit.gif\" alt=\"\" title=\"" . _EDITTHISFORUM . "\" /></a></td>\n"
+            . "<td style=\"width: 12%; text-align:center;\"><a href=\"javascript:delforum('" . mysql_real_escape_string(stripslashes($titre)) . "', '" . $id . "');\"><img style=\"border: 0;\" src=\"images/del.gif\" alt=\"\" title=\"" . _DELTHISFORUM . "\" /></a></td></tr>\n";
         }
         echo "</table><div style=\"text-align: center;\"><br />[ <a href=\"index.php?file=Admin\"><b>" . _BACK . "</b></a> ]</div><br /></div></div>\n";
     }
@@ -742,7 +833,7 @@ if ($visiteur >= $level_admin && $level_admin > -1){
         $nom = mysql_real_escape_string(stripslashes($nom));
 
         $sql = mysql_query("UPDATE " . FORUM_RANK_TABLE . " SET nom = '" . $nom . "', type = '" . $type . "', post = '" . $post . "', image = '" . $image . "' WHERE id = '" . $rid . "'");
-        
+
         // Action
         $texteaction = "". _ACTIONMODIFRANKFO .": ".$nom."";
         $acdate = time();
@@ -813,12 +904,12 @@ if ($visiteur >= $level_admin && $level_admin > -1){
 
     function do_prune($day, $forum_id){
         global $nuked, $user;
-        
+
         $sql_forum = mysql_query("SELECT nom FROM " . FORUM_TABLE . " WHERE id = '" . $forum_id . "'");
         list($nom) = mysql_fetch_array($sql_forum);
-        
+
         $prunedate = time() - (86400 * $day);
-        
+
         if (is_int(strpos($forum_id, "cat_"))){
             $cat = preg_replace("`cat_`i", "", $forum_id);
             $and = "AND cat = '" . $cat . "'";
@@ -829,7 +920,7 @@ if ($visiteur >= $level_admin && $level_admin > -1){
         else{
             $and = "";
         }
-        
+
         $sql = mysql_query("SELECT id, sondage FROM " . FORUM_THREADS_TABLE . " WHERE " . $prunedate . " >= last_post AND annonce = 0 " . $and);
         while (list($thread_id, $sondage) = mysql_fetch_row($sql)){
             if ($sondage == 1){
@@ -927,7 +1018,7 @@ if ($visiteur >= $level_admin && $level_admin > -1){
         $upd9 = mysql_query("UPDATE " . CONFIG_TABLE . " SET value = '" . $forum_file . "' WHERE name = 'forum_file'");
         $upd10 = mysql_query("UPDATE " . CONFIG_TABLE . " SET value = '" . $forum_file_level . "' WHERE name = 'forum_file_level'");
         $upd11 = mysql_query("UPDATE " . CONFIG_TABLE . " SET value = '" . $forum_file_maxsize . "' WHERE name = 'forum_file_maxsize'");
-        
+
         // Action
         $texteaction = "". _ACTIONPREFFO .".";
         $acdate = time();

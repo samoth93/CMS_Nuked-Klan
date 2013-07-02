@@ -110,7 +110,7 @@ define("_FLOGOUT","logout");
 define("_USERSIGN","Attacher sa signature");
 define("_EMAILNOTIFY","M'avertir lorsqu'une réponse est postée");
 define("_ANNONCE","Poster une annonce");
-define("_EDITTEXT","Afficher le message d'édition"); 
+define("_EDITTEXT","Afficher le message d'édition");
 define("_OPTIONS","Options");
 define("_CANCEL","Annuler");
 define("_EMAILNOTIFYMAIL","Il y a eu une réponse a ce message :");
@@ -258,4 +258,17 @@ define("_ACTIONDELRANKFO","a supprimé le rang forum");
 define("_ACTIONMODIFRANKFO","a modifié le rang forum");
 define("_ACTIONPRUNEFO","a délesté le forum");
 define("_ACTIONPREFFO","a modifié les préférences du module forum");
+
+// Main
+define('_TOTAL_MEMBERS_POSTS', 'Nos membres ont posté un total de ');
+define('_WE_HAVE', 'Nous avons ');
+define('_REGISTERED_MEMBERS', ' membres enregistrés.');
+define('_LAST_USER_IS', 'L\'utilisateur enregistré le plus récent est ');
+define('_STATS', 'Statistiques');
+define('_TOPICS', 'Sujets');
+// Viewforum
+define('_BAD_FORUM_ID', 'L\'ID que vous avez utilisé n\'est pas correct.');
+define('_TOPIC', 'Sujet');
+define('_CREATED_BY', 'Cr&eacute;&eacute; par');
+define('_ANSWERS', 'R&eacute;ponses');
 ?>

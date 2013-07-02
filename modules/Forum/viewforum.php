@@ -1,16 +1,365 @@
 <?php
-// -------------------------------------------------------------------------//
-// Nuked-KlaN - PHP Portal                                                  //
-// http://www.nuked-klan.org                                                //
-// -------------------------------------------------------------------------//
-// This program is free software. you can redistribute it and/or modify     //
-// it under the terms of the GNU General Public License as published by     //
-// the Free Software Foundation; either version 2 of the License.           //
-// -------------------------------------------------------------------------//
-if (!defined("INDEX_CHECK"))
-{
-    die ("<div style=\"text-align: center;\">You cannot open this page directly</div>");
+/**
+ * Main page of Forum Mod
+ *
+ * @version     1.8
+ * @link http://www.nuked-klan.org Clan Clan Management System for Gamers
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @copyright 2001-2013 Nuked-Klan (Registred Trademark)
+ */
+
+defined('INDEX_CHECK') or die ('You can\'t run this file alone.');
+
+// Inclusion des variables de langue
+translate('modules/Forum/lang/'.$GLOBALS['language'].'.lang.php');
+
+// Ouverture du conteneur de module
+opentable();
+
+// ################################
+// @todo : Mettre a jour avec les groupes
+// ################################
+// On définit le niveau du visiteur
+$visiteur = $GLOBALS['user'] ? $GLOBALS['user'][1] : 0;
+$ModName = basename(dirname(__FILE__));
+$level_access = nivo_mod($ModName);
+if ($visiteur >= $level_access && $level_access > -1){
+
+    // On récupère et on sécurise l'ID du forum
+    if(array_key_exists('forum_id', $_REQUEST) && !empty($_REQUEST['forum_id'])){
+        $_CLEAN['forumId'] = intval($_REQUEST['forum_id']);
+    }
+    else{
+        echo '<div class="nkNotificationMod nkSuccessMod">'._BAD_FORUM_ID.'</div>';
+        redirect('index.php?file=Forum', 3);
+        footer();
+        exit();
+    }
+
+    // On récupère les informations du forum en base de donnée
+    $dbsForum = "SELECT A.id AS forumId, A.cat, A.parentid, A.nom AS name, A.comment, A.image, A.niveau AS level, C.id AS catId, C.nom AS catName,
+                    (SELECT count(id) FROM ".FORUM_THREADS_TABLE." WHERE forum_id = forumId) AS nbThreads,
+                    (SELECT nom FROM ".FORUM_TABLE." WHERE id = A.parentid) AS parentName
+                 FROM ".FORUM_TABLE." AS A
+                 LEFT JOIN ".FORUM_TABLE." AS B
+                 ON B.id = A.parentid
+                 LEFT JOIN ".FORUM_CAT_TABLE." AS C
+                 ON C.id = A.cat
+                 WHERE A.id = ".$_CLEAN['forumId']."
+                 ";
+
+    $dbeForum = mysql_query($dbsForum) or die(mysql_error());
+
+    // On stocke les données du forum dans la variable dataForum
+    $arrayForum = mysql_fetch_assoc($dbeForum);
+
+    // On récupère le nombre de sujets maximum a affiché (définit dans l'administration)
+    $maxThreadsPerPage = $GLOBALS['nuked']['thread_forum_page'];
+
+    // On définit la page courante sur 1 par défaut
+    $page = 1;
+
+    // On vérifie la présence et on sécurise la variable p qui gère la page courante via l'url
+    if(array_key_exists('p', $_REQUEST) && !empty($_REQUEST['p'])){
+        $page = $_REQUEST['p'];
+    }
+
+    $currentItem = $page * $maxThreadsPerPage - $maxThreadsPerPage;
+
+    // On récupère les informations des sujets en base de donnée
+    $dbsThreads = "SELECT  id AS threadId, titre AS title, date, closed AS status, auteur AS author,
+                           auteur_id AS authorId, last_post AS lastPost, view AS nbViews, annonce, sondage AS survey, forum_id AS forumId,
+                            (SELECT auteur
+                             FROM ".FORUM_MESSAGES_TABLE."
+                             WHERE thread_id = threadId
+                             ORDER BY date DESC
+                             LIMIT 0,1
+                            ) AS lastMsgAuthor,
+                            (SELECT id
+                             FROM ".FORUM_MESSAGES_TABLE."
+                             WHERE thread_id = threadId
+                             ORDER BY date DESC
+                             LIMIT 0,1
+                            ) AS lastMsgId,
+                            (SELECT count(id) - 1
+                             FROM ".FORUM_MESSAGES_TABLE."
+                             WHERE thread_id = threadId
+                            ) AS nbMessages
+                   FROM ".FORUM_THREADS_TABLE."
+                   WHERE forum_id = ".$_CLEAN['forumId']."
+                   ORDER BY lastPost DESC
+                   LIMIT ".$currentItem.", ".$maxThreadsPerPage." ";
+    $dbeThreads = mysql_query($dbsThreads) or die(mysql_error());
+
+    // On initialise le tableau des sujets
+    $arrayThreads = array();
+
+    // On stocke les données dans le tableau des sujets
+    while ($dataThread = mysql_fetch_assoc($dbeThreads)) {
+        foreach ($dataThread as $field => $value) {
+            if($field != 'threadId'){
+                // Si le titre est trop long on le tronque
+                if($field == 'title' && strlen($value) > 60){
+                    $value = substr($value, 0, 60).'&nbsp;...';
+                }
+
+                $arrayThreads[$dataThread['threadId']][$field] = $value;
+            }
+        }
+    }
+
+    // On créer un tableau qui va contenir les différents pseudo à affiché
+    $arrayWhereAuthor = array();
+
+    foreach ($arrayThreads as $thread) {
+        $arrayWhereAuthor[] = $thread['author'];
+        $arrayWhereAuthor[] = $thread['lastMsgAuthor'];
+    }
+
+    // On supprime les doublons
+    $arrayWhereAuthor = array_unique($arrayWhereAuthor);
+
+    $where = null;
+    $i = 0;
+    // On créer le where pour la requete sur la table user
+    if(count($arrayWhereAuthor) > 0){
+        $where = implode('\' OR pseudo = \'', $arrayWhereAuthor);
+    }
+
+    $where = 'WHERE pseudo = \''.$where.'\'';
+
+    // On récupère les informations des auteurs en base de donnée
+    $dbsAuthors = " SELECT pseudo, avatar
+                    FROM ".USER_TABLE."
+                    ".$where." ";
+    $dbeAuthors = mysql_query($dbsAuthors);
+
+    // On stocke les données dans le tableau des auteurs
+    $arrayAuthors = array();
+
+    while($dataAuthors = mysql_fetch_assoc($dbeAuthors)){
+        $arrayAuthors[$dataAuthors['pseudo']] = $dataAuthors['avatar'];
+    }
+
+    // On intègre les avatars dans le tableau des threads
+    foreach($arrayThreads as $threadId => $thread){
+        if(array_key_exists($thread['lastMsgAuthor'], $arrayAuthors)){
+            $arrayThreads[$threadId]['avatar'] = $arrayAuthors[$thread['lastMsgAuthor']];
+        }
+        else{
+            $arrayThreads[$threadId]['avatar'] = 'modules/Forum/images/noAvatar.png';
+        }
+    }
+
+    $navPage = null;
+    // On affiche la navigation des pages s'il y a plus de topic que le maximum autorisé
+    if($arrayForum['nbThreads'] > $maxThreadsPerPage){
+        $navPage = number($arrayForum['nbThreads'], $maxThreadsPerPage, 'index.php?file=Forum&page=viewforum&forum_id='.$_CLEAN['forumId']);
+    }
+
+    $cat = '-> <a href="index.php?file=Forum&amp;cat='.$arrayForum['catId'].'"><strong>'.$arrayForum['catName'].'</strong></a>&nbsp;';
+
+    $parentForum = null;
+
+    if($arrayForum['parentid'] != 0){
+        $parentForum = '-> <a href="index.php?file=Forum&forumCat='.$arrayForum['parentid'].'">
+                                <strong>'.$arrayForum['parentName'].'</strong>
+                            </a>&nbsp;';
+    }
+
+    $forum = '-> <strong>'.$arrayForum['name'].'</strong>&nbsp;';
+
+    $nav = $cat.$parentForum.$forum;
+
+    // #################################
+    // # @todo : REMPLACER LE $GLOBALS['user'][0] par $GLOBALS['user']['id']
+    // #################################
+    // On inclus le statut de visite (forum vu ou non) dans les forums
+    foreach($arrayThreads as $threadId => $thread){
+        $arrayThreads[$threadId]['classThreadRead'] = null;
+    }
+
+    if (isset($GLOBALS['user']) && !empty($GLOBALS['user'])){
+        $dbsThreadsVisit = "SELECT thread_id AS threadId
+                           FROM ".FORUM_READ_TABLE."
+                           WHERE user_id = '".$GLOBALS['user'][0]."'
+                          ";
+        $dbeThreadsVisit = mysql_query($dbsThreadsVisit);
+        $dataThreadsRead = mysql_fetch_assoc($dbeThreadsVisit);
+
+        foreach($arrayThreads as $threadId => $thread){
+            $arrayThreadsRead = explode(',', $dataThreadsRead['threadId']);
+            $newTopic = false;
+            if($arrayThreads[$threadId]['nbMessages'] > 0 && !in_array($threadId, $arrayThreadsRead)){
+                $newTopic = true;
+                $arrayThreads[$threadId]['classThreadRead'] = 'nkForumNewTopic';
+            }
+
+            if($thread['nbMessages'] > $GLOBALS['nuked']['hot_topic']){
+                if($newTopic === true){
+                    $arrayThreads[$threadId]['classThreadRead'] = 'nkForumNewTopicPopular';
+                }
+                else{
+                    $arrayThreads[$threadId]['classThreadRead'] = 'nkForumTopicPopular';
+                }
+            }
+
+            if($thread['status'] == 1){
+                if($newTopic === true){
+                    $arrayThreads[$threadId]['classThreadRead'] = 'nkForumNewTopicLock';
+                }
+                else{
+                    $arrayThreads[$threadId]['classThreadRead'] = 'nkForumTopicLock';
+                }
+            }
+        }
+    }
+
+    // ------------------------------
+    // AFFICHAGE
+    // ------------------------------
+    if(isset($GLOBALS['bgcolor1']) && isset($GLOBALS['bgcolor2']) && isset($GLOBALS['bgcolor3']) && isset($GLOBALS['bgcolor4'])){
+    ?>
+        <style type="text/css">
+            .nkForumCatHead, #nkForumWhoIsOnline{
+                background: <?php echo $GLOBALS['bgcolor3']; ?>
+            }
+        </style>
+    <?php
+    }
+?>
+    <div id="nkForumWrapper">
+        <div id="nkForumInfos">
+<?php
+            if(!empty($arrayForum['image'])){
+                echo '<img src="'.$arrayForum['image'].'" alt="" />';
+            }
+?>          <div>
+                <h2><?php echo $arrayForum['name']; ?></h2>
+                <p><?php echo $arrayForum['comment'] ?></p>
+            </div>
+        </div>
+        <div id="nkForumBreadcrumb">
+            <a href="index.php?file=Forum"><strong><?php echo _INDEXFORUM; ?></strong></a>&nbsp;<?php echo $nav; ?>
+        </div>
+        <div class="nkForumNavPage">
+            <?php echo $navPage; ?>
+        </div>
+        <div class="nkForumCat">
+            <div class="nkForumCatWrapper">
+                <div class="nkForumCatHead">
+                    <div>
+                        <div class="nkForumBlankCell"></div>
+                        <div class="nkForumForumCell"><?php echo _TOPIC; ?></div>
+                        <div class="nkForumStatsCell"><?php echo _STATS; ?></div>
+                        <div class="nkForumDateCell"><?php echo _LASTPOST; ?></div>
+                    </div>
+                </div>
+                <div class="nkForumCatContent">
+<?php
+                    foreach($arrayThreads as $threadId => $thread){
+?>                      <div>
+                            <div class="nkForumIconCell">
+                                <span class="nkForumTopicIcon <?php echo $thread['classThreadRead']; ?>"></span>
+                            </div>
+                            <div class="nkForumForumCell">
+                                <a href="index.php?file=Forum&amp;page=viewtopic&amp;forum_id=<?php echo $thread['forumId']; ?>&amp;thread_id=<?php echo $threadId; ?>">
+                                    <h3><?php echo $thread['title']; ?></h3>
+                                </a>
+                                <div>
+                                    <span>
+                                        <?php echo _CREATED_BY; ?>
+<?php
+                                        if(array_key_exists($thread['author'], $arrayAuthors)){
+?>
+                                            <a href="index.php?file=Members&amp;op=detail&amp;autor=<?php echo $thread['author']; ?>">
+                                                <?php echo $thread['author']; ?>
+                                            </a>
+<?php
+                                        }
+                                        else{
+                                            echo $thread['author'];
+                                        }
+?>
+                                        <?php echo _THE.'&nbsp;'.nkdate($thread['date']); ?>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="nkForumStatsCell">
+                                <strong><?php echo $thread['nbMessages']; ?></strong>&nbsp;<?php echo strtolower(_ANSWERS); ?>
+                                <br/>
+                                <strong><?php echo $thread['nbViews']; ?></strong>&nbsp;<?php echo strtolower(_VIEWS); ?>
+                            </div>
+                            <div class="nkForumDateCell">
+                                <div class="nkForumAuthorAvatar">
+                                    <img src="<?php echo $thread['avatar']; ?>" alt="" />
+                                </div>
+                                <div>
+                                    <p>
+                                        <span><?php echo _BY; ?></span>
+<?php
+                                        if(array_key_exists($thread['lastMsgAuthor'], $arrayAuthors)){
+?>
+                                            <a href="index.php?file=Members&amp;op=detail&amp;autor=<?php echo $thread['lastMsgAuthor']; ?>">
+                                                <strong><?php echo $thread['lastMsgAuthor']; ?></strong>
+                                            </a>
+<?php
+                                        }
+                                        else{
+                                            echo '<strong>'.$thread['lastMsgAuthor'].'</strong>';
+                                        }
+?>
+                                    </p>
+                                    <p><?php echo nkDate($thread['lastPost']); ?></p>
+                                </div>
+                            </div>
+                        </div>
+<?php
+                    }
+?>
+                </div>
+            </div>
+
+        </div>
+        <div class="nkForumNavPage">
+            <?php echo $navPage; ?>
+        </div>
+    </div>
+<?php
 }
+// ################################
+// @todo : Mettre a jour avec les groupes
+// ################################
+else if ($level_access == -1) {
+    // On affiche le message qui previent l'utilisateur que le module est désactivé
+    echo '<div class="nkAccessModError">
+            <p>'._MODULEOFF.'</p>
+            <a href="javascript:history.back()"><strong>'._BACK.'</strong></a>
+        </div>';
+}
+else if ($level_access == 1 && $visiteur == 0) {
+    // On affiche le message qui previent l'utilisateur qu'il n'as pas accès à ce module
+    echo '<div class="nkAccessModError">
+            <p>'._USERENTRANCE.'</p>
+            <a href="index.php?file=User&amp;op=login_screen"><strong>'._LOGINUSER.'</strong></a>
+            &nbsp;|&nbsp;
+            <a href="index.php?file=User&amp;op=reg_screen"><strong>'._REGISTERUSER.'</strong></a>
+        </div>';
+}
+else {
+    // On affiche le message qui previent l'utilisateur que le module est désactivé
+    echo '<div class="nkAccessModError">
+            <p>'._NOENTRANCE.'</p>
+            <a href="javascript:history.back()"><strong>'._BACK.'</strong></a>
+        </div>';
+}
+
+// Fermeture du conteneur de module
+closetable();
+
+// ######################################
+// MARQUER DE MODIFICATION
+// ######################################
 
 global $nuked, $user, $language, $cookie_forum;
 
@@ -192,7 +541,7 @@ if ($visiteur >= $level_access && $level_access > -1)
             list($mess_id, $last_date, $last_auteur, $last_auteur_id) = mysql_fetch_array($sql7);
             $last_auteur = nk_CSS($last_auteur);
 
-            
+
                if ($user) {
                     $visitx = mysql_query("SELECT user_id FROM " . FORUM_READ_TABLE . " WHERE user_id = '" . $user[0] . "' AND `thread_id` LIKE '%" . ',' . $thread_id . ',' . "%' ");
                     $results = mysql_num_rows($visitx);
@@ -307,7 +656,7 @@ if ($visiteur >= $level_access && $level_access > -1)
             else if (strftime("%d", $last_date) == (strftime("%d", time()) - 1) && strftime("%m %Y", time()) == strftime("%m %Y", $last_date)) $last_date = _FYESTERDAY . "&nbsp;" . strftime("%H:%M", $last_date);
             else $last_date = nkDate($last_date);
 
-            
+
 
             echo "<td style=\"width: 25%;\" align=\"center\">" . $last_date . "<br />\n";
 

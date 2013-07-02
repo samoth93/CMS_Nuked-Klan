@@ -820,7 +820,7 @@ function number($count, $each, $link){
             }
         }
         $output .= '<br />';
-        echo $output;
+        return $output;
     }
 }
 

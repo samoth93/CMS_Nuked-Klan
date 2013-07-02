@@ -1,0 +1,270 @@
+#nkForumWrapper{
+    width:98%;
+    margin:0 auto;
+}
+
+/* MAIN */
+
+#nkForumHeader, #nkForumMainSearch ,#nkForumMainDates, .nkForumMainBreadcrumb{
+    display: inline-block;
+    width:50%;
+}
+
+#nkForumHeader{
+    text-align: center;
+}
+
+#nkForumHeader > h1, #nkForumHeader > p, #nkForumMainSearch p{
+    margin:0;
+}
+
+#nkForumMainSearch{
+    text-align: right;
+}
+
+#nkForumBreadcrumb, #nkForumMainDates{
+    margin:25px 0 5px 0;
+}
+
+#nkForumMainDates{
+    text-align: right;
+}
+
+#nkForumMainSearch label{
+    font-weight: bold;
+}
+
+#nkForumMainDates > span{
+    display: block;
+    line-height: 0;
+}
+
+.nkForumCatNameCell{
+    padding:4px;
+}
+
+.nkForumCat{
+    width:100%;
+    margin-bottom:10px;
+}
+
+.nkForumCatWrapper{
+    display: table;
+    width:100%;
+}
+
+.nkForumCatWrapper, #nkForumWhoIsOnline{
+    background:#444;
+    box-shadow:0 3px 2px rgba(0, 0, 0, 0.4);
+}
+
+.nkForumCatNameCell h2, .nkForumCat h3, .nkForumCat p{
+    margin:0;
+}
+
+.nkForumCatHead{
+    font-weight: bold;
+    color: #fff;
+}
+
+.nkForumCatHead, .nkForumCatContent{
+    display: table-row-group;
+}
+
+.nkForumCatHead > div, .nkForumCatContent > div{
+    display: table-row;
+}
+
+.nkForumCatHead > div > div, .nkForumCatContent > div > div{
+    display: table-cell;
+    vertical-align: middle;
+    padding:4px;
+}
+
+.nkForumCatContent > div > div{
+    border-bottom: 1px solid #bcbcbc;
+}
+
+.nkForumCatContent > div > div, #nkForumWhoIsOnlineIcon, #nkForumWhoIsOnlineContent{
+    background: none repeat scroll 0 0 #fff;
+}
+
+.nkForumCatContent > div > div.nkForumDateCell, #nkForumWhoIsOnlineContent{
+    border-right: 4px solid #BCBCBC;
+}
+
+.nkForumCatContent > div:last-child > div, #nkForumWhoIsOnlineIcon, #nkForumWhoIsOnlineContent{
+    border-bottom: 4px solid #BCBCBC;
+}
+
+.nkForumIconCell, #nkForumWhoIsOnlineIcon{
+    border-left: 4px solid #BCBCBC;
+}
+
+.nkForumIconCell, .nkForumBlankCell{
+    width:5%;
+    text-align: center;
+}
+
+
+.nkForumNameCell, .nkForumCell{
+    width:55%;
+    vertical-align: top !important;
+}
+
+.nkForumNameCell > span:after{
+    content:' |';
+}
+
+.nkForumNameCell > span:first-of-type:before{
+    content:'';
+    display: inline-block;
+    width:16px;
+    height:16px;
+    background: url(images/subForum.png);
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+.nkForumNameCell > span:last-of-type:after{
+    content:'' !important;
+}
+
+.nkForumStatsCell{
+    width:15%;
+    text-align: right
+}
+
+.nkForumDateCell{
+    width:25%;
+}
+
+.nkForumDateCell > div{
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.nkForumAuthorAvatar > img{
+    width:30px;
+    height:30px;
+    background: none repeat scroll 0 0 #fff;
+    border: 1px solid #d1d1d1;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+    padding: 1px;
+}
+
+#nkForumUserActionLink > a{
+    display: block;
+    text-align: right;
+}
+
+#nkForumWhoIsOnline{
+    width: 100%;
+}
+
+#nkForumWhoIsOnline > h3{
+    height: 25px;
+    line-height: 25px;
+    width: 100%;
+    margin:0;
+    padding:4px;
+    color:#fff;
+}
+
+#nkForumWhoIsOnlineIcon{
+    height: 90px;
+    margin: 0 10px 0 1px;
+    padding: 10px 0 0 10px;
+    width: 90px;
+    display: table-cell;
+}
+
+#nkForumWhoIsOnlineIcon:before{
+    background:url('images/whoisonline.png');
+    content: "";
+    display: block;
+    height: 80px;
+    width: 80px;
+}
+
+#nkForumWhoIsOnlineContent{
+    display: table-cell;
+    vertical-align: top;
+    padding:3px 0 0 10px;
+    width:100%;
+}
+
+#nkForumWhoIsOnlineContent > p{
+    margin:0 0 7px 0;
+}
+
+.nkForumOnlineFlag{
+    display: inline-block;
+    margin-right:2px;
+    vertical-align: middle;
+}
+
+.nkForumOnlineAdmin{
+    color:#C40000;
+}
+
+.nkForumOnlineMember{
+    color:#0080FF;
+}
+
+#nkForumReadLegend img {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right:5px;
+}
+
+/* VIEWFORUM */
+
+#nkForumInfos > img{
+    width:50px;
+    height:50px;
+    background: none repeat scroll 0 0 #fff;
+    border: 1px solid #d1d1d1;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+    padding: 1px;
+}
+
+#nkForumInfos > *{
+    display: inline-block;
+    vertical-align: top;
+}
+
+#nkForumInfos > div > h2, #nkForumInfos > div > p {
+    margin:0;
+}
+
+.nkForumNavPage{
+    margin:10px 0;
+}
+
+.nkForumTopicIcon{
+    display: inline-block;
+    width:24px;
+    height:24px;
+    background:url(images/spriteForum.png);
+}
+
+.nkForumNewTopic{
+    background-position:-48px 0;
+}
+
+.nkForumTopicLock{
+    background-position:-24px 0;
+}
+
+.nkForumNewTopicLock{
+    background-position:-72px 0;
+}
+
+.nkForumTopicPopular{
+    background-position:-96px 0;
+}
+
+.nkForumNewTopicPopular{
+    background-position:-120px 0;
+}
