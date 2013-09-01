@@ -56,7 +56,7 @@ define("_HOT","<font color=\"red\"><b><i>Hot!</i></b></font>");
 define("_NEW","<font color=\"red\"><b><i>New!</i></b></font>");
 
 define("_NOENTRANCE","Sorry you have no permission to access this page");
-define("_HELP","Help");
+define("HELP","Help");
 define("_ADMINDOWN","Downloads Administration");
 define("_TITLE","Title");
 define("_CREATE","Create");

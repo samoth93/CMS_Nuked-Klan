@@ -11,7 +11,6 @@ defined("INDEX_CHECK") or die ("<div style=\"text-align: center;\">You cannot op
 global $language, $user;
 translate("modules/Download/lang/" . $language . ".lang.php");
 
-$visiteur = $user ? $GLOBALS['user']['idGroup'] : 0;
 
 $sql2 = mysql_query("SELECT active FROM " . BLOCK_TABLE . " WHERE bid='$bid'");
 list($active) = mysql_fetch_array($sql2);
@@ -28,7 +27,10 @@ if ($active == 3 || $active == 4) {
        . "<tr><td style=\"width: 45%;\" valign=\"top\"><a href=\"index.php?file=Download&amp;op=classe&amp;orderby=news\"><big><b>" . _LASTDOWN . "</b></big></a><br /><br />\n";
 
     $i = 0;
-    $sql = mysql_query("SELECT id, titre, date, type, description FROM " . DOWNLOAD_TABLE . " WHERE " . $visiteur . " >= level ORDER BY id DESC LIMIT 0, 10");
+    /**
+     * @todo : Remplacer le where par les id de groupes autorisé
+     */
+    $sql = mysql_query("SELECT id, titre, date, type, description FROM " . DOWNLOAD_TABLE . " WHERE " . $TODO_GROUPS . " >= level ORDER BY id DESC LIMIT 0, 10");
     while (list($dl_id, $titre, $date, $cat, $description) = mysql_fetch_array($sql)) {
         $titre = printSecuTags($titre);
         $date = nkDate($date);
@@ -61,7 +63,10 @@ if ($active == 3 || $active == 4) {
     echo "</td><td style=\"width: 10%;\">&nbsp;</td><td style=\"width: 45%;\" align=\"left\" valign=\"top\"><a href=\"index.php?file=Download&amp;op=classe&amp;orderby=count\"><big><b>" . _TOPDOWN . "</b></big></a><br /><br />\n";
 
     $l = 0;
-    $sql3 = mysql_query("SELECT id, titre, count, type, description FROM " . DOWNLOAD_TABLE . " WHERE " . $visiteur . " >= level ORDER BY count DESC LIMIT 0, 10");
+    /**
+     * @todo : Remplacer le where par les id de groupes autorisé
+     */
+    $sql3 = mysql_query("SELECT id, titre, count, type, description FROM " . DOWNLOAD_TABLE . " WHERE " . $TODO_GROUPS . " >= level ORDER BY count DESC LIMIT 0, 10");
     while (list($tdl_id, $ttitre, $tcount, $tcat, $tdesc) = mysql_fetch_array($sql3)) {
         $sql4 = mysql_query("SELECT titre, parentid FROM " . DOWNLOAD_CAT_TABLE . " WHERE cid = '" . $tcat . "'");
         list($tcat_name, $tparentid) = mysql_fetch_array($sql4);
@@ -92,7 +97,10 @@ if ($active == 3 || $active == 4) {
        . "<td style=\"width: 10%;\"></td><td style=\"width: 45%;\" align=\"right\"><a href=\"index.php?file=Download&amp;op=classe&amp;orderby=count\"><small>+ " . _MORETOP . "</small></a></td></tr></table>\n";
 } else {
     $i = 0;
-    $sql = mysql_query("SELECT id, titre, date, description FROM " . DOWNLOAD_TABLE . " WHERE " . $visiteur . " >= level ORDER BY date DESC LIMIT 0, 10");
+    /**
+     * @todo : Remplacer le where par les id de groupes autorisé
+     */
+    $sql = mysql_query("SELECT id, titre, date, description FROM " . DOWNLOAD_TABLE . " WHERE " . $TODO_GROUPS . " >= level ORDER BY date DESC LIMIT 0, 10");
     while (list($dl_id, $titre, $date, $description) = mysql_fetch_array($sql)) {
         $titre = printSecuTags($titre);
         $description = strip_tags($description);
