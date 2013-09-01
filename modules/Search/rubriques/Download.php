@@ -13,8 +13,6 @@ if (!defined("INDEX_CHECK")){
 
 global $nuked, $user;
 
-$visiteur = !$user ? 0 : $GLOBALS['user']['idGroup'];
-
 $and = "";
 
 if ($autor != "" && $main != ""){
@@ -39,8 +37,10 @@ else if ($main != ""){
 
     $and .= ")";
 }
-
-$req = "SELECT id, titre, date FROM " . DOWNLOAD_TABLE . " WHERE level <= '" . $visiteur . "' AND " . $and . " ORDER BY id DESC";
+/**
+ * @todo : Remplacer le where par les id groups
+ */
+$req = "SELECT id, titre, date FROM " . DOWNLOAD_TABLE . " WHERE level <= '" . $TODO_GROUP . "' AND " . $and . " ORDER BY id DESC";
 $sql_dl = mysql_query($req);
 
 $nb_dl = mysql_num_rows($sql_dl);

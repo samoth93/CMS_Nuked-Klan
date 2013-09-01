@@ -13,8 +13,6 @@ if (!defined("INDEX_CHECK")){
 
 global $nuked, $user;
 
-$visiteur = !$user ? 0 : $GLOBALS['user']['idGroup'];
-
 $and = "";
 
 if ($autor != "" && $main != ""){
@@ -39,8 +37,10 @@ else if ($main != ""){
 
     $and .= ")";
 }
-
-$req = "SELECT M.id, M.thread_id, M.titre, M.forum_id, M.date, M.auteur FROM " . FORUM_MESSAGES_TABLE . " AS M, " . FORUM_TABLE . " AS F, " . FORUM_CAT_TABLE . " AS FC WHERE F.id=M.forum_id AND F.cat=FC.id AND FC.niveau <= '" . $visiteur . "' AND F.level <= '" . $visiteur . "' AND " . $and . " ORDER BY M.id DESC";
+/**
+ * @todo : Remplacer le where avec les ID de groupes
+ */
+$req = "SELECT M.id, M.thread_id, M.titre, M.forum_id, M.date, M.auteur FROM " . FORUM_MESSAGES_TABLE . " AS M, " . FORUM_TABLE . " AS F, " . FORUM_CAT_TABLE . " AS FC WHERE F.id=M.forum_id AND F.cat=FC.id AND FC.niveau <= '" . $TODO_GROUP . "' AND F.level <= '" . $TODO_GROÛP . "' AND " . $and . " ORDER BY M.id DESC";
 $sql_forum = mysql_query($req);
 
 $nb_mess = mysql_num_rows($sql_forum);

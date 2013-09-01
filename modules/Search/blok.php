@@ -31,10 +31,8 @@ if ($active == 3 || $active == 4){
         if ($mod != "." && $mod != ".." && $mod != "index.html"){
             $i++;
             $mod = str_replace(".php", "", $mod);
-            $perm = nivo_mod($mod);
-            if (!$perm) $perm = 0;
 
-            if ($GLOBALS['user']['idGroup'] >= $perm && $perm > -1){
+            if (nkAccessModule($mod) && nkIsModEnabled($mod)){
                 $umod = strtoupper($mod);
                 $modname = "_S" . $umod;
                 if (defined($modname)) $modname = constant($modname);

@@ -60,10 +60,8 @@ function index(){
         if ($mod != "." && $mod != ".." && $mod != "index.html"){
             $i++;
             $mod = str_replace(".php", "", $mod);
-            $perm = nivo_mod($mod);
-            if (!$perm) $perm = 0;
 
-            if (($user && $GLOBALS['user']['idGroup'] >= $perm) && $perm > -1){
+            if (($user && nkAccessModule($mod)) && nkIsModEnabled($mod)){
                 $umod = strtoupper($mod);
                 $modname = "_S" . $umod;
                 if (defined($modname)) $modname = constant($modname);
@@ -144,10 +142,8 @@ function mod_search(){
             if ($mod != "." && $mod != ".." && $mod != "index.html"){
                 $i++;
                 $mod = str_replace(".php", "", $mod);
-                $perm = nivo_mod($mod);
-                if (!$perm) $perm = 0;
 
-                if (($user && $GLOBALS['user']['idGroup'] >= $perm) && $perm > -1 && ($module == $mod || $module == "")){
+                if (($user && nkAccessModule($mod)) && nkIsModEnabled($mod) && ($module == $mod || $module == "")){
                     $umod = strtoupper($mod);
                     $modname = "_S" . $umod;
                     if (defined($modname)) $modname = constant($modname);
