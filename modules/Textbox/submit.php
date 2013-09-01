@@ -15,105 +15,94 @@ require_once("Includes/nkCaptcha.php");
 
 // On determine si le captcha est actif ou non
 if (_NKCAPTCHA == "off") $captcha = 0;
-else if ((_NKCAPTCHA == 'auto' OR _NKCAPTCHA == 'on') && $GLOBALS['user']['idGroup'] > 0)  $captcha = 0;
+else if ((_NKCAPTCHA == 'auto' OR _NKCAPTCHA == 'on') && !nkHasVisitor())  $captcha = 0;
 else $captcha = 1;
 
-$visiteur = $user ? $GLOBALS['user']['idGroup'] : 0;
 $redirection = $_SERVER['HTTP_REFERER'] ? $_SERVER['HTTP_REFERER'] : 'index.php';
-$level_access = nivo_mod("Textbox");
-
-if ($visiteur >= $level_access && $level_access > -1)
-{
     opentable();
 
-    if ($captcha == 1){
-        ValidCaptchaCode();
-    }
+if ($captcha == 1){
+    ValidCaptchaCode();
+}
 
-    if (isset($GLOBALS['user']['nickName']))
-    {
-        $pseudo = $GLOBALS['user']['nickName'];
-    }
-    else
-    {
-    	$_REQUEST['auteur'] =  utf8_decode($_REQUEST['auteur']);
-        $_REQUEST['auteur'] = htmlentities($_REQUEST['auteur'], ENT_QUOTES, 'ISO-8859-1');
-        $_REQUEST['auteur'] = verif_pseudo($_REQUEST['auteur']);
-
-        if (mysql_result(mysql_query('SELECT COUNT(*) FROM ' . USER_TABLE . ' WHERE pseudo LIKE \'' . mysql_real_escape_string($_REQUEST['auteur']) . '\''), 0))
-        {
-            echo "<br /><br /><div id=\"ajax_message\" style=\"text-align: center;\">" . nkHtmlEntities(_PSEUDOFAILDED) . "</div><br /><br />";
-            redirect($redirection, 2);
-            closetable();
-            footer();
-            exit();
-		}
-        elseif ($_REQUEST['auteur'] == "error1")
-        {
-            echo "<br /><br /><div id=\"ajax_message\" style=\"text-align: center;\">" . nkHtmlEntities(_PSEUDOFAILDED) . "</div><br /><br />";
-            redirect($redirection, 2);
-            closetable();
-            footer();
-            exit();
-
-        }
-        else if ($_REQUEST['auteur'] == "error2")
-        {
-            echo "<br /><br /><div id=\"ajax_message\" style=\"text-align: center;\">" . nkHtmlEntities(_RESERVNICK) . "</div><br /><br />";
-            redirect($redirection, 2);
-            closetable();
-            footer();
-            exit();
-        }
-        else if ($_REQUEST['auteur'] == "error3")
-        {
-            echo "<br /><br /><div id=\"ajax_message\" style=\"text-align: center;\">" . nkHtmlEntities(_BANNEDNICK) . "</div><br /><br />";
-            redirect($redirection, 2);
-            closetable();
-            footer();
-            exit();
-        }
-        else
-        {
-            $pseudo = $_REQUEST['auteur'];
-        }
-    }
-
-    $sql2 = mysql_query("SELECT auteur, ip, date FROM " . TEXTBOX_TABLE . " ORDER BY id DESC LIMIT 0, 1");
-    list($author, $flood_ip, $flood_date) = mysql_fetch_array($sql2);
-
-    $anti_flood = $flood_date + 5;
-
-    $date = time();
-
-	$_REQUEST['texte'] =  utf8_decode($_REQUEST['texte']);
-
-    $_REQUEST['texte'] = mysql_real_escape_string(stripslashes($_REQUEST['texte']));
-    $pseudo = mysql_real_escape_string(stripslashes($pseudo));
-
-    if ($userIp == $flood_ip && $date < $anti_flood && $visiteur == 0)
-    {
-        echo "<br /><br /><div id=\"ajax_message\" style=\"text-align: center;\">" . nkHtmlEntities(_NOFLOOD) . "</div><br /><br />";
-        redirect($redirection, 2);
-    }
-
-    else if ($_REQUEST['texte'] != "")
-    {
-        $sql = mysql_query("INSERT INTO " . TEXTBOX_TABLE . " ( `id` , `auteur` , `ip` , `texte` , `date` ) VALUES ( '' , '" . $pseudo . "' ,'" . $userIp . "' , '" . $_REQUEST['texte'] . "' , '" . $date . "' )");
-        echo "<br /><br /><div id=\"ajax_message\" style=\"text-align: center;\">" . nkHtmlEntities(_SHOUTSUCCES) . "</div><br /><br />";
-        redirect($redirection, 2);
-    }
-
-    else
-    {
-        echo "<br /><br /><div id=\"ajax_message\" style=\"text-align: center;\">" . nkHtmlEntities(_NOTEXT) . "</div><br /><br />";
-        redirect($redirection, 2);
-    }
+if (isset($GLOBALS['user']['nickName']))
+{
+    $pseudo = $GLOBALS['user']['nickName'];
 }
 else
 {
-        echo "<br /><br /><div id=\"ajax_message\" style=\"text-align: center;\">" . nkHtmlEntities(_NOENTRANCE) . "</div><br /><br />";
+	$_REQUEST['auteur'] =  utf8_decode($_REQUEST['auteur']);
+    $_REQUEST['auteur'] = htmlentities($_REQUEST['auteur'], ENT_QUOTES, 'ISO-8859-1');
+    $_REQUEST['auteur'] = verif_pseudo($_REQUEST['auteur']);
+
+    if (mysql_result(mysql_query('SELECT COUNT(*) FROM ' . USER_TABLE . ' WHERE pseudo LIKE \'' . mysql_real_escape_string($_REQUEST['auteur']) . '\''), 0))
+    {
+        echo "<br /><br /><div id=\"ajax_message\" style=\"text-align: center;\">" . nkHtmlEntities(_PSEUDOFAILDED) . "</div><br /><br />";
         redirect($redirection, 2);
+        closetable();
+        footer();
+        exit();
+	}
+    elseif ($_REQUEST['auteur'] == "error1")
+    {
+        echo "<br /><br /><div id=\"ajax_message\" style=\"text-align: center;\">" . nkHtmlEntities(_PSEUDOFAILDED) . "</div><br /><br />";
+        redirect($redirection, 2);
+        closetable();
+        footer();
+        exit();
+
+    }
+    else if ($_REQUEST['auteur'] == "error2")
+    {
+        echo "<br /><br /><div id=\"ajax_message\" style=\"text-align: center;\">" . nkHtmlEntities(_RESERVNICK) . "</div><br /><br />";
+        redirect($redirection, 2);
+        closetable();
+        footer();
+        exit();
+    }
+    else if ($_REQUEST['auteur'] == "error3")
+    {
+        echo "<br /><br /><div id=\"ajax_message\" style=\"text-align: center;\">" . nkHtmlEntities(_BANNEDNICK) . "</div><br /><br />";
+        redirect($redirection, 2);
+        closetable();
+        footer();
+        exit();
+    }
+    else
+    {
+        $pseudo = $_REQUEST['auteur'];
+    }
+}
+
+$sql2 = mysql_query("SELECT auteur, ip, date FROM " . TEXTBOX_TABLE . " ORDER BY id DESC LIMIT 0, 1");
+list($author, $flood_ip, $flood_date) = mysql_fetch_array($sql2);
+
+$anti_flood = $flood_date + 5;
+
+$date = time();
+
+$_REQUEST['texte'] =  utf8_decode($_REQUEST['texte']);
+
+$_REQUEST['texte'] = mysql_real_escape_string(stripslashes($_REQUEST['texte']));
+$pseudo = mysql_real_escape_string(stripslashes($pseudo));
+
+if ($userIp == $flood_ip && $date < $anti_flood && nkHasVisitor())
+{
+    echo "<br /><br /><div id=\"ajax_message\" style=\"text-align: center;\">" . nkHtmlEntities(_NOFLOOD) . "</div><br /><br />";
+    redirect($redirection, 2);
+}
+
+else if ($_REQUEST['texte'] != "")
+{
+    $sql = mysql_query("INSERT INTO " . TEXTBOX_TABLE . " ( `id` , `auteur` , `ip` , `texte` , `date` ) VALUES ( '' , '" . $pseudo . "' ,'" . $userIp . "' , '" . $_REQUEST['texte'] . "' , '" . $date . "' )");
+    echo "<br /><br /><div id=\"ajax_message\" style=\"text-align: center;\">" . nkHtmlEntities(_SHOUTSUCCES) . "</div><br /><br />";
+    redirect($redirection, 2);
+}
+
+else
+{
+    echo "<br /><br /><div id=\"ajax_message\" style=\"text-align: center;\">" . nkHtmlEntities(_NOTEXT) . "</div><br /><br />";
+    redirect($redirection, 2);
 }
 
 closetable();

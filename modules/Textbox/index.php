@@ -15,137 +15,103 @@ if (!defined("INDEX_CHECK"))
 global $user, $nuked, $language;
 translate("modules/Textbox/lang/" . $language . ".lang.php");
 
-$level_access = nivo_mod("Textbox");
-$level_admin = admin_mod("Textbox");
-
-if ($user)
-{
-    $visiteur = $GLOBALS['user']['idGroup'];
-}
-else
-{
-    $visiteur = 0;
-}
-
 function index()
 {
-    global $nuked, $user, $theme, $bgcolor1, $bgcolor2, $bgcolor3, $level_access, $level_admin, $visiteur;
+    global $nuked, $user, $theme, $bgcolor1, $bgcolor2, $bgcolor3;
 
-    if ($visiteur >= $level_access && $level_access > -1)
+    opentable();
+
+    $nb_mess = $nuked['max_shout'];
+
+    $sql = mysql_query("SELECT id FROM " . TEXTBOX_TABLE);
+    $count = mysql_num_rows($sql);
+
+    if(array_key_exists('p', $_REQUEST)){
+        $page = $_REQUEST['p'];
+    }
+    else{
+        $page = 1;
+    }
+    $start = $page * $nb_mess - $nb_mess;
+
+    echo "<br /><div style=\"text-align: center;\"><big><b>" . _SHOUTBOX . "</b></big></div><br />\n";
+
+    if ($count > $nb_mess)
     {
-        opentable();
+        number($count, $nb_mess, "index.php?file=Textbox");
+    }
 
-        $nb_mess = $nuked['max_shout'];
+    echo "<table style=\"margin-left: auto;margin-right: auto;text-align: left;background: " . $bgcolor2 . ";border: 1px solid " . $bgcolor3 . ";\" width=\"100%\" cellpadding=\"3\" cellspacing=\"1\">\n";
 
-        $sql = mysql_query("SELECT id FROM " . TEXTBOX_TABLE);
-        $count = mysql_num_rows($sql);
+    $sql2 = mysql_query("SELECT id, auteur, ip, texte, date FROM " . TEXTBOX_TABLE . " ORDER BY id DESC LIMIT " . $start . ", " . $nb_mess."");
+    $j = 0;
+    while (list($mid, $auteur, $ip, $texte, $date) = mysql_fetch_array($sql2))
+    {
+        $texte = printSecuTags($texte);
+        $texte = nk_CSS($texte);
 
-        if(array_key_exists('p', $_REQUEST)){
-            $page = $_REQUEST['p'];
-        }
-        else{
-            $page = 1;
-        }
-        $start = $page * $nb_mess - $nb_mess;
+        $texte = ' ' . $texte;
+        $texte = preg_replace("#([\t\r\n ])([a-z0-9]+?){1}://([\w\-]+\.([\w\-]+\.)*[\w]+(:[0-9]+)?(/[^ \"\n\r\t<]*)?)#i", '\1<a href="\2://\3" onclick="window.open(this.href); return false;">\2://\3</a>', $texte);
+        $texte = preg_replace("#([\t\r\n ])(www|ftp)\.(([\w\-]+\.)*[\w]+(:[0-9]+)?(/[^ \"\n\r\t<]*)?)#i", '\1<a href="http://\2.\3" onclick="window.open(this.href); return false;">\2.\3</a>', $texte);
+        $texte = preg_replace("#([\n ])([a-z0-9\-_.]+?)@([\w\-]+\.([\w\-\.]+\.)*[\w]+)#i", "\\1<a href=\"mailto:\\2@\\3\">\\2@\\3</a>", $texte);
 
-        echo "<br /><div style=\"text-align: center;\"><big><b>" . _SHOUTBOX . "</b></big></div><br />\n";
+        $texte = icon($texte);
+        $date = nkDate($date);
 
-        if ($count > $nb_mess)
+        $auteur = nk_CSS($auteur);
+
+        if ($j == 0)
         {
-            number($count, $nb_mess, "index.php?file=Textbox");
+            $bg = $bgcolor2;
+            $j++;
         }
-
-        echo "<table style=\"margin-left: auto;margin-right: auto;text-align: left;background: " . $bgcolor2 . ";border: 1px solid " . $bgcolor3 . ";\" width=\"100%\" cellpadding=\"3\" cellspacing=\"1\">\n";
-
-        $sql2 = mysql_query("SELECT id, auteur, ip, texte, date FROM " . TEXTBOX_TABLE . " ORDER BY id DESC LIMIT " . $start . ", " . $nb_mess."");
-        $j = 0;
-        while (list($mid, $auteur, $ip, $texte, $date) = mysql_fetch_array($sql2))
+        else
         {
-            $texte = printSecuTags($texte);
-            $texte = nk_CSS($texte);
-
-            $texte = ' ' . $texte;
-            $texte = preg_replace("#([\t\r\n ])([a-z0-9]+?){1}://([\w\-]+\.([\w\-]+\.)*[\w]+(:[0-9]+)?(/[^ \"\n\r\t<]*)?)#i", '\1<a href="\2://\3" onclick="window.open(this.href); return false;">\2://\3</a>', $texte);
-            $texte = preg_replace("#([\t\r\n ])(www|ftp)\.(([\w\-]+\.)*[\w]+(:[0-9]+)?(/[^ \"\n\r\t<]*)?)#i", '\1<a href="http://\2.\3" onclick="window.open(this.href); return false;">\2.\3</a>', $texte);
-            $texte = preg_replace("#([\n ])([a-z0-9\-_.]+?)@([\w\-]+\.([\w\-\.]+\.)*[\w]+)#i", "\\1<a href=\"mailto:\\2@\\3\">\\2@\\3</a>", $texte);
-
-            $texte = icon($texte);
-            $date = nkDate($date);
-
-            $auteur = nk_CSS($auteur);
-
-            if ($j == 0)
-            {
-                $bg = $bgcolor2;
-                $j++;
-            }
-            else
-            {
-                $bg = $bgcolor1;
-                $j = 0;
-            }
-
-            if ($visiteur >= $level_admin && $level_admin > -1)
-            {
-                echo "<script type=\"text/javascript\">\n"
-        . "<!--\n"
-        . "\n"
-        . "function del_shout(pseudo, id)\n"
-        . "{\n"
-        . "if (confirm('" . _DELETETEXT . " '+pseudo+' ! " . _CONFIRM . "'))\n"
-        . "{document.location.href = 'index.php?file=Textbox&page=admin&op=del_shout&mid='+id;}\n"
-        . "}\n"
-        . "\n"
-        . "// -->\n"
-        . "</script>\n";
-
-                $admin = "<div style=\"text-align: right;\"><a href=\"index.php?file=Textbox&amp;page=admin&amp;op=edit_shout&amp;mid=" . $mid . "\"><img style=\"border: 0;\" src=\"images/edition.gif\" alt=\"\" title=\"" . _EDITTHISMESS . "\" /></a>"
-        . "&nbsp;<a href=\"javascript:del_shout('" . mysql_real_escape_string(stripslashes($auteur)) . "', '" . $mid . "');\"><img style=\"border: 0;\" src=\"images/delete.gif\" alt=\"\" title=\"" . _DELTHISMESS . "\"></a></div>";
-
-        $aff_ip = "( $ip )";
-            }
-            else
-            {
-                $admin = "<br />";
-                $aff_ip = "&nbsp;";
-            }
-
-            echo "<tr style=\"background: $bgcolor3;\"><td><b>" . $auteur . "</b> " . $aff_ip . "</td></tr>\n"
-            . "<tr style=\"background: $bg;\"><td><img src=\"images/posticon.gif\" alt=\"\" />&nbsp;" . $date . "<br /><br />" . $texte . "<br />" . $admin . "</td></tr>\n";
+            $bg = $bgcolor1;
+            $j = 0;
         }
 
-        if ($count == 0) echo "<tr style=\"background: $bgcolor2;\"><td align=\"center\">" . _NOMESS . "</td></tr>\n";
-
-        echo"</table>";
-
-        if ($count > $nb_mess)
+        if (nkAccessAdmin('Textbox'))
         {
-            number($count, $nb_mess, "index.php?file=Textbox");
+            echo "<script type=\"text/javascript\">\n"
+    . "<!--\n"
+    . "\n"
+    . "function del_shout(pseudo, id)\n"
+    . "{\n"
+    . "if (confirm('" . _DELETETEXT . " '+pseudo+' ! " . _CONFIRM . "'))\n"
+    . "{document.location.href = 'index.php?file=Textbox&page=admin&op=del_shout&mid='+id;}\n"
+    . "}\n"
+    . "\n"
+    . "// -->\n"
+    . "</script>\n";
+
+            $admin = "<div style=\"text-align: right;\"><a href=\"index.php?file=Textbox&amp;page=admin&amp;op=edit_shout&amp;mid=" . $mid . "\"><img style=\"border: 0;\" src=\"images/edition.gif\" alt=\"\" title=\"" . _EDITTHISMESS . "\" /></a>"
+    . "&nbsp;<a href=\"javascript:del_shout('" . mysql_real_escape_string(stripslashes($auteur)) . "', '" . $mid . "');\"><img style=\"border: 0;\" src=\"images/delete.gif\" alt=\"\" title=\"" . _DELTHISMESS . "\"></a></div>";
+
+    $aff_ip = "( $ip )";
+        }
+        else
+        {
+            $admin = "<br />";
+            $aff_ip = "&nbsp;";
         }
 
-        echo "<br /><div style=\"text-align: center;\"><small><i>( " . _THEREIS . "&nbsp;" . $count . "&nbsp;" . _SHOUTINDB . " )</i></small></div><br />\n";
+        echo "<tr style=\"background: $bgcolor3;\"><td><b>" . $auteur . "</b> " . $aff_ip . "</td></tr>\n"
+        . "<tr style=\"background: $bg;\"><td><img src=\"images/posticon.gif\" alt=\"\" />&nbsp;" . $date . "<br /><br />" . $texte . "<br />" . $admin . "</td></tr>\n";
+    }
 
-        closetable();
-    }
-    else if ($level_access == -1)
+    if ($count == 0) echo "<tr style=\"background: $bgcolor2;\"><td align=\"center\">" . _NOMESS . "</td></tr>\n";
+
+    echo"</table>";
+
+    if ($count > $nb_mess)
     {
-        opentable();
-        echo "<br /><br /><div style=\"text-align: center;\">" . _MODULEOFF . "<br /><br /><a href=\"javascript:history.back()\"><b>" . _BACK . "</b></a></div><br /><br />";
-        closetable();
+        number($count, $nb_mess, "index.php?file=Textbox");
     }
-    else if ($level_access == 1 && $visiteur == 0)
-    {
-        opentable();
-        echo "<br /><br /><div style=\"text-align: center;\">" . _USERENTRANCE . "<br /><br /><b><a href=\"index.php?file=User&amp;op=login_screen\">" . _LOGINUSER . "</a> | "
-    . "<a href=\"index.php?file=User&amp;op=reg_screen\">" . _REGISTERUSER . "</a></b></div><br /><br />";
-        closetable();
-    }
-    else
-    {
-        opentable();
-        echo "<br /><br /><div style=\"text-align: center;\">" . _NOENTRANCE . "<br /><br /><a href=\"javascript:history.back()\"><b>" . _BACK . "</b></a></div><br /><br />";
-        closetable();
-    }
+
+    echo "<br /><div style=\"text-align: center;\"><small><i>( " . _THEREIS . "&nbsp;" . $count . "&nbsp;" . _SHOUTINDB . " )</i></small></div><br />\n";
+
+    closetable();
 }
 
     function smilies()
@@ -158,7 +124,7 @@ function index()
        . "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />\n"
        . "<meta http-equiv=\"content-style-type\" content=\"text/css\" />\n"
        . "<link title=\"style\" type=\"text/css\" rel=\"stylesheet\" href=\"themes/" . $theme . "/style.css\" />\n"
-         . "<script type=\"text/javascript\" src=\"media/js/smilies.js\"></script></head>\n"
+         . "<script type=\"text/javascript\" src=\"assets/scripts/smilies.js\"></script></head>\n"
        . "<body style=\"background: " . $bgcolor2 . ";\">\n";
 
        echo "<script type=\"text/javascript\">\n"
@@ -202,9 +168,8 @@ function index()
 
         require("modules/Textbox/config.php");
 
-        $visiteur = $user ? $GLOBALS['user']['idGroup'] : 0;
 
-        if ($visiteur >= 2) {
+        if (nkAccessAdmin('Textbox')) {
             echo "<script type=\"text/javascript\">\n"
             . "<!--\n"
             . "\n"
@@ -224,8 +189,6 @@ function index()
         $max_chars = $max_string;
         $mess_max = $max_texte;
         $pseudo_max = $max_pseudo;
-        $level_admin = admin_mod('Textbox');
-        $level_mod = nivo_mod('Textbox');
 
         $sql = mysql_query("SELECT id, auteur, ip, texte, date FROM " . TEXTBOX_TABLE . " ORDER BY id DESC LIMIT 0, 20");
         $i2 = 0;
@@ -296,7 +259,7 @@ function index()
             echo "<table width=\"100%\" style=\"background: #" . $bg . "\" cellspacing=\"0\" cellpadding=\"0\">\n"
             . "<tr>\n"
             . "<td width=\"95%\"><span style=\"margin-left: 2px;\">" . $pays . "&nbsp;<b>" . $url_auteur . "</b></span></td>\n";
-            if ($visiteur >= 2) {
+            if (nkAccessAdmin('Textbox')) {
                 echo "<td width=\"5%\"><a href=\"javascript:del_shout('" . mysql_real_escape_string(stripslashes($auteur)) . "', '" . $id . "');\"><img style=\"margin-top: 5px; margin-left: 2px;\" src=\"modules/Textbox/images/delete.png\" alt=\"\" title=\"" . _DELTHISMESS . "\" /></a></td>\n";
             }
 

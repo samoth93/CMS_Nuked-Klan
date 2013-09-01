@@ -21,17 +21,9 @@ include_once("Includes/nkCaptcha.php");
 
 // On determine si le captcha est actif ou non
 if (_NKCAPTCHA == "off") $captcha = 0;
-else if ((_NKCAPTCHA == 'auto' OR _NKCAPTCHA == 'on') && (array_key_exists(1, $user) && $GLOBALS['user']['idGroup'] > 0))  $captcha = 0;
+else if ((_NKCAPTCHA == 'auto' OR _NKCAPTCHA == 'on') && !nkHasVisitor())  $captcha = 0;
 else $captcha = 1;
 
-if ($user)
-{
-    $visiteur = $GLOBALS['user']['idGroup'];
-}
-else
-{
-    $visiteur = 0;
-}
 $sql2 = mysql_query("SELECT bid, active FROM " . BLOCK_TABLE . " WHERE bid = '" . $bid . "'");
 list($id, $active) = mysql_fetch_array($sql2);
 
@@ -134,7 +126,7 @@ function maFonctionAjax(auteur,texte, ctToken, ctScript, ctEmail)
 </script>
 
 <?php
-if ($visiteur >= 2)
+if (nkAccessAdmin('Textbox'))
             {
                 echo "<script type=\"text/javascript\">\n"
 		. "<!--\n"
@@ -184,11 +176,11 @@ else{
 
 if ($active == 3 || $active == 4)
 {
-    if ($visiteur >= nivo_mod("Textbox"))
+    if (nkAccessModule('Textbox'))
     {
         echo "<form method=\"post\" onsubmit=\"".$callAjax."\" action=\"\" ><div style=\"text-align: center;\">\n";
 
-        if (!$user)
+        if (nkHasVisitor())
         {
             echo "<input id=\"textbox_auteur\" type=\"text\" name=\"auteur\" size=\"40\" maxlength=\"100\" value=\"" . _NICKNAME . "\" onclick=\"if(this.value=='" . _NICKNAME . "'){this.value=''}\" /><br />\n";
         }
@@ -209,11 +201,11 @@ if ($active == 3 || $active == 4)
 }
 else
 {
-    if ($visiteur >= nivo_mod("Textbox"))
+    if (nkAccessModule('Textbox'))
     {
         echo"<form method=\"post\" onsubmit=\"".$callAjax."\" action=\"\" ><div style=\"text-align: center;\">\n";
 
-        if (!$user)
+        if (nkHasVisitor())
         {
             echo "<input id=\"textbox_auteur\" type=\"text\" name=\"auteur\" maxlength=\"100\" value=\"" . _NICKNAME . "\" style=\"width:70%;\" onclick=\"if(this.value=='" . _NICKNAME . "'){this.value=''}\" /><br />\n";
         }
