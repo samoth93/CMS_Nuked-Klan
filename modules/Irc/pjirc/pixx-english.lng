@@ -39,7 +39,7 @@
 860f [SOURCE_YOUR_MODE] Mode changed to %1
 8610 [SOURCE_YOUR_NICK] Your nick is now %1
 8611 [SOURCE_INFO] Infos
-      
+
 8701 [GUI_WHOIS] Whois
 8702 [GUI_QUERY] Query
 8703 [GUI_KICK] Kick
@@ -60,7 +60,7 @@
 8712 [GUI_CLOSE] Close
 8713 [GUI_DISCONNECT] Disconnect
 8714 [GUI_CHANNELS] Channels
-8715 [GUI_HELP] Help
+8715 [GUIHELP] Help
 8716 [GUI_PRIVATE] private
 8717 [GUI_PUBLIC] public
 8718 [GUI_CONNECT] Connect

@@ -21,7 +21,7 @@ define("_SMILIES","Smilies");
 
 define("_ADMINIRC","IRC Administration");
 define("_IRC","IRC");
-define("_HELP","Help");
+define("HELP","Help");
 define("_AWARDSDELETE","You are about to remove the award");
 define("_CONFIRM","Continue?");
 define("_DATE","Date");
