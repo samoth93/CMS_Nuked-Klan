@@ -1,0 +1,39 @@
+#nkDialog{display:none;max-width:800px !important;padding:20px;}
+/*==== Loader ajax ====*/
+.ajaxMessage{text-align: center;font-weight: bold;}
+.ajaxLoading{display:none;padding-top:30px;}
+.ajaxLoading:before{content:'';background:url('../images/elements/loaders/6.gif') no-repeat top center transparent;display:inline-block;width:32px;height:32px;}
+#loginMessage ui-dialog-titlebar {display:none;}
+
+/*==== Main Nav ====*/
+.nkIcons:before {
+    font-family: 'iconMoonNkDev6';
+    speak: none;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.mainNav > ul > li > a >.nkIcons:before {
+    display: block;
+    font-size: 28px;
+}
+
+.nav li ul li a .nkIcons:before {
+    display: inline-block;
+    font-size: 14px;
+    text-align: center;
+    width: 25px;
+}
+
+/*==== Middle Nav ====*/
+.middleNavR span{display:inline-block;width:66px;line-height: 80px;text-align: center;}
+.middleNavR span:before{font-size:30px;color:#AFAFB0;}
+
+/*==== Table footer border top ====*/
+tfoot {border-top: 1px solid #DFDFDF;}
+
+.chzn-container {min-width:100px !important;}
