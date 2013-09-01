@@ -11,7 +11,7 @@ var arrayTablesInstall = new Array(
                             "suggest", "shoutbox", "team", "team_rank", "tmpses", "userbox", "users", "users_detail", "users_visitors", "vote"
                         );
 var arrayTablesUpdate = new Array(
-                            "table_action", "table_banned", "table_comment_mod", "table_contact", "table_discussion", "table_erreursql", "table_games", "table_match", "table_match_files",
+                            "table_action", "table_banned", "table_comment_mod", "table_contact", "table_discussion", "table_erreursql", "table_games", "table_match", "table_match_files", "table_modules"
                             "table_notification", "table_tmpses", "table_users", "table_smilies", "update_bbcode", "update_config", "update_pass", "remove_style", "remove_editeur", "remove_package_manager",
                             "remove_turkish.lang.php", "table_forums_read"
                         );

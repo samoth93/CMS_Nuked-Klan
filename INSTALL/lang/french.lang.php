@@ -1,11 +1,11 @@
 <?php
 ///////////////////////////////////////////////
-/////// GLOBAL 
+/////// GLOBAL
 ///////////////////////////////////////////////
 define('_SUBMIT', 'Valider');
 define('_CONTINUE', 'Continuer');
 define("_CONFIRM", "Valider");
-define("_HELP","Aides");
+define("HELP","Aides");
 define('_FRENCH', 'Français');
 define('_ENGLISH', 'Anglais');
 define('_INSTALL', 'Installation');
@@ -21,7 +21,7 @@ define('_WAIT', 'Veuillez patienter...');
 define('_ERROR', 'Une erreur est survenue !!!');
 define('_ERRORTRY', 'Une erreur est survenue, veuillez réessayer.');
 ///////////////////////////////////////////////
-/////// TEXTES BAS DE PAGE 
+/////// TEXTES BAS DE PAGE
 ///////////////////////////////////////////////
 define("_DISCOVERY","Découvrer Nuked-Klan !");
 define("_NEWSADMIN","Une nouvelle administration");

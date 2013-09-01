@@ -581,20 +581,21 @@
                         $req = mysql_query($sql) or die (mysql_error());
                         $sql="CREATE TABLE `" . $db_prefix . "_group` (
                           `id` int(11) NOT NULL auto_increment,
-                          `nameGroup` varchar(20) NOT NULL,
+                          `name` varchar(20) NOT NULL,
                           `access` text NOT NULL,
                           `accessAdmin` text NOT NULL,
                           `description` text NOT NULL,
                           `color` varchar(7) NOT NULL,
+                          `position` INT(2) NOT NULL DEFAULT '0',
                           PRIMARY KEY  (`id`)
                         ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;";
                         $req = mysql_query($sql) or die (mysql_error());
 
                         $sql = "INSERT INTO `" . $db_prefix . "_group`
                         VALUES
-                        ('', '_ADMINISTRATOR', '', '', '_DESCADMINISTRATOR', '#B70000'),
-                        ('', '_MEMBERS', 'News|Forum|Wars|Irc|Survey|Links|Server|Gallery|Guestbook|Suggest|Textbox|Calendar|Members|Team|Defy|Recruit|Comment|Vote|Stats|Contact', '', '_DESCMEMBERS', '#0071E1'),
-                        ('', '_VISITOR', 'News|Forum|Wars|Irc|Survey|Links|Server|Download|Gallery|Suggest|Textbox|Calendar|Team|Defy|Recruit|Comment|Vote|Stats|Contact', '', '_DESCVISITORPADMIN', '');";
+                        ('', 'ADMINISTRATORS', 'ALL', 'ALL', '_DESCADMINISTRATORS', '#B70000'),
+                        ('', 'MEMBERS', 'Archives|Calendar|Comment|Contact|Defy|Download|Forum|Gallery|Guestbook|Irc|Links|Members|News|Recruit|Search|Sections|Server|Stats|Suggest|Survey|Team|Textbox|Userbox|Vote|Wars', '', '_DESCMEMBERS', '#0071E1'),
+                        ('', 'VISITORS', 'Archives|Calendar|Comment|Contact|Defy|Download|Forum|Gallery|Guestbook|Irc|Links|Members|News|Recruit|Search|Sections|Server|Stats|Suggest|Survey|Team|Textbox|Vote|Wars', '', '_DESCVISITORPADMIN', '');";
                         $req = mysql_query($sql) or die (mysql_error());
 
                         echo 'OK';
@@ -717,34 +718,37 @@
                         $sql = "CREATE TABLE `" . $db_prefix . "_modules` (
                           `id` int(2) NOT NULL auto_increment,
                           `nom` varchar(50) NOT NULL default '',
-                          `niveau` int(1) NOT NULL default '0',
-                          `admin` int(1) NOT NULL default '0',
+                          `status` varchar(3) NOT NULL default 'on',
                           PRIMARY KEY  (`id`)
                         ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;";
                         $req = mysql_query($sql) or die (mysql_error());
 
-                        $sql = "INSERT INTO `" . $db_prefix . "_modules` VALUES (1, 'News', 0, 2),
-                            (2, 'Forum', 0, 2),
-                            (3, 'Wars', 0, 2),
-                            (4, 'Irc', 0, 2),
-                            (5, 'Survey', 0, 3),
-                            (6, 'Links', 0, 3),
-                            (7, 'Sections', 0, 3),
-                            (8, 'Server', 0, 3),
-                            (9, 'Download', 0, 3),
-                            (10, 'Gallery', 0, 3),
-                            (11, 'Guestbook', 0, 3),
-                            (12, 'Suggest', 0, 3),
-                            (13, 'Textbox', 0, 9),
-                            (14, 'Calendar', 0, 2),
-                            (15, 'Members', 0, 9),
-                            (16, 'Team', 0, 9),
-                            (17, 'Defy', 0, 3),
-                            (18, 'Recruit', 0, 3),
-                            (19, 'Comment', 0, 9),
-                            (20, 'Vote', 0, 9),
-                            (21, 'Stats', 0, 2),
-                            (22, 'Contact', 0, 3);";
+                        $sql = "INSERT INTO `" . $db_prefix . "_modules` VALUES
+                                (1,  'Archives',  'on'),
+                                (2,  'Calendar',  'on'),
+                                (3,  'Comment',   'on'),
+                                (4,  'Contact',   'on'),
+                                (5,  'Defy',      'on'),
+                                (6,  'Download',  'on'),
+                                (7,  'Forum',     'on'),
+                                (8,  'Gallery',   'on'),
+                                (9,  'Guestbook', 'on'),
+                                (10, 'Irc',       'on'),
+                                (11, 'Links',     'on'),
+                                (12, 'Members',   'on'),
+                                (13, 'News',      'on'),
+                                (14, 'Recruit',   'on'),
+                                (15, 'Search',    'on'),
+                                (16, 'Sections',  'on'),
+                                (17, 'Server',    'on'),
+                                (18, 'Stats',     'on'),
+                                (19, 'Suggest',   'on'),
+                                (20, 'Survey',    'on'),
+                                (21, 'Team',      'on'),
+                                (22, 'Textbox',   'on'),
+                                (23, 'Userbox',   'on'),
+                                (24, 'Vote',      'on'),
+                                (25, 'Wars',      'on');";
                         $req = mysql_query($sql) or die (mysql_error());
                         echo 'OK';
         break;
@@ -1169,6 +1173,7 @@
                           `yim` varchar(50) NOT NULL default '',
                           `url` varchar(150) NOT NULL default '',
                           `pass` varchar(80) NOT NULL default '',
+                          `activated` INT(1) NOT NULL default '0',
                           `date` varchar(30) NOT NULL default '',
                           `avatar` varchar(100) NOT NULL default '',
                           `signature` text NOT NULL,
@@ -1180,9 +1185,8 @@
                           `erreur` INT(10) NOT NULL default '0',
                           `token` varchar(13)  DEFAULT NULL,
                           `token_time` varchar(10) NOT NULL DEFAULT '0',
-                          `idGroup` text NOT NULL,
-                          `groupMain` varchar(1) NOT NULL default '2',
-                          `visitedProfil` int(5) NOT NULL,
+                          `ids_group` varchar(100) NOT NULL DEFAULT '2',
+                          `main_group` INT(2) NOT NULL default '2',
                           PRIMARY KEY  (`id`),
                           KEY `team` (`team`),
                           KEY `team2` (`team2`),

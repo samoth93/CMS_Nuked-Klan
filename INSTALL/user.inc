@@ -16,7 +16,7 @@
 
     function saveConfig($type){
         if($type == 'install'){
-            $_SESSION['hash'] = addslashes(@sha1(uniqid(''), true));
+            $_SESSION['hash'] = addslashes(@sha1(uniqid('')));
             $pass = nk_hash($_SESSION['hash'] , $_REQUEST['pass']);
             $date = time();
             $ip = $_SERVER['REMOTE_ADDR'];
@@ -40,15 +40,6 @@
             mysql_query("UPDATE `".$_SESSION['db_prefix']."_config` SET value = '".$mail."' WHERE name = 'contact_mail'");
             mysql_query("UPDATE `".$_SESSION['db_prefix']."_config` SET value = '".$mail."' WHERE name = 'mail'");
         }
-
-/**
-*    [A DELETE]
-**/
-            mysql_query("ALTER TABLE `nuked_users` ADD `niveau` VARCHAR(1) NOT NULL");
-            mysql_query("UPDATE `".$_SESSION['db_prefix']."_users` SET niveau = '9' WHERE id = '".$user_id."' ");
-/**
-*    [A DELETE]
-**/
 
         if (@extension_loaded('zlib') && !@ini_get('zlib.output_compression') && @phpversion() >= "4.0.4" && stripos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip')) define('GZIP_COMPRESS', 'true');
         else define('GZIP_COMPRESS', 'false');

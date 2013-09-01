@@ -1,11 +1,11 @@
 <?php
 ///////////////////////////////////////////////
-/////// GLOBAL 
+/////// GLOBAL
 ///////////////////////////////////////////////
 define('_SUBMIT', 'Submit');
 define('_CONTINUE', 'Continue');
 define("_CONFIRM", "Confirm");
-define("_HELP","Help");
+define("HELP","Help");
 define('_FRENCH', 'French');
 define('_ENGLISH', 'English');
 define('_INSTALL', 'Installation');
@@ -21,7 +21,7 @@ define('_WAIT', 'Please wait...');
 define('_ERROR', 'An error has occured !!!');
 define('_ERRORTRY', 'An error has occured, please wait.');
 ///////////////////////////////////////////////
-/////// TEXTES BAS DE PAGE 
+/////// TEXTES BAS DE PAGE
 ///////////////////////////////////////////////
 define("_DISCOVERY","Discover Nuked-Klan !");
 define("_NEWSADMIN","A new administration");
