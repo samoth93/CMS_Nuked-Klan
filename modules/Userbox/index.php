@@ -299,7 +299,7 @@ function index(){
     }
 }
 
-if($user){
+if(!nkHasVisitor()){
     if(isset($_REQUEST['op'])){
         switch ($_REQUEST['op']){
 
