@@ -1,7 +1,7 @@
 <?php
 if (!defined("INDEX_CHECK"))
 {
-	exit('You can\'t run this file alone.');
+    exit('You can\'t run this file alone.');
 }
 define("_ZONEADMIN","Cette zone est réservée a l'Admin, Désolé...");
 define("_POSTCOMMENT","Poster un commentaire");

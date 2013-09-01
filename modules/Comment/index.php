@@ -18,12 +18,10 @@ global $user;
 if (_NKCAPTCHA == "off"){
     $captcha = 0;
 }
-else if ((_NKCAPTCHA == 'auto' OR _NKCAPTCHA == 'on') && ($user && $GLOBALS['user']['idGroup'] > 0)){
+else if ((_NKCAPTCHA == 'auto' OR _NKCAPTCHA == 'on') && !nkHasVisitor()){
     $captcha = 0;
 }
 else $captcha = 1;
-
-$visiteur = ($user) ? $GLOBALS['user']['idGroup'] : 0;
 
 function verification($module, $im_id){
     global $nuked;
@@ -90,7 +88,7 @@ function NbComment($im_id, $module){
 }
 
 function com_index($module, $im_id){
-    global $user, $bgcolor1, $bgcolor2, $bgcolor3, $nuked, $visiteur, $language, $captcha;
+    global $user, $bgcolor1, $bgcolor2, $bgcolor3, $nuked, $language, $captcha;
 
     define('EDITOR_CHECK', 1);
     ?>
@@ -136,8 +134,6 @@ function com_index($module, $im_id){
     -->
     </script>
     <?php
-    $level_access = nivo_mod("Comment");
-    $level_admin = admin_mod("Comment");
     $NbComment = NbComment($im_id, $module);
 
     if(verification($_REQUEST['file'],$im_id)){
@@ -174,7 +170,7 @@ function com_index($module, $im_id){
             if($j == 0){$bg = $bgcolor2; $j++;}
             else{$bg = $bgcolor1; $j = 0;}
 
-            if ($visiteur >= $level_admin && $level_admin > -1){
+            if (nkAccessAdmin('Comment')){
 
                 echo '<script type="text/javascript">function delmess(pseudo, id){if(confirm(\''._DELCOMMENT.' \'+pseudo+\' ! '._CONFIRM.'\')){document.location.href = \'index.php?file=Comment&page=admin&op=del_com&cid=\'+id;}}</script>';
 
@@ -185,7 +181,7 @@ function com_index($module, $im_id){
             echo '<tr style="background:'.$bg.';">
                     <td style="width:30%;" valign="top"><img src="images/flags/'.$country.'" alt="'.$country.'" />&nbsp;<b>'.$autor.'</b>';
 
-                    if ($visiteur >= $level_admin && $level_admin > -1) echo '<br />Ip : '.$row['autor_ip'];
+                    if (nkAccessAdmin('Comment')) echo '<br />Ip : '.$row['autor_ip'];
 
                     echo '<br /><br /><img src="'.$avatar.'" style="max-width: 100px; max-height: 100px;" alt="" />';
 
@@ -211,7 +207,7 @@ function com_index($module, $im_id){
         if ($count >= 0){
             echo '<div style="text-align:center;padding:10px 10px 0 0"><b>'._COMMENTS.' :</b>&nbsp;'.$NbComment.'&nbsp;';
 
-            if ($visiteur >= $level_access && $level_access > -1){
+            if (nkAccessModule('Comment') && nkIsModEnabled('Comment')){
                 echo '<br />[ <a href="#" onclick="javascript:window.open(\'index.php?file=Comment&amp;nuked_nude=index&amp;op=view_com&amp;im_id='.$im_id.'&amp;module='.$module.'\',\'popup\',\'toolbar=0,location=0,directories=0,status=0,scrollbars=1,resizable=0,copyhistory=0,menuBar=0,width=600,height=480,top=100,left=100\');return(false)">'._VIEWCOMMENT.'</a> ]';
             }
             echo '</div>';
@@ -228,7 +224,7 @@ function com_index($module, $im_id){
         echo '<div id="message">
                 <form method="post" onsubmit="'.$Soumission.'" action="">
                 <table width="100%" cellspacing="5" cellpadding="0" border="0" style="padding-top:15px">';
-                if($user) echo '<tr style="display: none"><td colspan="2"><input id="compseudo" type="hidden" name="pseudo" value="'.$GLOBALS['user']['nickName'].'" /></td></tr>';
+                if(!nkHasVisitor()) echo '<tr style="display: none"><td colspan="2"><input id="compseudo" type="hidden" name="pseudo" value="'.$GLOBALS['user']['nickName'].'" /></td></tr>';
                 else {
                     echo '<tr>
                         <td style="padding-left:5px;width:30%"><b>'._NICK.' :</b></td>
@@ -257,7 +253,7 @@ function com_index($module, $im_id){
 
 function view_com($module, $im_id){
 
-    global $user, $bgcolor2, $bgcolor3, $theme, $nuked, $language, $visiteur;
+    global $user, $bgcolor2, $bgcolor3, $theme, $nuked, $language;
 
     if(!verification($module,$im_id)) exit();
     if ($language == "french" && strpos("WIN", PHP_OS)) setlocale (LC_TIME, "french");
@@ -265,8 +261,6 @@ function view_com($module, $im_id){
     else if ($language == "french") setlocale (LC_TIME, "fr_FR");
     else setlocale (LC_TIME, $language);
 
-    $level_access = nivo_mod("Comment");
-    $level_admin = admin_mod("Comment");
     $module = mysql_real_escape_string(stripslashes($module));
 
     echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -300,7 +294,7 @@ function view_com($module, $im_id){
 
             echo '<table style="width:90%;margin:0px auto;" cellspacing="0" cellpadding="0"><tr><td style="width:90%;"><b>'.$titre.'</b>';
 
-            if ($visiteur >= $level_admin && $level_admin > -1){
+            if (nkAccessAdmin('Comment')){
                 echo '&nbsp;('.$row['autor_ip'].') <a href="index.php?file=Comment&amp;nuked_nude=index&amp;op=edit_comment&amp;cid='.$row['id'].'"><img style="border:none;" src="images/edit.gif" alt="" title="'._EDITTHISCOM.'" /></a><a href="javascript:delmess(\''.mysql_real_escape_string($row['autor']).'\', \''.$row['id'].'\');"><img style="border:none;" src="images/del.gif" alt="" title="'._DELTHISCOM.'"></a>';
             }
 
@@ -312,7 +306,7 @@ function view_com($module, $im_id){
         echo '<div style="text-align:center;"><br /><br />'._NOCOMMENT.'<br /></div>';
     }
 
-    if ($visiteur >= $level_access && $level_access > -1){
+    if (nkAccessModule('Comment') && nkIsModEnabled('Comment')){
         echo '<div style="text-align:center;"><br /><input type="button" value="'._POSTCOMMENT.'" onclick="document.location=\'index.php?file=Comment&amp;nuked_nude=index&amp;op=post_com&amp;im_id='.$im_id.'&amp;module='.$module.'\'" /></div>';
     }
 
@@ -321,14 +315,12 @@ function view_com($module, $im_id){
 
 function post_com($module, $im_id){
 
-    global $user, $nuked, $bgcolor2, $bgcolor4, $language, $theme, $visiteur, $captcha;
+    global $user, $nuked, $bgcolor2, $bgcolor4, $language, $theme, $captcha;
 
     define('EDITOR_CHECK', 1);
 
-    $level_access = nivo_mod("Comment");
-
     if(!verification($module,$im_id)){}
-    elseif($visiteur >= $level_access && $level_access > -1){
+    elseif(nkAccessModule('Comment') && nkIsModEnabled('Comment')){
     echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n"
             . "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"fr\">\n"
             . "<head><title>" . _POSTCOMMENT . "</title>\n"
@@ -363,7 +355,7 @@ function post_com($module, $im_id){
             . "<textarea id=\"e_basic\" name=\"texte\" cols=\"40\" rows=\"10\"></textarea></td></tr>\n"
             . "<tr><td><b>" . _NICK . " :</b>";
 
-    if ($user){
+    if ($GLOBALS['user']){
         echo "&nbsp;&nbsp;<b>" . $GLOBALS['user']['nickName'] . "</b><input id=\"com_pseudo\" type=\"hidden\" name=\"pseudo\" value=\"" . $GLOBALS['user']['nickName'] . "\" /></td>\n";
     }
     else{
@@ -381,7 +373,7 @@ function post_com($module, $im_id){
             . "<input type=\"hidden\" name=\"module\" value=\"" . $module . "\" />\n"
             . "</td></tr></table><div style=\"text-align: center;\"><input type=\"submit\" value=\"" . _SEND . "\" /><br /></div></form>";
 
-    echo '<script type="text/javascript" src="media/ckeditor/ckeditor.js"></script>',"\n"
+    echo '<script type="text/javascript" src="assets/ckeditor/ckeditor.js"></script>',"\n"
             , '<script type="text/javascript">',"\n"
             , '//<![CDATA[',"\n";
     echo ConfigSmileyCkeditor().'',"\n";
@@ -409,16 +401,16 @@ function post_com($module, $im_id){
 }
 
 function post_comment($im_id, $module, $titre, $texte, $pseudo){
-    global $user, $nuked, $bgcolor2, $theme, $userIp, $visiteur, $captcha;
+    global $user, $nuked, $bgcolor2, $theme, $userIp, $captcha;
 
     if(!isset($_REQUEST['noajax'])){
         $titre = utf8_decode($titre);
         $texte = utf8_decode($texte);
         $pseudo = utf8_decode($pseudo);
     }
-    $level_access = nivo_mod("Comment");
+
     if (!verification($module,$im_id)){}
-    else if ($visiteur >= $level_access && $level_access > -1){
+    else if (nkAccessAccess('Comment') && nkIsModEnabled('Comment')){
         echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n"
                 . "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"fr\">\n"
                 . "<head><title>" . _POSTCOMMENT . "</title>\n"
@@ -431,7 +423,7 @@ function post_comment($im_id, $module, $titre, $texte, $pseudo){
             ValidCaptchaCode();
         }
 
-        if ($visiteur > 0){
+        if (nkHasMember()){
             $autor = $GLOBALS['user']['nickName'];
             $autor_id = $GLOBALS['user']['id'];
         }
@@ -459,7 +451,7 @@ function post_comment($im_id, $module, $titre, $texte, $pseudo){
 
         $date = time();
 
-        if ($date < $anti_flood && $GLOBALS['user']['idGroup'] < admin_mod("Comment")){
+        if ($date < $anti_flood && !nkAccessAdmin('Contact')){
             echo "<br /><br /><div style=\"text-align: center;\">" . _NOFLOOD . "</div><br /><br />";
             $url = "index.php?file=Comment&nuked_nude=index&op=view_com&im_id=" . $im_id . "&module=" . $module;
             redirect($url, 2);
@@ -506,11 +498,9 @@ function post_comment($im_id, $module, $titre, $texte, $pseudo){
 }
 
 function del_comment($cid){
-    global $nuked, $user, $theme, $bgcolor2, $nuked_nude, $visiteur;
+    global $nuked, $user, $theme, $bgcolor2, $nuked_nude;
 
-    $level_admin = admin_mod("Comment");
-
-    if ($visiteur >= $level_admin){
+    if (nkAccessAdmin('Comment')){
         $sql = mysql_query("SELECT module, im_id FROM " . COMMENT_TABLE . " WHERE id = '" . $cid . "'");
         list($module, $im_id) = mysql_fetch_array($sql);
 
@@ -546,14 +536,13 @@ function del_comment($cid){
 }
 
 function modif_comment($cid, $titre, $texte, $module, $im_id){
-    global $nuked, $user, $theme, $bgcolor2, $visiteur;
+    global $nuked, $user, $theme, $bgcolor2;
 
-    $level_admin = admin_mod("Comment");
     $texte = secu_html(nkHtmlEntityDecode($texte));
     if(!verification($module,$im_id)){
         exit();
     }
-    if ($visiteur >= $level_admin){
+    if (nkAccessAdmin('Comment')){
         $sql = mysql_query("UPDATE " . COMMENT_TABLE . " SET titre = '" . $titre . "', comment = '" . $texte . "' WHERE id = '" . $cid . "'");
 
         echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n"
@@ -586,13 +575,11 @@ function modif_comment($cid, $titre, $texte, $module, $im_id){
 }
 
 function edit_comment($cid){
-    global $user, $nuked, $bgcolor2, $theme, $visiteur;
+    global $user, $nuked, $bgcolor2, $theme;
 
     define('EDITOR_CHECK', 1);
 
-    $level_admin = admin_mod("Comment");
-
-    if ($visiteur >= $level_admin){
+    if (nkAccessAdmin('Comment')){
         echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n"
                 . "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"fr\">\n"
                 . "<head><title>" . _POSTCOMMENT . "</title>\n"
