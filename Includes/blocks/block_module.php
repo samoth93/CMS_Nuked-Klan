@@ -19,7 +19,7 @@ function affich_block_module($blok){
 function edit_block_module($bid){
     global $nuked, $language;
 
-    $sql = mysql_query('SELECT active, position, titre, module, content, type, nivo, page FROM ' . BLOCK_TABLE . ' WHERE bid = \'' . $bid . '\' ');
+    $sql = mysql_query('SELECT active, position, titre, module, content, type, groups, pages FROM ' . BLOCK_TABLE . ' WHERE bid = \'' . $bid . '\' ') or die(mysql_error());
     list($active, $position, $titre, $modul, $content, $type, $nivo, $pages) = mysql_fetch_array($sql);
     //check des modules
     $handle = opendir('modules/');
@@ -45,7 +45,7 @@ function edit_block_module($bid){
     echo '<div class="content-box">',"\n" //<!-- Start Content Box -->
 			, '<div class="content-box-header"><h3>' , _BLOCKADMIN , '</h3>',"\n"
 			, '<a href="help/' , $language , '/block.html" rel="modal">',"\n"
-			, '<img style="border: 0;" src="help/help.gif" alt="" title="' , _HELP , '" /></a>',"\n"
+			, '<img style="border: 0;" src="help/help.gif" alt="" title="' , HELP , '" /></a>',"\n"
 			, '</div>',"\n"
 			, '<div class="tab-content" id="tab2"><form method="post" action="index.php?file=Admin&amp;page=block&amp;op=modif_block">',"\n"
 			, '<table style="margin-left: auto;margin-right: auto;text-align: left;" cellspacing="0" cellpadding="2" border="0">',"\n"
