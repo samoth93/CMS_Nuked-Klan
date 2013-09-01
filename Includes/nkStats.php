@@ -114,10 +114,10 @@ function getStats($nuked)
     $data['count_teams'] = $rep['team'];
     $data['count_pagesee'] = $rep['pageview'];
 
-    $sql = mysql_query("SELECT nom, niveau, admin FROM ". MODULES_TABLE);
+    $sql = mysql_query("SELECT name, status FROM ". MODULES_TABLE);
     while($rep = mysql_fetch_array($sql))
     {
-        $data['module_'. $rep[0]] = $rep[1].'%'.$rep[2];
+        $data['module_'. $rep[0]] = $rep[1];
     }
 
     return $data;

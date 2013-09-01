@@ -12,7 +12,7 @@
 
 if (!defined("INDEX_CHECK")) exit('You can\'t run this file alone.');
 
-function printMedias(){
+function printMedias($jQuery = false){
     // Vérification des variables de request
     if(array_key_exists('file', $_REQUEST)){
         $file = $_REQUEST['file'];
@@ -40,8 +40,8 @@ function printMedias(){
     $pathCssTemplate = 'themes/'.$GLOBALS['theme'].'/css/modules/'.$file.'.css';
 
     // Définition des cheminds vers les fichiers par défaut
-    $pathJsDefault = 'media/js/nkDefault.js';
-    $pathCssDefault = 'media/css/nkDefault.css';
+    $pathJsDefault = 'assets/scripts/nkDefault.js';
+    $pathCssDefault = 'assets/css/nkDefault.css';
 
     // On stocke les paths dans un ordre bien précis Default -> Mods -> Templates afin de permettre la surcharge des propriétés css
     $arrayMedias = array(
@@ -53,7 +53,9 @@ function printMedias(){
     $output = '';
 
     // On ajout le chargement de jquery avant les autres scripts
-    $output = getJquery();
+    if($jQuery === false){
+        $output = '<script type="text/javascript" src="assets/scripts/jquery-min-1.8.3.js"></script>';
+    }
 
     // On parcours le tableaux des paths et on génère la sortie html
     foreach($arrayMedias as $language => $paths){
@@ -74,34 +76,6 @@ function printMedias(){
 
     // On retourne la sortie pour affichage
     return $output;
-}
-
-function displayMedias(){
-    if(function_exists('head')){
-        // Si la function head est défini dans le theme.php (themes de la version 1.8)
-        head();
-
-        echo printMedias();
-
-        top();
-    }
-    else{
-        // Sinon on conserve la compatibilité avec les anciens thèmes
-        top();
-
-        echo printMedias();
-    }
-}
-
-function getJquery(){
-?>
-    <script type="text/javascript">
-        if(typeof jQuery == 'undefined'){
-            document.write('\x3Cscript type="text/javascript" src="media/js/jquery-min-1.8.3.js">\x3C/script>');
-        }
-    </script>
-
-<?php
 }
 
 ?>

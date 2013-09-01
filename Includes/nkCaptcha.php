@@ -19,10 +19,10 @@ function ValidCaptchaCode($code = null){
     $message = null;
     // Check valid token code
     if(!isset($_REQUEST['ct_token'])){
-        $message = _CTNOTOKEN;
+        $message = CAPTCHA_NO_TOKEN;
     }
     else if($_REQUEST['ct_token'] != $_SESSION['CT_TOKEN']){
-        $message = _CTBADTOKEN;
+        $message = CAPTCHA_BAD_TOKEN;
     }
     else{
         // If is valid token we delete it for no re-use
@@ -31,12 +31,12 @@ function ValidCaptchaCode($code = null){
 
     // Check valid ct_script field edited via JS
     if(!isset($_REQUEST['ct_script']) || $_REQUEST['ct_script'] != 'klan'){
-        $message = _CTBADJS;
+        $message = CAPTCHA_BAD_JS;
     }
 
     // Check no-data in ct_email field
     if(isset($_REQUEST['ct_email']) && $_REQUEST['ct_email'] != ''){
-        $message = _CTBADFIELD;
+        $message = CAPTCHA_BAD_FIELD;
     }
 
     if($message != null){
@@ -45,7 +45,7 @@ function ValidCaptchaCode($code = null){
             <?php echo $message; ?>
         </div>
         <div style="text-align:center;margin:15px 0;">
-            <a href="javascript:history.back();"><?php echo _BACK; ?></a>
+            <a href="javascript:history.back();"><?php echo BACK; ?></a>
         </div>
         <?php
         closetable();
@@ -56,6 +56,8 @@ function ValidCaptchaCode($code = null){
 
     return true;
 }
+
+$GLOBALS['nuked']['captchaJS'] = false;
 
 function create_captcha($style){
 
@@ -84,9 +86,9 @@ function create_captcha($style){
     <?php
     }
 
-    if(!array_key_exists('captchaJS', $GLOBALS['nuked']) || empty($GLOBALS['nuked']['captchaJS'])){
-        echo '<script type="text/javascript" src="media/js/captcha.js"></script>';
-        $GLOBALS['nuked']['captchaJS'] = 1;
+    if(!array_key_exists('captchaJS', $GLOBALS['nuked']) || (empty($GLOBALS['nuked']['captchaJS']) || $GLOBALS['nuked']['captchaJS'] === false)){
+        echo '<script type="text/javascript" src="assets/scripts/captcha.js"></script>';
+        $GLOBALS['nuked']['captchaJS'] = true;
     }
 }
 
