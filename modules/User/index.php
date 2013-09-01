@@ -24,7 +24,7 @@ else $captcha = 1;
 function index(){
     global $user, $nuked, $bgcolor1, $bgcolor2, $bgcolor3;
 
-    if ($user){
+    if (!nkHasVisitor()){
         opentable();
 
         echo '<div style="text-align: center"><br /><big><b>' . _YOURACCOUNT . '</b></big><br /><br />',"\n"
@@ -216,7 +216,7 @@ function index(){
 function reg_screen(){
     global $nuked, $user, $language, $captcha;
 
-    if ($user){
+    if (!nkHasVisitor()){
         redirect("index.php?file=User&op=edit_account", 0);
     }
 
@@ -278,8 +278,8 @@ function reg_screen(){
                     . "// -->\n"
                     . "</script>\n";
 
-            echo "<link rel=\"stylesheet\" href=\"media/css/checkSecurityPass.css\" type=\"text/css\" media=\"screen\" />\n"
-                    . "<script type=\"text/javascript\" src=\"media/js/checkSecurityPass.js\"></script>\n"
+            echo "<link rel=\"stylesheet\" href=\"assets/css/checkSecurityPass.css\" type=\"text/css\" media=\"screen\" />\n"
+                    . "<script type=\"text/javascript\" src=\"assets/scripts/checkSecurityPass.js\"></script>\n"
                     . "<br /><div style=\"text-align: center;\"><big><b>" . _NEWUSERREGISTRATION . "</b></big></div><br /><br />\n"
                     . "<form method=\"post\" action=\"index.php?file=User&amp;op=reg\" onsubmit=\"return verifchamps();\">\n"
                     . "<table style=\"margin-left:auto;margin-right:auto;text-align:left;width:70%;\" border=\"0\" cellspacing=\"1\" cellpadding=\"3\">\n"
@@ -350,7 +350,7 @@ function edit_account(){
 
     define('EDITOR_CHECK', 1);
 
-    if ($user){
+    if (!nkHasVisitor()){
         $sql = mysql_query("SELECT pseudo, pass, url, mail, email, icq, msn, aim, yim, avatar, signature, country, game FROM " . USER_TABLE . " WHERE id = '" . $GLOBALS['user']['id'] . "'");
         list($nick, $pass, $url, $mail, $email, $icq, $msn, $aim, $yim, $avatar, $signature, $pays, $jeu) = mysql_fetch_array($sql);
 
@@ -478,7 +478,7 @@ function edit_account(){
 function edit_pref(){
     global $user, $nuked, $bgcolor3, $bgcolor2, $bgcolor1;
 
-    if ($user){
+    if (!nkHasVisitor()){
         $sql = mysql_query("SELECT prenom, age, sexe, ville, motherboard, cpu, ram, video, resolution, son, ecran, souris, clavier, connexion, system, photo, pref_1, pref_2, pref_3, pref_4, pref_5 FROM " . USER_DETAIL_TABLE . " WHERE user_id = '" . $GLOBALS['user']['id'] . "'");
         list($prenom, $age, $sexe, $ville, $motherboard, $cpu, $ram, $video, $resolution, $sons, $ecran, $souris, $clavier, $connexion, $osystem, $photo, $pref1, $pref2, $pref3, $pref4, $pref5) = mysql_fetch_array($sql);
 
@@ -852,7 +852,7 @@ function edit_pref(){
 function login_screen(){
     global $nuked, $user;
 
-    if ($user){
+    if (!nkHasVisitor()){
         redirect("index.php?file=User", 0);
     }
     else{
@@ -1005,7 +1005,7 @@ function reg($pseudo, $mail, $email, $pass_reg, $pass_conf, $game, $country){
         $country = "France.gif";
     }
     $date2 = nkDate(time());
-    $add = mysql_query("INSERT INTO " . USER_TABLE . " ( `id` , `team` , `team2` , `team3` , `rang` , `ordre` , `pseudo` , `mail` , `email` , `icq` , `msn` , `aim` , `yim` , `url` , `pass` , `niveau` , `date` , `avatar` , `signature` , `user_theme` , `user_langue` , `game` , `country` , `count` ) VALUES ( '" . $user_id . "' , '' , '' , '' , '' , '' , '" . $pseudo . "' , '" . $mail . "' , '" . $email . "' , '' , '' , '' , '' , '' , '" . $cryptpass . "' , '" . $niveau . "' , '" . $date . "' , '' , '' , '' , '' , '" . $game . "' , '" . $country . "' , '' )");
+    $add = mysql_query("INSERT INTO " . USER_TABLE . " ( `id` , `team` , `team2` , `team3` , `rang` , `ordre` , `pseudo` , `mail` , `email` , `icq` , `msn` , `aim` , `yim` , `url` , `pass` , `niveau` , `date` , `avatar` , `signature` , `user_theme` , `user_langue` , `game` , `country` , `count`, `idGroup`, `groupMain` ) VALUES ( '" . $user_id . "' , '' , '' , '' , '' , '' , '" . $pseudo . "' , '" . $mail . "' , '" . $email . "' , '' , '' , '' , '' , '' , '" . $cryptpass . "' , '" . $niveau . "' , '" . $date . "' , '' , '' , '' , '' , '" . $game . "' , '" . $country . "' , '', '2', '2' )");
 
     // Mark read all topics in the forum
     $_COOKIE['cookie_forum'] = '';
@@ -1909,7 +1909,7 @@ function modif_theme(){
     if (is_dir($dir) && $_REQUEST['user_theme']){
         setcookie($GLOBALS['cookieTheme'], $_REQUEST['user_theme'], $timelimit);
 
-        if ($user){
+        if (!nkHasVisitor()){
             $upd = mysql_query("UPDATE " . USER_TABLE . " SET user_theme = '" . $_REQUEST['user_theme'] . "' WHERE id = '" . $GLOBALS['user']['id'] . "'");
         }
     }
@@ -1923,7 +1923,7 @@ function modif_langue(){
     if ($_REQUEST['user_langue'] != ""){
         setcookie($GLOBALS['cookieLang'], $_REQUEST['user_langue'], $timelimit);
 
-        if ($user){
+        if (!nkHasVisitor()){
             $upd = mysql_query("UPDATE " . USER_TABLE . " SET user_langue = '" . $_REQUEST['user_langue'] . "' WHERE id = '" . $GLOBALS['user']['id'] . "'");
         }
     }
@@ -1967,7 +1967,6 @@ function delModerator($idUser)
     {
         if (is_int(strpos($listModos, '|'))) //Multiple moderators in this category
         {
-            var_dump($listModos);
             $tmpListModos = explode('|', $listModos);
             $tmpKey = array_search($idUser, $tmpListModos);
             if ($tmpKey !== false)
