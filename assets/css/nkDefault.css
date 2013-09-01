@@ -1,3 +1,9 @@
+.nkDebug{
+    background:#fff;
+    color:#000;
+    font-size:12px !important;
+}
+
 #nkSiteClosedWrapper{
     width: 600px;
     padding: 25px;

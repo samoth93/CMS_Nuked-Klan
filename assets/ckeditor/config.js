@@ -14,11 +14,11 @@ CKEDITOR.editorConfig = function( config ) {
 	    { name: 'clipboard', items: ['Undo', 'Redo', '-', 'Cut', 'Copy', 'Paste', '-',  'PasteText', 'PasteFromWord']},
 	    { name: 'editing', items: ['Find', 'Replace', 'Scayt']},
 	    { name: 'others', items: ['Maximize', 'ShowBlocks']},
-	    { name: 'about', items: ['About']},
+        { name: 'tools', items: ['Link', 'Unlink', 'Anchor', '-', 'Image', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Video', 'Syntaxhighlight']},
+        { name: 'about', items: ['About']},
 	    '/',
 	    { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike', 'RemoveFormat']},
 	    { name: 'paragraph', items: ['NumberedList', 'BulletedList', 'Outdent', 'Indent', 'Blockquote', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
-	    { name: 'tools', items: ['Link', 'Unlink', 'Anchor', '-', 'Image', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Video', 'Syntaxhighlight']},
 	    { name: 'styles', items: ['Styles', 'Format', 'Font', 'FontSize', 'TextColor', 'BGColor']}
 	];
 

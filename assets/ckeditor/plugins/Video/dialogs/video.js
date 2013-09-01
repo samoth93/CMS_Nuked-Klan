@@ -29,13 +29,13 @@ CKEDITOR.dialog.add('Video',function(a) {
 			// Youtube
 			if (inputYoutube != '') {
 				var url = 'http://www.youtube.com/v/';
-				var text = '<div style="background:url(media/ckeditor/plugins/Video/images/youtube_large.jpg)  no-repeat center center black; height:'+videoHeight+'px; text-align:center; width:'+videoWidth+'px"><object width="'+videoWidth+'" height="'+videoHeight+'"><param name="movie" value="'+url+inputYoutube+'?version=3"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="'+url+inputYoutube+'?version=3" type="application/x-shockwave-flash" width="'+videoWidth+'" height="'+videoHeight+'" allowscriptaccess="always" allowfullscreen="true"></embed></object></div><p>&nbsp;</p>';
+				var text = '<div style="background:url(assets/ckeditor/plugins/Video/images/youtube_large.jpg)  no-repeat center center black; height:'+videoHeight+'px; text-align:center; width:'+videoWidth+'px"><object width="'+videoWidth+'" height="'+videoHeight+'"><param name="movie" value="'+url+inputYoutube+'?version=3"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="'+url+inputYoutube+'?version=3" type="application/x-shockwave-flash" width="'+videoWidth+'" height="'+videoHeight+'" allowscriptaccess="always" allowfullscreen="true"></embed></object></div><p>&nbsp;</p>';
 				this.getParentEditor().insertHtml(text);
 			}
 			// Dailymotion
 			else if (inputDailymotion != '') {
 				var url = 'http://www.dailymotion.com/swf/video/';
-				var text = '<div style="background:url(media/ckeditor/plugins/Video/images/dailymotion_large.jpg)  no-repeat center center black; height:'+videoHeight+'px; text-align:center; width:'+videoWidth+'px"><object width="'+videoWidth+'" height="'+videoHeight+'"><param name="movie" value="'+url+inputDailymotion+'"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="'+url+inputDailymotion+'" type="application/x-shockwave-flash" width="'+videoWidth+'" height="'+videoHeight+'" allowscriptaccess="always" allowfullscreen="true"></embed></object></div><p>&nbsp;</p>';
+				var text = '<div style="background:url(assets/ckeditor/plugins/Video/images/dailymotion_large.jpg)  no-repeat center center black; height:'+videoHeight+'px; text-align:center; width:'+videoWidth+'px"><object width="'+videoWidth+'" height="'+videoHeight+'"><param name="movie" value="'+url+inputDailymotion+'"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="'+url+inputDailymotion+'" type="application/x-shockwave-flash" width="'+videoWidth+'" height="'+videoHeight+'" allowscriptaccess="always" allowfullscreen="true"></embed></object></div><p>&nbsp;</p>';
 				this.getParentEditor().insertHtml(text);
 			}
 			// Vimeo
@@ -48,7 +48,7 @@ CKEDITOR.dialog.add('Video',function(a) {
 			// Wat TV
 			else if (inputWattv != '') {
 				var url = 'http://www.wat.tv/swf2/';
-				var text = '<div style="background:url(media/ckeditor/plugins/Video/images/wat-tv_large.jpg)  no-repeat center center black; height:'+videoHeight+'px; text-align:center; width:'+videoWidth+'px"><object width="'+videoWidth+'" height="'+videoHeight+'"><param name="movie" value="'+url+inputWattv+'"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="'+url+inputWattv+'" type="application/x-shockwave-flash" width="'+videoWidth+'" height="'+videoHeight+'" allowscriptaccess="always" allowfullscreen="true"></embed></object></div><p>&nbsp;</p>';
+				var text = '<div style="background:url(assets/ckeditor/plugins/Video/images/wat-tv_large.jpg)  no-repeat center center black; height:'+videoHeight+'px; text-align:center; width:'+videoWidth+'px"><object width="'+videoWidth+'" height="'+videoHeight+'"><param name="movie" value="'+url+inputWattv+'"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="'+url+inputWattv+'" type="application/x-shockwave-flash" width="'+videoWidth+'" height="'+videoHeight+'" allowscriptaccess="always" allowfullscreen="true"></embed></object></div><p>&nbsp;</p>';
 				this.getParentEditor().insertHtml(text);
 			}
 
