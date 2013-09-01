@@ -34,7 +34,7 @@ define("_NOSIGN","There are yet no signatures");
 define("_NOFLOOD","Do not flood! Please wait a moment...");
 
 define("_ADMINGUESTBOOK","Guestbook Administration");
-define("_HELP","Help");
+define("HELP","Help");
 define("_POSTDELETE","Message was successfully removed.");
 define("_SIGNDELETE","You are about to remove the message by");
 define("_CONFIRM","Continue?");
