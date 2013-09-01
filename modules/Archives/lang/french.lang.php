@@ -1,7 +1,7 @@
 <?php
 if (!defined("INDEX_CHECK"))
 {
-	exit('You can\'t run this file alone.');
+    exit('You can\'t run this file alone.');
 }
 define("_ARCHIVE","Archives des News");
 define("_SUGGESTNEWS","Proposer une News");
