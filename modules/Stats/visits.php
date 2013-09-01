@@ -12,9 +12,7 @@ defined('INDEX_CHECK') or die;
 global $nuked, $user, $language, $bgcolor3, $bgcolor2, $bgcolor1;
 translate('modules/Stats/lang/' . $language . '.lang.php');
 
-$visiteur = ($user) ? $GLOBALS['user']['idGroup'] : 0;
-
-if ($visiteur >= $nuked['level_analys'] && $nuked['level_analys']!= -1) {
+if (nkAccessModule('Stats') && $nuked['level_analys']!= -1) {
     if ($_REQUEST['op'] == 'view_all') {
         view_all();
     }
@@ -393,7 +391,7 @@ if ($visiteur >= $nuked['level_analys'] && $nuked['level_analys']!= -1) {
         closetable();
     }
 }
-else if ($nuked['level_analys'] == 1 && $visiteur == 0) {
+else if ($nuked['level_analys'] == 1 && nkHasVisitor()) {
     opentable();
     echo '<br /><br /><div style="text-align: center">' . _USERENTRANCE . '<br /><br /><b><a href="index.php?file=User&amp;op=login_screen">' . _LOGINUSER . '</a> | '
     . '<a href="index.php?file=User&amp;op=reg_screen">' . _REGISTERUSER . '</a></b></div><br /><br />';

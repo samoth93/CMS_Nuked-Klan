@@ -31,21 +31,21 @@ if ($active == 3 || $active == 4)
 
     echo "&nbsp;<b><big>·</big></b>&nbsp;<b>" . $nb_users . "</b> " . _MEMBERSRECORD . "<br />\n";
 
-    if (nivo_mod("News") != -1)
+    if (nkIsModEnabled("News"))
     {
         $sql_news = mysql_query("SELECT id FROM " . NEWS_TABLE);
         $nb_news = mysql_num_rows($sql_news);
         echo "&nbsp;<b><big>·</big></b>&nbsp;<b>" . $nb_news . "</b> " . _NEWSINDB . "<br />\n";
     }
 
-    if (nivo_mod("Download") != -1)
+    if (nkIsModEnabled("Download"))
     {
         $sql_dl = mysql_query("SELECT id FROM " . DOWNLOAD_TABLE);
         $nb_downloads = mysql_num_rows($sql_dl);
         echo "&nbsp;<b><big>·</big></b>&nbsp;<b>" . $nb_downloads . "</b> " . _FILESINDB . "<br />\n";
     }
 
-    if (nivo_mod("Links") != -1)
+    if (nkIsModEnabled("Links"))
     {
         $sql_links = mysql_query("SELECT id FROM " . LINKS_TABLE);
         $nb_liens = mysql_num_rows($sql_links);
@@ -68,21 +68,21 @@ else
     . "<hr style=\"height: 1px;\" />"
     . "&nbsp;<b><big>·</big></b>&nbsp;" . _NBMEMBERS . " : <b>" . $nb_users . "</b><br />\n";
 
-    if (nivo_mod("News") != -1)
+    if (nkIsModEnabled('News'))
     {
         $sql_news = mysql_query("SELECT id FROM " . NEWS_TABLE);
         $nb_news = mysql_num_rows($sql_news);
         echo "&nbsp;<b><big>·</big></b>&nbsp;" . _NBNEWS . " : <b>" . $nb_news . "</b><br />\n";
     }
 
-    if (nivo_mod("Download") != -1)
+    if (nkIsModEnabled('Download'))
     {
         $sql_dl = mysql_query("SELECT id FROM " . DOWNLOAD_TABLE);
         $nb_downloads = mysql_num_rows($sql_dl);
         echo "&nbsp;<b><big>·</big></b>&nbsp;" . _NBDOWNLOAD . " : <b>" . $nb_downloads . "</b><br />\n";
     }
 
-    if (nivo_mod("Links") != -1)
+    if (nkIsModEnabled('Links'))
     {
         $sql_links = mysql_query("SELECT id FROM " . LINKS_TABLE);
         $nb_liens = mysql_num_rows($sql_links);
