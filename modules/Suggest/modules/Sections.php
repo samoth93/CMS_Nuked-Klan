@@ -50,7 +50,7 @@ function form($content, $sug_id)
     . _SUGGESTART . " ]";
 
         $action = "index.php?file=Suggest&amp;op=add_sug&amp;module=Sections";
-        if($user){
+        if(!nkHasVisitor()){
             $autor = $GLOBALS['user']['nickName'];
             $autor_id = $GLOBALS['user']['id'];
         }

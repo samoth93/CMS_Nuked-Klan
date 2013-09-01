@@ -14,7 +14,7 @@ define("_NEWSUBMIT","sent a new suggestion:");
 define('_NOCONTENT','You forgot to fill in required fields');
 
 define("_ADMINSUGGEST","Suggestions Administration");
-define("_HELP","Help");
+define("HELP","Help");
 define("_SUGGESTID","ID");
 define("_CAT","Category");
 define("_NICK","Nick");

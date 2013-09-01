@@ -256,6 +256,5 @@ function del_suggest($data){
     $data = explode('|', $data);
     @unlink($data[4]);
     @unlink($data[9]);
-    var_dump($data);
 }
 ?>
