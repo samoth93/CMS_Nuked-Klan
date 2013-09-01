@@ -19,13 +19,13 @@ $timelimit    = $time + $lifeTime;
 $sessionlimit = $time + $timesession;
 
 // Initialisation des variables de cookies
-$cookieSession  = $nuked['cookiename'] . '_sess_id';
-$cookieTheme   = $nuked['cookiename'] . '_user_theme';
-$cookieLang  = $nuked['cookiename'] . '_user_langue';
-$cookieVisit   = $nuked['cookiename'] . '_last_visit';
-$cookieAdmin   = $nuked['cookiename'] . '_admin_session';
-$cookieForum   = $nuked['cookiename'] . '_forum_read';
-$cookieUserId  = $nuked['cookiename'] . '_userid';
+$cookieSession = $nuked['cookiename'].'_sess_id';
+$cookieTheme   = $nuked['cookiename'].'_user_theme';
+$cookieLang    = $nuked['cookiename'].'_user_langue';
+$cookieVisit   = $nuked['cookiename'].'_last_visit';
+$cookieAdmin   = $nuked['cookiename'].'_admin_session';
+$cookieForum   = $nuked['cookiename'].'_forum_read';
+$cookieUserId  = $nuked['cookiename'].'_userid';
 
 // Recherche de l'adresse IP
 $serverUserIp = (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
@@ -40,7 +40,7 @@ if(isset($serverUserIp) && !empty($serverUserIp)) {
 function secure(){
     // VERIFIER L'UTILITE DE CETTE CHOSE
     $lastVisit   = 0;
-    $nb_mess       = 0;
+    $nb_mess     = 0;
 
     // Initialisation l'ID de session
     $sessionId = '';
@@ -67,17 +67,17 @@ function secure(){
         }
 
         if ($dataSession['validSession']  == 1) {
-            $dbsUser = "SELECT A.pseudo AS nickName, A.idGroup, A.groupMain, B.color AS nickColor
+            $dbsUser = "SELECT A.pseudo AS nickName, A.ids_group, A.main_group, A.avatar, B.color AS nickColor
                         FROM ".USER_TABLE." AS A
                         LEFT JOIN ".GROUP_TABLE." AS B
-                        ON B.id = A.groupMain
+                        ON B.id = A.main_group
                         WHERE A.id = '".$userId."' ";
             $dbeUser = mysql_query($dbsUser);
             $dataUser = mysql_fetch_assoc($dbeUser);
 
             $lastVisit = $dataSession['lastConnect'];
 
-            $arrayGroupId = explode('|', $dataUser['idGroup']);
+            $arrayGroupId = explode('|', $dataUser['ids_group']);
             if(in_array('2', $arrayGroupId)){
                 $userType = '2';
             }
@@ -88,10 +88,14 @@ function secure(){
                 $userType = '2';
             }
 
-            if(!empty($dataUser['idGroup'])){
-                $dataUser['idGroup'] = explode('|', $dataUser['idGroup']);
+            if (empty($dataUser['avatar'])) {
+                $dataUser['avatar'] = 'assets/images/noAvatar.png';
+            }
+
+            if(!empty($dataUser['ids_group'])){
+                $dataUser['ids_group'] = explode('|', $dataUser['ids_group']);
                 $whereId = '';
-                foreach ($dataUser['idGroup'] as $id) {
+                foreach ($dataUser['ids_group'] as $id) {
                     if(!empty($whereId)){
                         $whereId .= ' OR ';
                     }
@@ -102,13 +106,13 @@ function secure(){
                 }
                 if(!empty($whereId)){
                     $dbsGroups = "SELECT id, access, accessAdmin FROM ".GROUP_TABLE." ".$whereId." ";
-
                     $dbeGroups = mysql_query($dbsGroups);
 
                     $arrayAccess = array();
                     $arrayAccessAdmin = array();
 
                     while($dataGroups = mysql_fetch_assoc($dbeGroups)){
+
                         $dataGroups['access']      = explode('|', $dataGroups['access']);
                         $dataGroups['accessAdmin'] = explode('|', $dataGroups['accessAdmin']);
 
@@ -123,7 +127,7 @@ function secure(){
                                 }
                             }
                             foreach ($dataGroups['accessAdmin'] as $admin) {
-                                if(!empty($admin) && !in_array($admin, $arrayAccess)){
+                                if(!empty($admin) && !in_array($admin, $arrayAccessAdmin)){
                                     $arrayAccessAdmin[] = $admin;
                                 }
                             }
@@ -184,12 +188,12 @@ function secure(){
         // On rempli le tableau $user
         $user = array(
                     'id' => $userId,
-                    // On conserve la compatibilité $user[1] = 1 (level membre sur les anciens modules)
-                    'idGroup' => '0',
+                    'ids_groups' => $dataUser['ids_group'],
                     'nickName' => mysql_real_escape_string($dataUser['nickName']),
                     'ip' => $GLOBALS['userIp'],
                     'lastVisit' => $lastVisit,
-                    'nbMess' => $nb_mess,
+                    'nbMess' => $dataUserbox['count'],
+                    'avatar' => $dataUser['avatar'],
                     'accessMods' => $accessMods,
                     'accessAdmin' => $accessAdmin,
                     'userType' => $userType,
@@ -204,20 +208,19 @@ function secure(){
 
 function adminCheck() {
     if(isset($_SESSION['admin']) && $_SESSION['admin'] == true){
-        return 1;
+        return true;
     }
-    return 0;
+    $_SESSION['admin'] = false;
+    return false;
 }
 
 
 function sessionCheck() {
     if (isset($_COOKIE[$GLOBALS['cookieSession']]) && !empty($_COOKIE[$GLOBALS['cookieSession']])) {
-        $session = 1;
+        $session = true;
     }
     else {
-        $sessionId = '';
-        $session = 0;
-        $user = array();
+        $session = false;
     }
     return $session;
 }
