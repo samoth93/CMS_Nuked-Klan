@@ -177,7 +177,7 @@ define("_NOTIFYISOFF","Notification was successfully deactivated.");
 define("_NOTEXTRESUME","No resume available...");
 
 define("_ADMINFORUM","Forum Administration");
-define("_HELP","Help");
+define("HELP","Help");
 define("_ADDFORUM","Add a Forum");
 define("_NAME","Name");
 define("_NIVEAU","Level");

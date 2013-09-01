@@ -13,7 +13,7 @@ global $user, $nuked, $language;
 
 include('modules/Forum/template.php');
 
-$visiteur = $user ? $GLOBALS['user']['idGroup'] : 0;
+$visiteur = $user ? $GLOBALS['user']['idGroups'] : 0;
 $user_last_visit = (empty($GLOBALS['user']['lastVisit'])) ? time() : $GLOBALS['user']['lastVisit'];
 
 $date_jour = nkDate(time());
@@ -98,7 +98,7 @@ while (list($nom_cat, $cid) = mysql_fetch_row($main))
         list($mess_id, $thid, $date, $auteur, $auteur_id) = mysql_fetch_array($req5);
         $auteur = nk_CSS($auteur);
 
-          if ($user) {
+          if (!nkHasVisitor()) {
                $visits = mysql_query("SELECT user_id, forum_id FROM " . FORUM_READ_TABLE . " WHERE user_id = '" . $GLOBALS['user']['id'] . "' AND forum_id LIKE '%" . ',' . $forum_id . ',' . "%' ");
                $results = mysql_fetch_assoc($visits);
                if ($num_post > 0 && strrpos($results['forum_id'], ',' . $forum_id . ',') === false) {
@@ -136,8 +136,7 @@ while (list($nom_cat, $cid) = mysql_fetch_row($main))
         . "<td style=\"width: 15%;\" align=\"center\">" . $num_mess . "</td>\n"
         . "<td style=\"width: 25%;\" align=\"center\"> ";
 
-        if ($num_mess > 0)
-        {
+        if ($num_mess > 0){
             if ($auteur_id != "")
             {
                 $sq_user = mysql_query("SELECT pseudo, country FROM " . USER_TABLE . " WHERE id = '" . $auteur_id . "'");
@@ -210,7 +209,7 @@ if (mysql_num_rows($online) == NULL) echo '<em>' . _NONE . '</em>';
 
 echo "</td></tr></table><div style=\"text-align: right;\">";
 
-if ($user)
+if (!nkHasVisitor())
 {
     echo "<a href=\"index.php?file=Forum&amp;op=mark\">" . _MARKREAD . "</a>";
 }

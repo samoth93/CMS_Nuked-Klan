@@ -7,23 +7,13 @@
 // it under the terms of the GNU General Public License as published by     //
 // the Free Software Foundation; either version 2 of the License.           //
 // -------------------------------------------------------------------------//
-if (!defined("INDEX_CHECK"))
-{
+if (!defined("INDEX_CHECK")){
     die ("<div style=\"text-align: center;\">You cannot open this page directly</div>");
 }
 
 
 global $nuked, $file, $language, $user, $bgcolor3, $bgcolor2;
 translate("modules/Forum/lang/" . $language . ".lang.php");
-
-if (!$user)
-{
-    $visiteur = 0;
-}
-else
-{
-    $visiteur = $GLOBALS['user']['idGroup'];
-}
 
 $sql2 = mysql_query("SELECT active FROM " . BLOCK_TABLE . " WHERE bid = '" . $bid . "'");
 list($active) = mysql_fetch_array($sql2);
@@ -37,8 +27,11 @@ if ($active == 3 || $active == 4)
     . "<td style=\"width: 10%;\" align=\"center\"><b>" . _ANSWERS . "</b></td>\n"
     . "<td style=\"width: 10%;\" align=\"center\"><b>" . _VIEWS . "</b></td>\n"
     . "<td style=\"width: 30%;\" align=\"center\"><b>" . _LASTPOST . "</b></td></tr>\n";
-
-    $sql = mysql_query("SELECT FTT.id, FTT.titre, FTT.auteur, FTT.auteur_id, FTT.view, FTT.closed, FTT.forum_id FROM " . FORUM_THREADS_TABLE . " AS FTT INNER JOIN " . FORUM_TABLE . " AS FT ON FT.id = FTT.forum_id WHERE FT.niveau <= '" . $visiteur . "' ORDER BY last_post DESC LIMIT 0, 10");
+    /**
+     * @todo : Remplacer le where par les id de groupes autorisé
+     */
+    $TODO_GROUP = 1;
+    $sql = mysql_query("SELECT FTT.id, FTT.titre, FTT.auteur, FTT.auteur_id, FTT.view, FTT.closed, FTT.forum_id FROM " . FORUM_THREADS_TABLE . " AS FTT INNER JOIN " . FORUM_TABLE . " AS FT ON FT.id = FTT.forum_id WHERE FT.niveau <= '" . $TODO_GROUP . "' ORDER BY last_post DESC LIMIT 0, 10");
     while (list($thread_id, $titre, $auteur, $auteur_id, $nb_read, $closed, $forum_id) = mysql_fetch_row($sql))
     {
         $auteur = nk_CSS($auteur);
@@ -135,8 +128,11 @@ if ($active == 3 || $active == 4)
 else
 {
     echo "<table width=\"100%\" cellspacing=\"5\" cellpadding=\"0\" border=\"0\">\n";
-
-    $sql = mysql_query("SELECT FTT.id, FTT.titre, FTT.last_post, FTT.forum_id FROM " . FORUM_THREADS_TABLE . " AS FTT INNER JOIN " . FORUM_TABLE . " AS FT ON FT.id = FTT.forum_id WHERE FT.niveau <= '" . $visiteur . "' ORDER BY last_post DESC LIMIT 0, 10");
+    /**
+     * @todo : Remplacer le where par les id de groupes autorisé
+     */
+    $TODO_GROUP = 1;
+    $sql = mysql_query("SELECT FTT.id, FTT.titre, FTT.last_post, FTT.forum_id FROM " . FORUM_THREADS_TABLE . " AS FTT INNER JOIN " . FORUM_TABLE . " AS FT ON FT.id = FTT.forum_id WHERE FT.niveau <= '" . $TODO_GROUP . "' ORDER BY last_post DESC LIMIT 0, 10");
     while (list($thread_id, $titre, $last_post, $forum_id) = mysql_fetch_row($sql))
     {
         $date = nkDate($last_post);

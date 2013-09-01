@@ -20,23 +20,10 @@ include_once("Includes/nkCaptcha.php");
 
 // On determine si le captcha est actif ou non
 if (_NKCAPTCHA == "off") $captcha = 0;
-else if ((_NKCAPTCHA == 'auto' OR _NKCAPTCHA == 'on') && $GLOBALS['user']['idGroup'] > 0)  $captcha = 0;
+else if ((_NKCAPTCHA == 'auto' OR _NKCAPTCHA == 'on') && !nkHasVisitor())  $captcha = 0;
 else $captcha = 1;
 
-
-if (!$user)
-{
-    $visiteur = 0;
-}
-else
-{
-    $visiteur = $GLOBALS['user']['idGroup'];
-}
-$ModName = basename(dirname(__FILE__));
-$level_access = nivo_mod($ModName);
-if ($visiteur >= $level_access && $level_access > -1)
-{
-    compteur("Forum");
+     compteur("Forum");
 
     function index()
     {
@@ -47,7 +34,7 @@ if ($visiteur >= $level_access && $level_access > -1)
 
     function edit($mess_id)
     {
-        global $visiteur, $user, $nuked;
+        global $user, $nuked;
 
         opentable();
 
@@ -61,12 +48,15 @@ if ($visiteur >= $level_access && $level_access > -1)
             exit();
         }
 
-        $result = mysql_query("SELECT moderateurs FROM " . FORUM_TABLE . " WHERE '" . $visiteur . "' >= level AND id = '" . $_REQUEST['forum_id'] . "'");
+        /**
+         * @todo : Remplacer le where par les id de groupes autorisé
+         */
+        $result = mysql_query("SELECT moderateurs FROM " . FORUM_TABLE . " WHERE '" . $TODO_GROUP . "' >= level AND id = '" . $_REQUEST['forum_id'] . "'");
         list($modos) = mysql_fetch_array($result);
 
         $administrator = ($user && $modos != "" && strpos($modos, $GLOBALS['user']['id']) !== false) ? 1 : 0;
 
-        if ($_REQUEST['author'] == $GLOBALS['user']['nickName'] || $visiteur >= admin_mod("Forum") || $administrator == 1)
+        if ($_REQUEST['author'] == $GLOBALS['user']['nickName'] || nkAccessAdmin('Forum') || $administrator == 1)
         {
             $date = nkDate(time());
 
@@ -129,11 +119,13 @@ if ($visiteur >= $level_access && $level_access > -1)
 
     function del($mess_id)
     {
-        global $visiteur, $user, $nuked;
+        global $user, $nuked;
 
         opentable();
-
-        $result = mysql_query("SELECT moderateurs FROM " . FORUM_TABLE . " WHERE '" . $visiteur . "' >= niveau AND id = '" . $_REQUEST['forum_id'] . "'");
+        /**
+         * @todo : Remplacer le where par les id de groupes autorisé
+         */
+        $result = mysql_query("SELECT moderateurs FROM " . FORUM_TABLE . " WHERE '" . $TODO_GROUP . "' >= niveau AND id = '" . $_REQUEST['forum_id'] . "'");
         list($modos) = mysql_fetch_array($result);
 
         if ($user && $modos != "" && strpos($modos, $GLOBALS['user']['id']) !== false)
@@ -145,7 +137,7 @@ if ($visiteur >= $level_access && $level_access > -1)
             $administrator = 0;
         }
 
-        if ($visiteur >= admin_mod("Forum") || $administrator == 1)
+        if (nkAccessAdmin('Forum') || $administrator == 1)
         {
             if ($_REQUEST['confirm'] == _YES)
             {
@@ -224,11 +216,13 @@ if ($visiteur >= $level_access && $level_access > -1)
 
     function del_topic($thread_id)
     {
-        global $visiteur, $user, $nuked;
+        global $user, $nuked;
 
         opentable();
-
-        $result = mysql_query("SELECT moderateurs FROM " . FORUM_TABLE . " WHERE '" . $visiteur . "' >= niveau AND id = '" . $_REQUEST['forum_id'] . "'");
+        /**
+         * @todo : Remplacer le where par les id de groupes autorisé
+         */
+        $result = mysql_query("SELECT moderateurs FROM " . FORUM_TABLE . " WHERE '" . $TODO_GROUP . "' >= niveau AND id = '" . $_REQUEST['forum_id'] . "'");
         list($modos) = mysql_fetch_array($result);
 
         if ($user && $modos != "" && strpos($modos, $GLOBALS['user']['id']) !== false)
@@ -240,7 +234,7 @@ if ($visiteur >= $level_access && $level_access > -1)
             $administrator = 0;
         }
 
-        if ($visiteur >= admin_mod("Forum") || $administrator == 1)
+        if (nkAccessAdmin('Forum') || $administrator == 1)
         {
             if ($_REQUEST['confirm'] == _YES)
             {
@@ -311,11 +305,13 @@ if ($visiteur >= $level_access && $level_access > -1)
 
     function move()
     {
-        global $visiteur, $user, $nuked;
+        global $user, $nuked;
 
         opentable();
-
-        $result = mysql_query("SELECT moderateurs FROM " . FORUM_TABLE . " WHERE '" . $visiteur . "' >= niveau AND id = '" . $_REQUEST['forum_id'] . "'");
+        /**
+         * @todo : Remplacer le where par les id de groupes autorisé
+         */
+        $result = mysql_query("SELECT moderateurs FROM " . FORUM_TABLE . " WHERE '" . $TODO_GROUP . "' >= niveau AND id = '" . $_REQUEST['forum_id'] . "'");
         list($modos) = mysql_fetch_array($result);
 
         if ($user && $modos != "" && strpos($modos, $GLOBALS['user']['id']) !== false)
@@ -327,7 +323,7 @@ if ($visiteur >= $level_access && $level_access > -1)
             $administrator = 0;
         }
 
-        if ($visiteur >= admin_mod("Forum") || $administrator == 1)
+        if (nkAccessAdmin('Forum') || $administrator == 1)
         {
             if ($_REQUEST['confirm'] == _YES && $_REQUEST['newforum'] != "")
             {
@@ -418,15 +414,19 @@ if ($visiteur >= $level_access && $level_access > -1)
             {
                 echo "<form action=\"index.php?file=Forum&amp;op=move\" method=\"post\">\n"
                 . "<div style=\"text-align: center;\"><br /><br />" . _MOVETOPIC . " : <select name=\"newforum\">\n";
-
-                $sql_cat = mysql_query("SELECT id, nom FROM " . FORUM_CAT_TABLE . " WHERE '" . $visiteur . "' >= niveau ORDER BY ordre, nom");
+                /**
+                 * @todo : Remplacer le where par les id de groupes autorisé
+                 */
+                $sql_cat = mysql_query("SELECT id, nom FROM " . FORUM_CAT_TABLE . " WHERE '" . $TODO_GROUP . "' >= niveau ORDER BY ordre, nom");
                 while (list($cat, $cat_name) = mysql_fetch_row($sql_cat))
                 {
                     $cat_name = printSecuTags($cat_name);
 
                     echo "<option value=\"\">* " . $cat_name . "</option>\n";
-
-                    $sql_forum = mysql_query("SELECT nom, id FROM " . FORUM_TABLE . " WHERE cat = '" . $cat . "' AND '" . $visiteur . "' >= niveau ORDER BY ordre, nom");
+                    /**
+                     * @todo : Remplacer le where par les id de groupes autorisé
+                     */
+                    $sql_forum = mysql_query("SELECT nom, id FROM " . FORUM_TABLE . " WHERE cat = '" . $cat . "' AND '" . $TODO_GROUP . "' >= niveau ORDER BY ordre, nom");
                     while (list($forum_name, $fid) = mysql_fetch_row($sql_forum))
                     {
                         $forum_name = printSecuTags($forum_name);
@@ -453,11 +453,13 @@ if ($visiteur >= $level_access && $level_access > -1)
 
     function lock()
     {
-        global $visiteur, $user, $nuked;
+        global $user, $nuked;
 
         opentable();
-
-        $result = mysql_query("SELECT moderateurs FROM " . FORUM_TABLE . " WHERE '" . $visiteur . "' >= niveau AND id = '" . $_REQUEST['forum_id'] . "'");
+        /**
+         * @todo : Remplacer le where par les id de groupes autorisé
+         */
+        $result = mysql_query("SELECT moderateurs FROM " . FORUM_TABLE . " WHERE '" . $TODO_GROUP . "' >= niveau AND id = '" . $_REQUEST['forum_id'] . "'");
         list($modos) = mysql_fetch_array($result);
 
         if ($user && $modos != "" && strpos($modos, $GLOBALS['user']['id']) !== false)
@@ -481,7 +483,7 @@ if ($visiteur >= $level_access && $level_access > -1)
             $lock_type = 0;
         }
 
-        if ($visiteur >= admin_mod("Forum") || $administrator == 1)
+        if (nkAccessAdmin('Forum') || $administrator == 1)
         {
             echo "<br /><br /><div style=\"text-align: center;\">" . $lock_text . "</div><br /><br />";
 
@@ -503,11 +505,13 @@ if ($visiteur >= $level_access && $level_access > -1)
 
     function announce()
     {
-        global $visiteur, $user, $nuked;
+        global $user, $nuked;
 
         opentable();
-
-        $result = mysql_query("SELECT moderateurs FROM " . FORUM_TABLE . " WHERE '" . $visiteur . "' >= niveau AND id = '" . $_REQUEST['forum_id'] . "'");
+        /**
+         * @todo : Remplacer le where par les id de groupes autorisé
+         */
+        $result = mysql_query("SELECT moderateurs FROM " . FORUM_TABLE . " WHERE '" . $TODO_GROUP . "' >= niveau AND id = '" . $_REQUEST['forum_id'] . "'");
         list($modos) = mysql_fetch_array($result);
 
         if ($user && $modos != "" && strpos($modos, $GLOBALS['user']['id']) !== false)
@@ -528,7 +532,7 @@ if ($visiteur >= $level_access && $level_access > -1)
             $announce = 0;
         }
 
-        if ($visiteur >= admin_mod("Forum") || $administrator == 1)
+        if (nkAccessAdmin('Forum') || $administrator == 1)
         {
             echo "<br /><br /><div style=\"text-align: center;\">" . _TOPICMODIFIED . "</div><br /><br />";
 
@@ -550,7 +554,7 @@ if ($visiteur >= $level_access && $level_access > -1)
 
     function reply()
     {
-        global $user, $nuked, $captcha,$visiteur,$userIp, $bgcolor3;
+        global $user, $nuked, $captcha, $userIp, $bgcolor3;
 
         opentable();
 
@@ -580,15 +584,20 @@ if ($visiteur >= $level_access && $level_access > -1)
 
         $lock = mysql_query("SELECT closed FROM " . FORUM_THREADS_TABLE . " WHERE forum_id = '" . $_REQUEST['forum_id'] . "' AND id = '" . $_REQUEST['thread_id'] . "'");
         list($closed) = mysql_fetch_array($lock);
-
+        /**
+         * @todo : Remplacer le level les id de groupes autorisé
+         */
         $forum = mysql_query("SELECT FT.level FROM " . FORUM_TABLE . " AS FT INNER JOIN " . FORUM_THREADS_TABLE . " AS FTT ON FT.id = FTT.forum_id WHERE FTT.id = '" . $_REQUEST['thread_id'] . "'");
         list($level) = mysql_fetch_array($forum);
 
-        if ($visiteur >= admin_mod("Forum") || $administrator == 1)
+        if (nkAccessAdmin('Forum') || $administrator == 1)
         {
             $auth = 1;
         }
-        else if ($closed > 0 || $level > $visiteur)
+        /**
+         * @todo : Remplacer le le level les id de groupes autorisé
+         */
+        else if ($closed > 0 || $level > $TODO_GROUP)
         {
             $auth = 0;
         }
@@ -648,7 +657,7 @@ if ($visiteur >= $level_access && $level_access > -1)
 
         $date = time();
 
-        if ($date < $anti_flood && $visiteur < admin_mod("Forum"))
+        if ($date < $anti_flood && !nkAccessAdmin('Forum'))
         {
             echo "<br /><br /><div style=\"text-align: center;\">" . _NOFLOOD . "</div><br /><br />";
             $url = "index.php?file=Forum&page=viewtopic&forum_id=" . $_REQUEST['forum_id'] . "&thread_id=" . $_REQUEST['thread_id'];
@@ -672,7 +681,10 @@ if ($visiteur >= $level_access && $level_access > -1)
         $filename = $_FILES['fichiernom']['name'];
         $filesize = $_FILES['fichiernom']['size'] / 1000;
 
-        if ($visiteur >= $nuked['forum_file_level'] && $filename != "" && $nuked['forum_file'] == "on" && $nuked['forum_file_maxsize'] >= $filesize)
+        /**
+         * @todo : Remplacer le check du level sur l'upload par les groups
+         */
+        if ($TODO_GROUP >= $nuked['forum_file_level'] && $filename != "" && $nuked['forum_file'] == "on" && $nuked['forum_file_maxsize'] >= $filesize)
         {
             if (!preg_match("`\.php`i", $filename) && !preg_match("`\.htm`i", $filename) && !preg_match("`\.[a-z]htm`i", $filename) && $filename != ".htaccess")
             {
@@ -734,7 +746,7 @@ if ($visiteur >= $level_access && $level_access > -1)
 			}
 		}
 
-		if ($user)
+		if (!nkHasVisitor())
 		{
 			$sql_count = mysql_query("SELECT count FROM " . USER_TABLE . " WHERE id = '" . $GLOBALS['user']['id'] . "'");
 			list($count) = mysql_fetch_row($sql_count);
@@ -764,7 +776,7 @@ if ($visiteur >= $level_access && $level_access > -1)
 
     function post()
     {
-        global $user, $nuked,$captcha,$userIp, $visiteur, $bgcolor3;
+        global $user, $nuked,$captcha,$userIp, $bgcolor3;
 
         opentable();
 
@@ -781,11 +793,15 @@ if ($visiteur >= $level_access && $level_access > -1)
             footer();
             exit();
         }
-
+        /**
+         * @todo : Remplacer le le level les id de groupes autorisé
+         */
         $forum = mysql_query("SELECT level, level_poll FROM " . FORUM_TABLE . " WHERE id = '" . $_REQUEST['forum_id'] . "'");
         list($level, $level_poll) = mysql_fetch_array($forum);
-
-        if ($level > $visiteur)
+        /**
+         * @todo : Remplacer le le level les id de groupes autorisé
+         */
+        if ($level > $TODO_GROUP)
         {
             echo "<br /><br /><div style=\"text-align: center;\">" . _ZONEADMIN . "</div><br /><br />";
             $url = "index.php?file=Forum&page=post&forum_id=" . $_REQUEST['forum_id'];
@@ -844,7 +860,7 @@ if ($visiteur >= $level_access && $level_access > -1)
 
         $date = time();
 
-        if ($date < $anti_flood && $GLOBALS['user']['idGroup'] < admin_mod("Forum"))
+        if ($date < $anti_flood && !nkAccessAdmin('Forum'))
         {
             echo "<br /><br /><div style=\"text-align: center;\">" . _NOFLOOD . "</div><br /><br />";
             $url = "index.php?file=Forum&page=viewforum&forum_id=" . $_REQUEST['forum_id'];
@@ -863,9 +879,12 @@ if ($visiteur >= $level_access && $level_access > -1)
 
         if (!is_numeric($_REQUEST['usersig'])) $_REQUEST['usersig'] = 0;
         if (!is_numeric($_REQUEST['emailnotify'])) $_REQUEST['emailnotify'] = 0;
-        if (($visiteur < admin_mod("Forum") && $administrator == 0) || !is_numeric($_REQUEST['annonce'])) $_REQUEST['annonce'] = 0;
+        if ((!nkAccessAdmin('Forum') && $administrator == 0) || !is_numeric($_REQUEST['annonce'])) $_REQUEST['annonce'] = 0;
 
-        if ($_REQUEST['survey'] == 1 && $_REQUEST['survey_field'] > 0 && $visiteur >= $level_poll)
+        /**
+         * @todo : Remplacer le le level les id de groupes autorisé
+         */
+        if ($_REQUEST['survey'] == 1 && $_REQUEST['survey_field'] > 0 && $TODO_GROUP >= $level_poll)
         {
             $sondage = 1;
         }
@@ -882,8 +901,10 @@ if ($visiteur >= $level_access && $level_access > -1)
 
         $filename = $_FILES['fichiernom']['name'];
         $filesize = $_FILES['fichiernom']['size'] / 1000;
-
-        if ($visiteur >= $nuked['forum_file_level'] && $filename != "" && $nuked['forum_file'] == "on" && $nuked['forum_file_maxsize'] >= $filesize)
+        /**
+         * @todo : Remplacer le le level les id de groupes autorisé
+         */
+        if ($TODO_GROUP >= $nuked['forum_file_level'] && $filename != "" && $nuked['forum_file'] == "on" && $nuked['forum_file_maxsize'] >= $filesize)
         {
             if (!preg_match("`\.php`i", $filename) && !preg_match("`\.htm`i", $filename) && !preg_match("`\.[a-z]htm`i", $filename) && $filename != ".htaccess")
             {
@@ -917,7 +938,7 @@ if ($visiteur >= $level_access && $level_access > -1)
                $update = "INSERT INTO `" . FORUM_READ_TABLE . "` (forum_id, thread_id, user_id) VALUES $update ON DUPLICATE KEY UPDATE forum_id=VALUES(forum_id), thread_id=VALUES(thread_id);";
                mysql_query($update) or die(mysql_error());
           }
-        if ($user)
+        if (!nkHasVisitor())
         {
             $sql_count = mysql_query("SELECT count FROM " . USER_TABLE . " WHERE id = '" . $GLOBALS['user']['id'] . "'");
             list($count) = mysql_fetch_row($sql_count);
@@ -925,7 +946,10 @@ if ($visiteur >= $level_access && $level_access > -1)
             $upd = mysql_query("UPDATE " . USER_TABLE . " SET count = '" . $newcount . "' WHERE id = '" . $GLOBALS['user']['id'] . "'");
         }
 
-        if ($_REQUEST['survey'] == 1 && $_REQUEST['survey_field'] > 0 && $visiteur >= $level_poll)
+        /**
+         * @todo : Remplacer le le level les id de groupes autorisé
+         */
+        if ($_REQUEST['survey'] == 1 && $_REQUEST['survey_field'] > 0 && $TODO_GROUP >= $level_poll)
         {
             $url = "index.php?file=Forum&op=add_poll&survey_field=" . $_REQUEST['survey_field'] . "&forum_id=" . $_REQUEST['forum_id'] . "&thread_id=" . $_REQUEST['thread_id'];
         }
@@ -943,7 +967,7 @@ if ($visiteur >= $level_access && $level_access > -1)
     {
         global $user, $nuked;
 
-        if ($user)
+        if (!nkHasVisitor())
         {
             if ($_REQUEST['forum_id'] > 0)
             {
@@ -978,7 +1002,7 @@ if ($visiteur >= $level_access && $level_access > -1)
                 $req = "UPDATE " . SESSIONS_TABLE . " SET last_used = date WHERE user_id = '" . $GLOBALS['user']['id'] . "'";
                 $sql = mysql_query($req);
             }
-               if ($user) {
+               if (!nkHasVisitor()) {
                     if ((int) $_REQUEST['forum_id'] != "") {
                          $where = "WHERE forum_id = '" . (int) $_REQUEST['forum_id'] . "'";
                     } else {
@@ -1535,25 +1559,5 @@ if ($visiteur >= $level_access && $level_access > -1)
             index();
             break;
     }
-
-}
-else if ($level_access == -1)
-{
-    opentable();
-    echo "<br /><br /><div style=\"text-align: center;\">" . _MODULEOFF . "<br /><br /><a href=\"javascript:history.back()\"><b>" . _BACK . "</b></a><br /><br /></div>";
-    closetable();
-}
-else if ($level_access == 1 && $visiteur == 0)
-{
-    opentable();
-    echo "<br /><br /><div style=\"text-align: center;\">" . _USERENTRANCE . "<br /><br /><b><a href=\"index.php?file=User&amp;op=login_screen\">" . _LOGINUSER . "</a> | <a href=\"index.php?file=User&amp;op=reg_screen\">" . _REGISTERUSER . "</a></b><br /><br /></div>";
-    closetable();
-}
-else
-{
-    opentable();
-    echo "<br /><br /><div style=\"text-align: center;\">" . _NOENTRANCE . "<br /><br /><a href=\"javascript:history.back()\"><b>" . _BACK . "</b></a><br /><br /></div>";
-    closetable();
-}
 
 ?>

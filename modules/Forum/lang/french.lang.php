@@ -110,7 +110,7 @@ define("_FLOGOUT","logout");
 define("_USERSIGN","Attacher sa signature");
 define("_EMAILNOTIFY","M'avertir lorsqu'une réponse est postée");
 define("_ANNONCE","Poster une annonce");
-define("_EDITTEXT","Afficher le message d'édition"); 
+define("_EDITTEXT","Afficher le message d'édition");
 define("_OPTIONS","Options");
 define("_CANCEL","Annuler");
 define("_EMAILNOTIFYMAIL","Il y a eu une réponse a ce message :");
@@ -258,4 +258,6 @@ define("_ACTIONDELRANKFO","a supprimé le rang forum");
 define("_ACTIONMODIFRANKFO","a modifié le rang forum");
 define("_ACTIONPRUNEFO","a délesté le forum");
 define("_ACTIONPREFFO","a modifié les préférences du module forum");
+define('_PREFS', 'Préférences');
+define('_BACK', 'Retour');
 ?>
