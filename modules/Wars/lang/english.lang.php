@@ -32,7 +32,7 @@ define("_NEXTMATCHES","Next Wars");
 define("_DETAILS2","Comment");
 define("_FROM","from");
 define("_ADMINMATCH","Matches Administration");
-define("_HELP","Help");
+define("HELP","Help");
 define("_DELETEMATCH","You are about to remove the match vs");
 define("_CONFIRM","Continue?");
 define("_EDIT","Edit");
