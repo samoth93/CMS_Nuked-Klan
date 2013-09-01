@@ -46,7 +46,7 @@ function edit_block_theme($bid){
     echo '<div class="content-box">',"\n" //<!-- Start Content Box -->
 			, '<div class="content-box-header"><h3>' , _BLOCKADMIN , '</h3>',"\n"
 			, '<a href="help/' , $language , '/block.html" rel="modal">',"\n"
-			, '<img style="border: 0;" src="help/help.gif" alt="" title="' , _HELP , '" /></a>',"\n"
+			, '<img style="border: 0;" src="help/help.gif" alt="" title="' , HELP , '" /></a>',"\n"
 			, '</div>',"\n"
 			, '<div class="tab-content" id="tab2"><form method="post" action="index.php?file=Admin&amp;page=block&amp;op=modif_block">',"\n"
 			, '<table style="margin-left: auto;margin-right: auto;text-align: left;" cellspacing="0" cellpadding="2" border="0">',"\n"
