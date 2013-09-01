@@ -1,7 +1,7 @@
 <?php
 if (!defined("INDEX_CHECK"))
 {
-	exit('You can\'t run this file alone.');
+    exit('You can\'t run this file alone.');
 }
 define("_JAN","Janvier");
 define("_FEB","Février");
@@ -97,4 +97,9 @@ define("_ACTIONADDCAL","a ajouté l'événement");
 define("_ACTIONMODIFCAL","a modifié l'événement");
 define("_ACTIONDELCAL","a supprimé l'événement");
 define("_ACTIONPREFUPCAL","a modifié les préférences du calendrier");
+
+define("_PREFS","Préférences");
+define("_NAVCALENDAR", "Calendrier");
+define('_SEND', 'Envoyer');
+define('_AT', 'à');
 ?>

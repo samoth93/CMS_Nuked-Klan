@@ -65,7 +65,7 @@ define("_SUBMIT","Go");
 define("_NOENTRANCE","Sorry you do not have the permissions to access this page");
 define("_ZONEADMIN","This zone is reserved for the Admin, sorry...");
 define("_ADMINCAL","Calendar Administration");
-define("_HELP","Help");
+define("HELP","Help");
 define("_TITLE","Title");
 define("_DATE","Date");
 define("_AUTEUR","Author");

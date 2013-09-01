@@ -11,9 +11,6 @@ defined('INDEX_CHECK') or die('<div style="text-align:center;">You cannot open t
 
 global $language, $user;
 translate("modules/Calendar/lang/" . $language . ".lang.php");
-$visiteur = $user ? $GLOBALS['user']['idGroup'] : 0;
-$ModName = basename(dirname(__FILE__));
-$level_access = nivo_mod($ModName);
 
 function index(){
 	global $bgcolor1, $bgcolor2, $bgcolor3, $bgcolor4, $user;
@@ -399,7 +396,7 @@ function show_event(){
 		if($user && $etat != 1){
 			$sql_dispo = mysql_query("SELECT team FROM " . USER_TABLE . " WHERE id = '" . $GLOBALS['user']['id'] . "'");
 			list($user_team) = mysql_fetch_array($sql_dispo);
-			if ($user_team > 0 || $GLOBALS['user']['idGroup'] > 1) dispo($warid, $_REQUEST['type']);
+			if ($user_team > 0 || nkHasAdmin()) dispo($warid, $_REQUEST['type']);
 		}
 
 		echo "</table><div style=\"text-align: center;\"><a href=\"#\" onclick=\"self.close()\"><b>" . _CLOSEWINDOW . "</b></a></div></body></html>";
@@ -545,50 +542,29 @@ function cleanList($val, $list){
 	return $cnt;
 }
 
-if ($visiteur >= $level_access && $level_access > -1){
+compteur("Calendar");
 
-	compteur("Calendar");
+switch ($_REQUEST['op']){
 
-	switch ($_REQUEST['op']){
+	case "show_event":
+	show_event();
+	break;
 
-		case "show_event":
-		show_event();
-		break;
+    case"iminent":
+	iminent($_REQUEST['eid']);
+	break;
 
-        case"iminent":
-		iminent($_REQUEST['eid']);
-		break;
+    case"add_dispo":
+	add_dispo($_REQUEST['dispo']);
+	break;
 
-        case"add_dispo":
-		add_dispo($_REQUEST['dispo']);
-		break;
+    case"del_dispo":
+	del_dispo();
+	break;
 
-        case"del_dispo":
-		del_dispo();
-		break;
-
-        default:
-		index();
-		break;
-    }
-
-}elseif ($level_access == -1){
-
-    opentable();
-    echo '<div style="text-align:center;padding:25px 0">'._MODULEOFF.'<br /><br /><a href="javascript:history.back()"><b>'._BACK.'</b></a></div>';
-    closetable();
-
-}elseif ($level_access == 1 && $visiteur == 0){
-
-    opentable();
-    echo '<div style="text-align:center;padding:25px 0">'._USERENTRANCE.'<br /><br /><b><a href="index.php?file=User&amp;op=login_screen">'._LOGINUSER.'</a> | <a href="index.php?file=User&amp;op=reg_screen">'._REGISTERUSER.'</a></b></div>';
-    closetable();
-
-}else{
-
-    opentable();
-    echo '<div style="text-align:center;padding:25px 0">'._NOENTRANCE.'<br /><br /><a href="javascript:history.back()"><b>'._BACK.'</b></a></div>';
-    closetable();
+    default:
+	index();
+	break;
 }
 
 ?>
