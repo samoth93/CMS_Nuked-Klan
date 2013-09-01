@@ -1,7 +1,7 @@
 <?php
 if (!defined("INDEX_CHECK"))
 {
-	exit('You can\'t run this file alone.');
+    exit('You can\'t run this file alone.');
 }
 define("_NOENTRANCE","Désolé mais vous n'avez pas les droits pour accéder à cette page");
 define("_ZONEADMIN","Cette zone est réservée a l'Admin, Désolé...");
@@ -48,4 +48,6 @@ define("_ACTIONADDSUR","a ajouté le sondage");
 define("_ACTIONDELSUR","a supprimé le sondage");
 define("_ACTIONMODIFSUR","a modifié le sondage");
 define("_ACTIONCONFSUR","a modifié les préférences du module sondage");
+define("_PREFS","Préférences");
+define('_SEND', 'Envoyer');
 ?>

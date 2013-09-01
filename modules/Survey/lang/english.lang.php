@@ -25,7 +25,7 @@ define("_NOLEVEL","Sorry you have no permission to vote in this poll");
 define("_NOOPTION","You haven't selected any option");
 
 define("_ADMINPOLL","Survey Administration");
-define("_HELP","Help");
+define("HELP","Help");
 define("_TITLE","Title");
 define("_DATE","Date");
 define("_LEVEL","Level");
