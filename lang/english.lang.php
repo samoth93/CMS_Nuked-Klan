@@ -1,9 +1,110 @@
 <?php
+/**
+ * french.lang.php
+ *
+ * Global french language constants
+ *
+ * @version 1.8
+ * @link http://www.nuked-klan.org Clan Management System for Gamers
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @copyright 2001-2013 Nuked-Klan (Registred Trademark)
+ */
 
-if (!defined("INDEX_CHECK")){
-	exit('You can\'t run this file alone.');
-}
+defined('INDEX_CHECK') or die ('You can\'t run this file alone.');
 
+$arrayGlobalLang = array(
+    #####################################
+    # Global
+    #####################################
+    'NICKNAME'          => 'Nickname',
+    'PASSWORD'          => 'Password',
+    'ADMINISTRATOR'     => 'Administrator',
+    'ADMINISTRATORS'    => 'Administrators',
+    'VISITOR'           => 'Visitor',
+    'VISITORS'          => 'Visitors',
+    'MEMBER'            => 'Member',
+    'MEMBERS'           => 'Members',
+    'USER'              => 'User',
+    'USERS'             => 'Users',
+    'GROUP'             => 'Group',
+    'GROUPS'            => 'Groups',
+    'THEME'             => 'Theme',
+    'THEMES'            => 'Themes',
+    'MODULE'            => 'Module',
+    'MODULES'           => 'Modules',
+    'BLOCKS'            => 'Blocks',
+    'BLOCK'             => 'Block',
+    'MENU'              => 'Menu',
+    'MENUS'             => 'Menus',
+    'SMILEY'            => 'Smiley',
+    'SMILIES'           => 'Smilies',
+    'GAME'              => 'Game',
+    'GAMES'             => 'Games',
+    'TITLE'             => 'Title',
+    'DESCRIPTION'       => 'Description',
+    'MESSAGE'           => 'Message',
+    'MESSAGES'          => 'Messages',
+    'CONTENT'           => 'Content',
+    'MISC'              => 'Miscellaneous',
+    'SEE'               => 'See',
+    'EDIT'              => 'Edit',
+    'MODIFY'            => 'Edit',
+    'DELETE'            => 'Delete',
+    'BACK'              => 'Back',
+    'CONFIRM'           => 'Confirm',
+    'HELP'              => 'Help',
+    'LOGIN'             => 'Login',
+    'LOGOUT'            => 'Logout',
+    'SETTINGS'          => 'Settings',
+    'OPEN'              => 'Open',
+    'OPEN_F'            => 'Open',
+    'CLOSED'            => 'Closed',
+    'CLOSED_F'          => 'Closed',
+    'ENABLE'            => 'Enable',
+    'ENABLED'           => 'Enabled',
+    'ENABLED_F'         => 'Enabled',
+    'DISABLE'           => 'Disable',
+    'DISABLED'          => 'Disabled',
+    'DISABLED_F'        => 'Disabled',
+    'STATUS'            => 'Status',
+    'ALL'               => 'All',
+    'ALL_F'             => 'All',
+    'CONFIG'            => 'Configuration',
+    'VARS'              => 'Variables',
+    'INFO'              => 'Information',
+    'DATE'              => 'Date',
+    'URL'               => 'Url',
+    #####################################
+    # Global - Modules Name
+    #####################################
+    'ARCHIVES_MODNAME'  => 'Archives',
+    'CALENDAR_MODNAME'  => 'Calendar',
+    'COMMENT_MODNAME'   => 'Comments',
+    'CONTACT_MODNAME'   => 'Contact',
+    'DEFY_MODNAME'      => 'Defy',
+    'DOWNLOAD_MODNAME'  => 'Downloads',
+    'FORUM_MODNAME'     => 'Forum',
+    'GALLERY_MODNAME'   => 'Galery',
+    'GUESTBOOK_MODNAME' => 'Guestbook',
+    'IRC_MODNAME'       => 'IRC',
+    'LINKS_MODNAME'     => 'Links',
+    'MEMBERS_MODNAME'   => 'Members',
+    'NEWS_MODNAME'      => 'News',
+    'RECRUIT_MODNAME'   => 'Recruit',
+    'SEARCH_MODNAME'    => 'Search',
+    'SECTIONS_MODNAME'  => 'Articles',
+    'SERVER_MODNAME'    => 'Servers',
+    'STATS_MODNAME'     => 'Stats',
+    'SUGGEST_MODNAME'   => 'Proposal',
+    'SURVEY_MODNAME'    => 'Polls',
+    'TEAM_MODNAME'      => 'Team',
+    'TEXTBOX_MODNAME'   => 'Textbox',
+    'USERBOX_MODNAME'   => 'Private messages',
+    'VOTE_MODNAME'      => 'Vote',
+    'WARS_MODNAME'      => 'Matches',
+);
+
+/*
 define("_WELCOMEINSTALL","Welcome to the 1.7.9 version of nuked-klan ");
 define("_GUIDEINSTALL","The installation guide will help you though all stages of the website creation<br /><b>Please do not delete the nuked-klan copyright whilst using nuked-klan.</b> ");
 define("_TYPEINSTALL","What do you want to do?");
@@ -186,7 +287,7 @@ define("_NEXTPAGE","Next page");
 
 define("_SEND","Send");
 define("_BACK","Back");
-define("_HELP","Help");
+define("HELP","Help");
 define("_ADMINBLOCK","Manage Blocks");
 define("_TITREACTU","View the feed title");
 define("_NBRRSS","Number of links displayed");
@@ -368,4 +469,5 @@ define('_CONTINUE', 'Continue');
 define('_EDITCONFIG', 'Configuration\'s update');
 
 define('_HTMLNOCORRECT', 'HTML code is incorrectly formatted');
+*/
 ?>

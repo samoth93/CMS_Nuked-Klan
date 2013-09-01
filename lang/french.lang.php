@@ -1,4 +1,177 @@
 <?php
+/**
+ * french.lang.php
+ *
+ * Global french language constants
+ *
+ * @version 1.8
+ * @link http://www.nuked-klan.org Clan Management System for Gamers
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @copyright 2001-2013 Nuked-Klan (Registred Trademark)
+ */
+
+defined('INDEX_CHECK') or die ('You can\'t run this file alone.');
+
+$arrayGlobalLang = array(
+    #####################################
+    # Global
+    #####################################
+    'NICKNAME'           => 'Pseudo',
+    'PASSWORD'           => 'Mot de passe',
+    'MAIL'               => 'Adresse e-mail',
+    'ADMINISTRATOR'      => 'Administrateur',
+    'ADMINISTRATORS'     => 'Administrateurs',
+    'VISITOR'            => 'Visiteur',
+    'VISITORS'           => 'Visiteurs',
+    'MEMBER'             => 'Membre',
+    'MEMBERS'            => 'Membres',
+    'USER'               => 'Utilisateur',
+    'USERS'              => 'Utilisateurs',
+    'GROUP'              => 'Groupe',
+    'GROUPS'             => 'Groupes',
+    'THEME'              => 'Th&egrave;me',
+    'THEMES'             => 'Th&egrave;mes',
+    'MODULE'             => 'Module',
+    'MODULES'            => 'Modules',
+    'BLOCKS'             => 'Blocs',
+    'BLOCK'              => 'Bloc',
+    'MENU'               => 'Menu',
+    'MENUS'              => 'Menus',
+    'SMILEY'             => 'Emoticone',
+    'SMILIES'            => 'Emoticones',
+    'GAME'               => 'Jeu',
+    'GAMES'              => 'Jeux',
+    'TITLE'              => 'Titre',
+    'DESCRIPTION'        => 'Description',
+    'MESSAGE'            => 'Message',
+    'MESSAGES'           => 'Messages',
+    'CONTENT'            => 'Contenu',
+    'MISC'               => 'Divers',
+    'SEE'                => 'Voir',
+    'ADD'                => 'Ajouter',
+    'EDIT'               => 'Editer',
+    'MODIFY'             => 'Modifier',
+    'DELETE'             => 'Supprimer',
+    'BACK'               => 'Retour',
+    'CONFIRM'            => 'Confirmer',
+    'HELP'               => 'Aide',
+    'LOGIN'              => 'Connexion',
+    'LOGOUT'             => 'D&eacute;connexion',
+    'SETTINGS'           => 'Param&egrave;tres',
+    'OPEN'               => 'Ouvert',
+    'OPEN_F'             => 'Ouverte',
+    'OPEN_FP'            => 'Ouvertes',
+    'CLOSED'             => 'Ferm&eacute;',
+    'CLOSED_F'           => 'Ferm&eacute;e',
+    'CLOSED_FP'          => 'Ferm&eacute;es',
+    'ENABLE'             => 'Activer',
+    'ENABLED'            => 'Activ&eacute;',
+    'ENABLED_F'          => 'Activ&eacutee',
+    'DISABLE'            => 'D&eacute;sactiver',
+    'DISABLED'           => 'D&eacute;sativ&eacute;',
+    'DISABLED_F'         => 'D&eacute;sactiv&eacute;e',
+    'STATUS'             => 'Statut',
+    'ALL'                => 'Tous',
+    'ALL_F'              => 'Toutes',
+    'CONFIG'             => 'Configuration',
+    'VARS'               => 'Variables',
+    'INFO'               => 'Information',
+    'DATE'               => 'Date',
+    'URL'                => 'Url',
+    'TYPE'               => 'Type',
+    'POSITION'           => 'Position',
+    'ORDER'              => 'Ordre',
+    'SUCCESS'            => 'Succ&egrave;s',
+    'FAIL'               => 'Echec',
+    'ALERT'              => 'Alerte',
+    'BY'                 => 'Par',
+    'YOU_HAVE'        => 'Vous avez',
+    'LEFT'            => 'Gauche',
+    'RIGHT'           => 'Droite',
+    'CENTER'          => 'Centre',
+    'BOTTOM'          => 'Bas',
+    'LANGUAGE'        => 'Langue',
+    'HTML'            => 'Html',
+    'COUNTER'         => 'Compteur',
+    'LOGIN_NAME'      => 'Login',
+    'NAME'            => 'Nom',
+    'SEARCH'          => 'Recherche',
+    'MODULE_DISABLED' => 'D&eacute;sol&eacute; ce module est d&eacute;sactiv&eacute; !',
+    'MODULE_VISITORS_DENIED' => 'D&eacute;sol&eacute; cette zone est r&eacute;serv&eacute;e aux utilisateurs enregistr&eacute;s.',
+    'MODULE_ACCESS_DENIED' => 'D&eacute;sol&eacute; mais vous n\'avez pas les droits pour acc&eacute;der &agrave; cette page',
+    'REGISTRATION' => 'Inscription',
+    'CLICK_TO_CLOSE' => 'Cliquer pour fermer',
+    'GOTO_PRIVATE_MESSAGES' => 'Cliquez ici pour consulter votre messagerie',
+    'NEW_PV_MSG_START' => 'Vous avez reçu ',
+    'NEW_PV_MSG_END' => 'nouveau(x) message(s)',
+    'WEBSITE_CLOSED' => 'Ce site est momentan&eacute;ment ferm&eacute; pour cause de travaux, merci de r&eacute;essayer plus tard',
+    'WEBSITE_CLOSED_ADMIN' => 'Votre site est actuellement ferm&eacute; et accessible uniquement aux administrateurs supr&ecirc;mes. En cas de d&eacute;connexion, veuillez vous identifiez par cette URL',
+    'REMOVE_INSTALL_DIR' => 'Veuillez supprimer le dossier d\'installation de Nuked-Klan (/INSTALL/)',
+    'REMOVE_INSTALL_FILES' => 'Veuillez supprimer vos fichiers d\'installation de modules ou de patchs (install.php ou update.php)',
+    'CAPTCHA_BAD_TOKEN' => 'Token incorrect !<br/>Veuillez utiliser le formulaire.',
+    'CAPTCHA_NO_TOKEN' => 'Token introuvable !<br/>Veuillez utiliser le formulaire.',
+    'CAPTCHA_BAD_JS' => 'La validation javascript a &eacute;chou&eacute;e ! <br/>Veuillez activer javascript.',
+    'CAPTCHA_BAD_FIELD' => 'La validation antiRobot a &eacute;chou&eacute;e ! <br/>Veuillez utiliser le formulaire.',
+    'NONE' => 'Aucun',
+    'NONE_F' => 'Aucune',
+    #####################################
+    # Global - Block Login
+    #####################################
+    'WELCOME'            => 'Bienvenue',
+    'ACCOUNT'            => 'Compte',
+    'PRIVATE_MESSAGE'    => 'Messages Priv&eacute;s',
+    'READS'              => 'Lus',
+    'UNREADS'            => 'Non-lus',
+    'NK_LIST'            => 'Liste',
+    'WHO_IS_ONLINE'      => 'Qui est en ligne',
+    'LAST_MEMBER'        => 'Dernier membre',
+    'REMEMBER_ME'        => 'Se souvenir de moi',
+    'FORGOTTEN_PASSWORD' => 'Mot de passe oubli&eacute;',
+    'REGISTER'           => 'S\'enregistrer',
+    #####################################
+    # Global - Blocks
+    #####################################
+    'VOTE' => 'Voter',
+    'RESULTS' => 'R&eacute;sultats',
+    'OTHER_POLLS' => 'Autres sondages',
+    #####################################
+    # Global - Modules Name
+    #####################################
+    'ARCHIVES_MODNAME'   => 'Archives',
+    'CALENDAR_MODNAME'   => 'Calendrier',
+    'COMMENT_MODNAME'    => 'Commentaires',
+    'CONTACT_MODNAME'    => 'Contact',
+    'DEFY_MODNAME'       => 'Nous d&eacute;fier',
+    'DOWNLOAD_MODNAME'   => 'T&eacute;l&eacute;chargements',
+    'FORUM_MODNAME'      => 'Forum',
+    'GALLERY_MODNAME'    => 'Galerie',
+    'GUESTBOOK_MODNAME'  => 'Livre d\'or',
+    'IRC_MODNAME'        => 'IRC',
+    'LINKS_MODNAME'      => 'Liens',
+    'MEMBERS_MODNAME'    => 'Membres',
+    'NEWS_MODNAME'       => 'News',
+    'RECRUIT_MODNAME'    => 'Recrutement',
+    'SEARCH_MODNAME'     => 'Recherche',
+    'SECTIONS_MODNAME'   => 'Articles',
+    'SERVER_MODNAME'     => 'Serveur',
+    'STATS_MODNAME'      => 'Statistiques',
+    'SUGGEST_MODNAME'    => 'Suggestions',
+    'SURVEY_MODNAME'     => 'Sondage',
+    'TEAM_MODNAME'       => 'Equipe',
+    'TEXTBOX_MODNAME'    => 'Tribune libre',
+    'USERBOX_MODNAME'    => 'Messages priv&eacute;s',
+    'VOTE_MODNAME'       => 'Votes',
+    'WARS_MODNAME'       => 'Matches',
+    #####################################
+    # 404
+    #####################################
+    'PAGE_NOT_FOUND'     => 'Oups! Page introuvable',
+    'BACK_DASHBOARD'     => 'Retour sur le panel',
+    'BACK_WEBSITE'       => 'Retour sur le site',
+);
+
+/*
+
 defined('INDEX_CHECK') or die ('You can\'t run this file alone.');
 
 define("_WELCOMEINSTALL","Bienvenue sur Nuked-Klan 1.7.9");
@@ -183,7 +356,7 @@ define("_NEXTPAGE","Page Suivante");
 
 define("_BACK","Retour");
 define("_SEND","Envoyer");
-define("_HELP","Aides");
+define("HELP","Aides");
 define("_ADMINBLOCK","Gestion des Blocks");
 define("_TITREACTU","Afficher le titre du flux");
 define("_NBRRSS","Nombre de lien affiché");
@@ -302,28 +475,28 @@ define("_OPTIMISATION","Optimisation");
 define("_OPTIMISATION1","Nous avons optimisé quelques codes comme le système de pagination afin de rendre légérement moins lourd votre site, cependant nous n'avons pu optimisé tout le code ne s'agissant que d'une mise à jour 1.7.X.");
 define("_ADMINISTRATION","Administration");
 define("_ADMINISTRATION1","Afin de réaliser une administration de notre époque, nous avons préféré repartir de zéro, et concevoir un système dans lequel administrateurs, utilisateurs,
-		machines, et sites officiels seraient reliés.
-		Pour cela, nous avons mis en place des systèmes de communication comme les notifications, les actions, les discussions admin, mais aussi les signatures des modules
-		les mises à jour, les messages.
-		Cette administration possède un panneau capable de vous transporter n'importe où dans votre administration mais aussi de vous avertir.");
+        machines, et sites officiels seraient reliés.
+        Pour cela, nous avons mis en place des systèmes de communication comme les notifications, les actions, les discussions admin, mais aussi les signatures des modules
+        les mises à jour, les messages.
+        Cette administration possède un panneau capable de vous transporter n'importe où dans votre administration mais aussi de vous avertir.");
 define("_BANTEMP","Ban temporaire");
 define("_BANTEMP1","Un système de bannissement temporaire a été mise en place, vous avez donc le choix de bannir l'utilisateur 1 jour, 7 jours, 1 mois, 1 an, ou définitivement.");
 define("_SHOUTBOX","Shoutbox ajax");
 define("_SHOUTBOX1","Un nouveau bloc textbox a été développé, il est capable de dire qui est en ligne, il est en ajax, c'est à dire que vous pouvez envoyer des messages sans rechargement de
-		la page. De plus, le bloc affiche les nouveaux messages sans rechargement de la page.");
+        la page. De plus, le bloc affiche les nouveaux messages sans rechargement de la page.");
 define("_ERRORSQL","Gestions des erreurs SQL");
 define("_ERRORSQL1","Ce système est à double sens, lorsqu'un visiteur tombe sur une erreur SQL, plutôt que de voir l'erreur, il est redirigé vers une page d'excuse, et un
-		rapport de l'erreur SQL est envoyé dans l'administration.");
+        rapport de l'erreur SQL est envoyé dans l'administration.");
 define("_MULTIWARS","Multi-map module wars");
 define("_MULTIWARS1","Le nouveau module permet de visionner les prochains matchs mais aussi il permet de choisir le nombre de maps, il y a alors un score par map, puis un score final
-		qui est la moyenne des scores par map.");
+        qui est la moyenne des scores par map.");
 define("_COMSYS","Système commentaires");
 define("_COMSYS1","Le nouveau système de commentaires permet rapidement d'envoyer un commentaire en ajax et de visionner les 4 derniers commentaires.");
 define("_EDITWYS","Editeur WYSIWYG");
 define("_EDITWYS1","Ce nouveau système permet d'avoir une visualisation rapide de votre message, news ou autre après mise en forme.");
 define("_MISAJ","Mise à jour automatique");
 define("_MISAJ1","Si une faille est détectée, nous pouvons mettre à jour rapidement tous les sites depuis Nuked-Klan.org, et ainsi sécuriser votre site sans effectuer
-		de modifications et sans interrompre votre navigation.");
+        de modifications et sans interrompre votre navigation.");
 define("_CONT","Module Contact");
 define("_CONT1","Nous avons ajouté le module contact indispensable au fonctionnement d'un site web.");
 define("_ERREURPASS","Erreur mot de passe");
@@ -374,4 +547,7 @@ define('_CONTINUE', 'Continuer');
 define('_EDITCONFIG', 'Mise à jour de la configuration');
 
 define('_HTMLNOCORRECT', 'Le code HTML est mal formaté');
+
+*/
+
 ?>

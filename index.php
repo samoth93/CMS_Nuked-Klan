@@ -35,12 +35,19 @@ if (!defined('NK_INSTALLED')) {
 
 // Si le site est fermé on affiche le message de fermeture
 if (!defined('NK_OPEN')) {
-    echo WBSITE_CLOSED;
+    echo WEBSITE_CLOSED;
     exit();
 }
 
 require_once 'nuked.php';
 require_once 'Includes/hash.php';
+
+// Inclusion du fichier de langue général
+include_once 'lang/'.$GLOBALS['language'].'.lang.php';
+nkTranslate('lang/'.$GLOBALS['language'].'.lang.php');
+
+// Ouverture du buffer PHP
+$bufferMedias = ob_start();
 
 if ($nuked['time_generate'] == 'on') {
     $microTime = microtime();
@@ -49,8 +56,19 @@ if ($nuked['time_generate'] == 'on') {
 // GESTION DES ERREURS SQL - SQL ERROR MANAGEMENT
 if(ini_get('set_error_handler')) set_error_handler('erreursql');
 
-$session       = sessionCheck();
-$user          = ($session == 1) ? secure() : array();
+$session  = sessionCheck();
+
+if($session === true){
+    $user =  secure();
+}
+else{
+    $dbsVisitor = "SELECT access AS accessMods FROM ".GROUP_TABLE." WHERE id = '3'";
+    $dbeVisitor = mysql_query($dbsVisitor);
+    $user = mysql_fetch_assoc($dbeVisitor);
+    $user['nickName']  = VISITOR;
+    $user['ids_group'] = 3;
+}
+
 $session_admin = adminCheck();
 
 if (isset($_REQUEST['nuked_nude']) && $_REQUEST['nuked_nude'] == 'ajax') {
@@ -94,7 +112,10 @@ if (preg_match('`\.\.`', $theme) || preg_match('`\.\.`', $language) || preg_matc
     preg_match('`\.\.`', $_REQUEST['im_file']) || preg_match('`http\:\/\/`i', $_REQUEST['file']) ||
     preg_match('`http\:\/\/`i', $_REQUEST['im_file']) || is_int(strpos( $_SERVER['QUERY_STRING'], '..' )) ||
     is_int(strpos( $_SERVER['QUERY_STRING'], 'http://' )) || is_int(strpos( $_SERVER['QUERY_STRING'], '%3C%3F' ))){
-    exit(WAYTODO);
+    exit();
+/**
+ * @todo Ajouter un insert SQL avec les infos IP etc... pour prevenir l'administrateur
+ */
 }
 
 $_REQUEST['file']    = basename(trim($_REQUEST['file']));
@@ -106,23 +127,16 @@ $language            = trim($language);
 // Check Ban
 $check_ip = banip();
 
-if (!$user) {
-    $visiteur          = 0;
+if (nkHasVisitor()) {
     $_SESSION['admin'] = false;
-}
-else {
-    $visiteur          = $GLOBALS['user']['idGroup'];
 }
 
 // Inclusion du fichier des couleurs
 require_once 'themes/'.$theme.'/colors.php';
 
-// Inclusion du fichier de langue général
-translate('lang/'.$language.'.lang.php');
-
 // Si le site est fermé
 if ($nuked['nk_status'] == 'closed'
-    && (!$user || !nkAccessAdmin('Admin'))
+    && (nkHasVisitor() || !nkAccessAdmin('Admin'))
     && $_REQUEST['op'] != 'login_screen'
     && $_REQUEST['op'] != 'login_message'
     && $_REQUEST['op'] != 'login') {
@@ -132,14 +146,14 @@ if ($nuked['nk_status'] == 'closed'
         <head>
             <title><?php echo $nuked['name']; ?> - <?php echo $nuked['slogan']; ?></title>
             <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-            <link type="text/css" rel="stylesheet" media="screen" href="media/css/nkDefault.css" />
+            <link type="text/css" rel="stylesheet" media="screen" href="assets/css/nkDefault.css" />
             <link type="text/css" rel="stylesheet" media="screen" href="themes/<?php echo $theme; ?>/style.css" />
         </head>
         <body style="background:<?php echo $bgcolor2; ?>;">
             <div id="nkSiteClosedWrapper" style=" border: 1px solid <?php echo $bgcolor3; ?>; background:<?php echo $bgcolor2; ?>;">
                 <h1><?php echo $nuked['name']; ?> - <?php echo $nuked['slogan']; ?></h1>
-                <p><?php echo _SITECLOSED; ?></p>
-                <a href="index.php?file=User&amp;op=login_screen"><strong><?php echo _LOGINUSER; ?></strong></a>
+                <p><?php echo WEBSITE_CLOSED; ?></p>
+                <a href="index.php?file=User&amp;op=login_screen"><strong><?php echo LOGIN; ?></strong></a>
             </div>
         </body>
     </html>
@@ -152,8 +166,9 @@ else if ( ($_REQUEST['file'] == 'Admin'
             && (isset($_SESSION['admin']) && $_SESSION['admin'] == 0)) {
     require_once 'modules/Admin/login.php';
 }
+
 else if ( ( $_REQUEST['file'] != 'Admin' AND $_REQUEST['page'] != 'admin' )
-            || ( nivo_mod($_REQUEST['file']) === false || ( nivo_mod($_REQUEST['file']) > -1 && nkAccessAdmin($_REQUEST['file']) ) ) ) {
+            || ( $_REQUEST['file'] == 'Admin' || nkIsModEnabled($_REQUEST['file']) && nkAccessModule($_REQUEST['file']) ) ) {
 
 
     require_once 'themes/'.$theme.'/theme.php';
@@ -170,19 +185,36 @@ else if ( ( $_REQUEST['file'] != 'Admin' AND $_REQUEST['page'] != 'admin' )
         if ( !($_REQUEST['file'] == 'Admin' || $_REQUEST['page'] == 'admin' || (isset($_REQUEST['nuked_nude']) && $_REQUEST['nuked_nude'] == 'admin'))
             || $_REQUEST['page'] == 'login') {
 
-            require_once 'Includes/nkMediasIncludes.php';
-            // Les appels de top(); et head(); se font dans la fonction suivante
-            displayMedias();
+            top();
+
+        require_once 'Includes/nkMediasIncludes.php';
+
+        $bufferEdited = ob_get_contents();
+
+        $findJquery = (boolean)preg_match('#<script[\s]*[type="text/javascript"]*[\s]*src="[A-z0-9:./_-]*(jquery)+[A-z0-9.:/_-]*"[\s]*[type="text/javascript"]*[\s]*>#', $bufferEdited);
+        $mediasToInclude = printMedias($findJquery);
+
+        if($findJquery === true){
+            $bufferEdited = preg_replace('#<script[\s]*[type="text/javascript"]*[\s]*src="[A-z0-9:./_-]*(jquery)+[A-z0-9.:/_-]*"[\s]*[type="text/javascript"]*[\s]*>#',
+                                      '<script type="text/javascript" src="http://code.jquery.com/jquery-1.8.3.js">',
+                                      $bufferEdited);
+        }
+
+        $bufferEdited = preg_replace('#</head>#', $mediasToInclude.'</head>', $bufferEdited);
+
+        ob_end_clean();
+
+        echo $bufferEdited;
 ?>
-            <script type="text/javascript" src="media/js/infobulle.js"></script>
+            <script type="text/javascript" src="assets/scripts/infobulle.js"></script>
             <script type="text/javascript">
                 InitBulle('<?php echo $bgcolor2; ?>','<?php echo $bgcolor3; ?>', 2);
             </script>
-            <script type="text/javascript" src="media/js/syntaxhighlighter/shCore.js"></script>
-            <script type="text/javascript" src="media/js/syntaxhighlighter/shAutoloader.js"></script>
-            <script type="text/javascript" src="media/js/syntaxhighlighter.autoloader.js"></script>
-            <link type="text/css" rel="stylesheet" href="media/css/syntaxhighlighter/shCoreMonokai.css"/>
-            <link type="text/css" rel="stylesheet" href="media/css/syntaxhighlighter/shThemeMonokai.css"/>
+            <script type="text/javascript" src="assets/scripts/syntaxhighlighter/shCore.js"></script>
+            <script type="text/javascript" src="assets/scripts/syntaxhighlighter/shAutoloader.js"></script>
+            <script type="text/javascript" src="assets/scripts/syntaxhighlighter.autoloader.js"></script>
+            <link type="text/css" rel="stylesheet" href="assets/css/syntaxhighlighter/shCoreMonokai.css"/>
+            <link type="text/css" rel="stylesheet" href="assets/css/syntaxhighlighter/shThemeMonokai.css"/>
 <?php
         }
 
@@ -190,7 +222,7 @@ else if ( ( $_REQUEST['file'] != 'Admin' AND $_REQUEST['page'] != 'admin' )
             if ($nuked['nk_status'] == 'closed') {
 ?>
                 <div id="nkSiteClosedLogged" class="nkAlert">
-                    <strong><?php echo _YOURSITEISCLOSED; ?></strong>
+                    <strong><?php echo WEBSITE_CLOSED_ADMIN; ?></strong>
                     <p><?php echo $nuked['url']; ?>/index.php?file=User&amp;op=login_screen</p>
                 </div>
 <?php
@@ -198,25 +230,25 @@ else if ( ( $_REQUEST['file'] != 'Admin' AND $_REQUEST['page'] != 'admin' )
             if (is_dir('INSTALL/')){
 ?>
                 <div id="nkInstallDirTrue" class="nkAlert">
-                    <strong><?php echo REMOVEDIRINST; ?></strong>
+                    <strong><?php echo REMOVE_INSTALL_DIR; ?></strong>
                 </div>
 <?php
             }
             if (file_exists('install.php') || file_exists('update.php')){
 ?>
                 <div id="nkInstallFileTrue" class="nkAlert">
-                    <strong><?php echo REMOVEINST; ?></strong>
+                    <strong><?php echo REMOVE_INSTALL_FILES; ?></strong>
                 </div>
 <?php
             }
         }
 
-        if (($user && $GLOBALS['user']['nbMess'] > 0) && !isset($_COOKIE['popup']) && $_REQUEST['file'] != 'User' && $_REQUEST['file'] != 'Userbox' && $_REQUEST['file'] != 'Admin' && $_REQUEST['page'] != 'admin'){
+        if ((!nkHasVisitor() && $GLOBALS['user']['nbMess'] > 0) && !isset($_COOKIE['popup']) && $_REQUEST['file'] != 'User' && $_REQUEST['file'] != 'Userbox' && $_REQUEST['file'] != 'Admin' && $_REQUEST['page'] != 'admin'){
 ?>
                 <div id="nkNewPrivateMsg" class="nkAlert">
-                    <strong><?php echo _NEWMESSAGESTART; ?>&nbsp;<?php echo $GLOBALS['user']['nbMess']; ?>&nbsp;<?php echo _NEWMESSAGEEND; ?></strong>
-                    <a href="index.php?file=Userbox"><?php echo _GOTO_PRIVATE_MESSAGES; ?></a>
-                    <a id="nkNewPrivateMsgClose" href="#" title="<?php echo _CLICK_TO_CLOSE; ?>"><span><?php echo _CLICK_TO_CLOSE; ?></span></a>
+                    <strong><?php echo NEW_PV_MSG_START; ?>&nbsp;<?php echo $GLOBALS['user']['nbMess']; ?>&nbsp;<?php echo NEW_PV_MSG_END; ?></strong>
+                    <a href="index.php?file=Userbox"><?php echo GOTO_PRIVATE_MESSAGES; ?></a>
+                    <a id="nkNewPrivateMsgClose" href="#" title="<?php echo CLICK_TO_CLOSE; ?>"><span><?php echo CLICK_TO_CLOSE; ?></span></a>
                 </div>
 <?php
         }
@@ -225,8 +257,64 @@ else if ( ( $_REQUEST['file'] != 'Admin' AND $_REQUEST['page'] != 'admin' )
         header('Content-Type: text/html;charset=ISO-8859-1');
     }
 
-    if (is_file('modules/' . $_REQUEST['file'] . '/' . $_REQUEST['im_file'] . '.php')) {
-        require_once 'modules/' . $_REQUEST['file'] . '/' . $_REQUEST['im_file'] . '.php';
+    $fileMod = 'modules/'.$_REQUEST['file'].'/'.$_REQUEST['im_file'].'.php';
+
+    if ($_REQUEST['file'] == 'Admin' && $_REQUEST['im_file'] != 'index') {
+        $fileMod = 'modules/'.$_REQUEST['file'].'/pages/'.$_REQUEST['im_file'].'.php';
+    }
+
+    if (is_file($fileMod)) {
+        if($_REQUEST['im_file'] == 'admin'){
+            $functionAccess = 'nkAccessAdmin';
+        }
+        else{
+            $functionAccess = 'nkAccessModule';
+        }
+
+        $hasAccess = $functionAccess($_REQUEST['file']);
+        if($_REQUEST['file'] != 'Admin'
+           && $_REQUEST['file'] != '404'
+           && $_REQUEST['page'] != 'Admin'
+           && ((isset($_REQUEST['nuked_nude'])
+                && $_REQUEST['nuked_nude'] != 'Admin')
+              || !isset($_REQUEST['nuked_nude']))
+          ){
+            $modEnabled  = nkIsModEnabled($_REQUEST['file']);
+        }
+        else{
+            $modEnabled = true;
+        }
+
+        if(($hasAccess === true && $modEnabled === true) || $_REQUEST['file'] == 'User'){
+
+            require_once $fileMod;
+
+        }
+        else if ($modEnabled === false && $_REQUEST['file']) {
+?>
+            <div class="nkErrorMod">
+                <p><?php echo MODULE_DISABLED; ?></p>
+                <a href="javascript:history.back()"><strong><?php echo BACK; ?></strong></a>
+            </div>
+<?php
+        }
+        else if ($modEnabled === true && (!nkAccessModule($_REQUEST['file']) && nkHasVisitor())) {
+?>
+            <div class="nkErrorMod">
+                <p><?php echo MODULE_VISITORS_DENIED; ?></p>
+                <a href="index.php?file=User&amp;op=login_screen"><?php echo LOGIN; ?></a> |
+                <a href="index.php?file=User&amp;op=reg_screen"><?php echo REGISTRATION; ?></a>
+            </div>
+<?php
+        }
+        else {
+?>
+            <div class="nkErrorMod">
+                <p><?php echo MODULE_ACCESS_DENIED; ?></p>
+                <a href="javascript:history.back()"><strong><?php echo BACK; ?></strong></a>
+            </div>
+<?php
+        }
     }
     else {
         require_once 'modules/404/index.php';
@@ -235,8 +323,8 @@ else if ( ( $_REQUEST['file'] != 'Admin' AND $_REQUEST['page'] != 'admin' )
     if ($_REQUEST['file'] != 'Admin' && $_REQUEST['page'] != 'admin' && defined('EDITOR_CHECK')) {
 
         ?>
-            <script type="text/javascript" src="media/ckeditor/ckeditor.js"></script>
-            <script type="text/javascript" src="media/ckeditor/config.js"></script>
+            <script type="text/javascript" src="assets/ckeditor/ckeditor.js"></script>
+            <script type="text/javascript" src="assets/ckeditor/config.js"></script>
             <script type="text/javascript">
                 //<![CDATA[
                 if(document.getElementById('e_basic')){
@@ -285,11 +373,10 @@ else if ( ( $_REQUEST['file'] != 'Admin' AND $_REQUEST['page'] != 'admin' )
     if (!isset($_REQUEST['nuked_nude'])) {
         if (!($_REQUEST['file'] == 'Admin' || $_REQUEST['page'] == 'admin') || $_REQUEST['page'] == 'login') {
             footer();
+            require_once 'Includes/copyleft.php';
         }
 
-        require_once 'Includes/copyleft.php';
-
-        if ($nuked['time_generate'] == 'on') {
+        if ($nuked['time_generate'] == 'on' && (!($_REQUEST['file'] == 'Admin' || $_REQUEST['page'] == 'admin' || (isset($_REQUEST['nuked_nude']) && $_REQUEST['nuked_nude'] == 'admin')))) {
             $microTime = microtime() - $microTime;
             echo '<p class="nkGenerated">Generated in '.$microTime.'s</p>';
         }
@@ -306,13 +393,14 @@ else {
     opentable();
     translate('lang/'.$language.'.lang.php');
 ?>
-    <link type="text/css" rel="stylesheet" href="media/css/nkDefault.css" />
+    <link type="text/css" rel="stylesheet" href="assets/css/nkDefault.css" />
     <div class="nkErrorMod">
-        <p><?php echo _NOENTRANCE; ?></p>
-        <a href="javascript:history.back()"><b><?php echo _BACK; ?></b></a>
+        <p><?php echo MODULE_ACCESS_DENIED; ?></p>
+        <a href="javascript:history.back()"><b><?php echo BACK; ?></b></a>
     </div>
 
 <?php
+
     closetable();
     footer();
 }
