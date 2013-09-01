@@ -39,7 +39,7 @@ define("_NOPLAYERS","No players");
 
 define("_ADMINSERVER","Servers Administration");
 define("_SERVER","Servers");
-define("_HELP","Help");
+define("HELP","Help");
 define("_DELETESERV","You are about to remove");
 define("_CONFIRM","Continue?");
 define("_CAT","Category");
