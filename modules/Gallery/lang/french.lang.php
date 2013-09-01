@@ -1,7 +1,7 @@
 <?php
 if (!defined("INDEX_CHECK"))
 {
-	exit('You can\'t run this file alone.');
+    exit('You can\'t run this file alone.');
 }
 define("_NOENTRANCE","Désolé mais vous n'avez pas les droits pour accéder à cette page");
 define("_ZONEADMIN","Cette zone est réservée a l'Admin, Désolé...");
@@ -87,4 +87,9 @@ define("_ACTIONMODIFCATGAL","a modifié dans la galerie la catégorie");
 define("_ACTIONDELCATGAL","a supprimé dans la galerie la catégorie");
 define("_ACTIONPREFGAL","a modifié les préférences de la galerie");
 define("_ACTIONPOSCATGAL","a modifié la position de la catégorie galerie");
+define('_PREFS', 'Préférences');
+define('_POSITION', 'Position');
+define('_MOVEUP', 'Déplacer vers le haut');
+define('_MOVEDOWN', 'Déplacer vers le bas');
+define('_SEND', 'Envoyer');
 ?>

@@ -36,7 +36,7 @@ define("_ADDTHE","Added on");
 define("_LASTADD","Last added on");
 
 define("_ADMINGALLERY","Gallery Administration");
-define("_HELP","Help");
+define("HELP","Help");
 define("_CAT","Category");
 define("_URLIMG2","Thumbnail's Url");
 define("_URLIMG","Image's url");

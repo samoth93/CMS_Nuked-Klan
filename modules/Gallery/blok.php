@@ -18,9 +18,9 @@ translate("modules/Gallery/lang/" . $language . ".lang.php");
 include("modules/Gallery/config.php");
 
 echo '<script type="text/javascript"><!--'."\n"
-. 'document.write(\'<link rel="stylesheet" type="text/css" href="media/shadowbox/shadowbox.css">\');'."\n"
+. 'document.write(\'<link rel="stylesheet" type="text/css" href="assets/shadowbox/shadowbox.css">\');'."\n"
 . '--></script>'."\n"
-. '<script type="text/javascript" src="media/shadowbox/shadowbox.js"></script>'."\n"
+. '<script type="text/javascript" src="assets/shadowbox/shadowbox.js"></script>'."\n"
 . '<script type="text/javascript">'."\n"
 . 'Shadowbox.init();'."\n"
 . '</script>'."\n";
