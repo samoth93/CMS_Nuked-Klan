@@ -20,7 +20,7 @@ define('_NOENTRANCE','Sorry you haven\'t got the permissions to open this page')
 define('_ZONEADMIN','This zone is reserved for Admins, sorry...');
 define('_NOEXIST','Sorry either this page does not exist or the address that you typed is incorrect');
 define('_ADMINCONTACT','Contact the Administration');
-define('_HELP','Help');
+define('HELP','Help');
 define('_DELETEMESSAGEFROM','You are about to remove the message from');
 define('_LISTMAIL','Message List');
 define('_PREFS','Preferences');
