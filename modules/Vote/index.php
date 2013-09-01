@@ -11,12 +11,8 @@ defined('INDEX_CHECK') or die ('<div style="text-align: center;">You cannot open
 
 translate('modules/Vote/lang/' . $language . '.lang.php');
 
-$visiteur = ($user) ? $GLOBALS['user']['idGroup'] : 0;
-
 function vote_index($module, $vid) {
-    global $user, $nuked, $visiteur;
-
-    $level_access = nivo_mod('Vote');
+    global $user, $nuked;
 
     echo '<b>' . _NOTE . ' :</b>&nbsp;';
 
@@ -49,19 +45,17 @@ function vote_index($module, $vid) {
         echo _NOTEVAL;
     }
 
-    if ($visiteur >= $level_access && $level_access > -1) {
+    if (nkAccessModule('Vote') && nkIsModEnabled('Vote')) {
         echo '&nbsp;<small>[ <a href="#" onclick="javascript:window.open(\'index.php?file=Vote&amp;nuked_nude=index&amp;op=post_vote&amp;vid=' . $vid . '&amp;module=' . $module . '\',\'screen\',\'toolbar=0,location=0,directories=0,status=0,scrollbars=0,resizable=0,copyhistory=0,menuBar=0,width=350,height=150,top=30,left=0\');return(false)">' . _RATE . '</a> ]</small>'."\n";
     }
 }
 
 function post_vote($module, $vid) {
-    global $user, $nuked, $bgcolor2, $theme, $visiteur,$userIp;
+    global $user, $nuked, $bgcolor2, $theme, $userIp;
 
-    $level_access = nivo_mod('Vote');
+    if (nkAccessModule('Vote')) {
 
-    if ($visiteur >= $level_access) {
-
-        if ($user) {
+        if (!nkHasVisitor()) {
             $author = $GLOBALS['user']['nickName'];
         } else {
             $author = _VISITOR;
@@ -111,13 +105,11 @@ function post_vote($module, $vid) {
 }
 
 function do_vote($vid, $module, $vote) {
-    global $nuked, $user, $bgcolor2, $theme, $visiteur,$userIp;
-
-    $level_access = nivo_mod('Vote');
+    global $nuked, $user, $bgcolor2, $theme, $userIp;
     $module = mysql_real_escape_string(stripslashes($module));
 
-    if ($visiteur >= $level_access && is_numeric($vote) && $vote<=10 && $vote>=0) {
-        if ($user) {
+    if (nkAccessModule('Vote') && is_numeric($vote) && $vote<=10 && $vote>=0) {
+        if (!nkHasVisitor()) {
             $author = $GLOBALS['user']['nickName'];
         } else {
             $author =  _VISITOR;
