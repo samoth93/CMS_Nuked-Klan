@@ -1,7 +1,7 @@
 <?php
 if (!defined("INDEX_CHECK"))
 {
-	exit('You can\'t run this file alone.');
+    exit('You can\'t run this file alone.');
 }
 define("_INDEXSECTIONS","Index");
 define("_CLASSBY","Trier par");
@@ -86,4 +86,11 @@ define("_ACTIONMODIFCATSEC","a modifié la catégorie article");
 define("_ACTIONDELCATSEC","a supprimé la catégorie article");
 define("_ACTIONCONFSEC","a modifié les préférences du module Sections");
 define("_ACTIONPOSSEC","a modifié la position de la catégorie article");
+
+define("_PREFS","Préférences");
+define('_NAVART', 'Articles');
+define('_POSITION', 'Position');
+define('_MOVEUP', 'Déplacer vers le haut');
+define('_MOVEDOWN', 'Déplacer vers le bas');
+define('_SEND', 'Envoyer');
 ?>

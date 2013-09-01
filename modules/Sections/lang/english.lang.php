@@ -40,7 +40,7 @@ define("_NEW","<span style=\"color: red;\"><b><i>New!</i></b></span>");
 define("_NOENTRANCE","Sorry you have no permission to access this page");
 define("_ZONEADMIN","This zone is reserved for the Admin, sorry...");
 define("_ADMINSECTIONS","Sections Administration");
-define("_HELP","Help");
+define("HELP","Help");
 define("_DELETEART","You are about to remove");
 define("_CONFIRM","Continue?");
 define("_EDIT","Edit");
