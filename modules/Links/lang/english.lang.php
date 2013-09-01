@@ -50,7 +50,7 @@ define("_INDICATELINK","Report broken link");
 define("_NOENTRANCE","Sorry you have no permission to access this page");
 define("_ZONEADMIN","This zone is reserved for the Admin, sorry...");
 define("_ADMINLINKS","Links Administration");
-define("_HELP","Help");
+define("HELP","Help");
 define("_DELETELINK","You are about to remove");
 define("_CONFIRM","Continue?");
 define("_URL","Url");
