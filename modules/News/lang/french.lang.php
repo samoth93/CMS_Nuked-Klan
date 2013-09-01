@@ -1,7 +1,7 @@
 <?php
 if (!defined("INDEX_CHECK"))
 {
-	exit('You can\'t run this file alone.');
+    exit('You can\'t run this file alone.');
 }
 define("_NOENTRANCE","Désolé mais vous n'avez pas les droits pour accéder à cette page");
 define("_ZONEADMIN","Cette zone est réservée a l'Admin, Désolé...");
@@ -22,6 +22,9 @@ define("_BADMAIL","Adresse email non valide !");
 define("_SENDFMAIL","News envoyée avec succès.");
 define("_READNEWS","vous invite à lire la news :");
 define("_NEWSURL","L'URL de cette news est :");
+define("_NEWSPOSTBY","Postée par");
+define("_THE", "le");
+define("_NEWSCOMMENT","Commentaires");
 
 define("_ADMINNEWS","Administration des News");
 define("_HELP","Aides");

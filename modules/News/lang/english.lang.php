@@ -24,7 +24,7 @@ define("_READNEWS","invites you to read the news:");
 define("_NEWSURL","The URL for this news is:");
 
 define("_ADMINNEWS","News Administration");
-define("_HELP","Help");
+define("HELP","Help");
 define("_DELETENEWS","You are about to remove");
 define("_CONFIRM","Continue?");
 define("_TITLE","Title");
