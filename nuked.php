@@ -21,19 +21,6 @@ unset($sql_conf, $row);
 // CONVERT ALL HTML ENTITIES TO THEIR APPLICABLE CHARACTERS
 $nuked['prefix'] = $db_prefix;
 
-// FUNCTIONS TO FIX COMPATIBILITY WITH PHP5.4
-function nkHtmlEntityDecode($var){
-    return html_entity_decode($var,ENT_QUOTES,'ISO-8859-1');
-}
-
-function nkHtmlSpecialChars($var){
-    return htmlspecialchars($var,ENT_QUOTES,'ISO-8859-1');
-}
-
-function nkHtmlEntities($var){
-    return htmlentities($var,ENT_QUOTES,'ISO-8859-1');
-}
-
 // FUNCTION TO FIX PRINTING TAGS
 function printSecuTags($value){
     $value = nkHtmlEntities(nkHtmlEntityDecode(nkHtmlEntityDecode($value)));
@@ -96,7 +83,7 @@ function nkDate($timestamp, $block = false) {
 
     $format = ((($block === false) ? $isBlock : $block) === true) ? ($language == 'french') ? '%d/%m/%Y' : '%m/%d/%Y' : $nuked['dateformat'];
     // iconv pour eviter les caracteres speciaux dans la date
-    return iconv('UTF-8','ISO-8859-1',strftime($format, $timestamp));
+    return iconv('UTF-8','ISO-8859-1//TRANSLIT',strftime($format, $timestamp));
     //return iconv('UTF-8','ISO-8859-1',utf8_encode(strftime($format, $timestamp))); // For Windows servers
 
 }
@@ -160,10 +147,10 @@ function session_read($id){
 
 // WRITE PHP SESSION
 function session_write($id, $data){
+    connect();
+
     $id = mysql_real_escape_string($id);
     $data = mysql_real_escape_string($data);
-
-    connect();
 
     $sql = mysql_query('INSERT INTO ' . TMPSES_TABLE . ' (session_id, session_start, session_vars) VALUES ("' . $id . '", ' . time() . ', \'' . $data . '\')');
 
@@ -230,7 +217,7 @@ include ('Includes/nkSessions.php');
 function banip() {
     global $userIp, $user, $language;
 
-    if(array_key_exists(2, $user)){
+    if(array_key_exists('nickName', $GLOBALS['user'])){
         $userName = $GLOBALS['user']['nickName'];
     }
     else{
@@ -285,54 +272,12 @@ function banip() {
             $upd_ban = mysql_query('UPDATE ' . BANNED_TABLE . ' SET ip = "' . $userIp . '"' . $where_user . ' ' . $where_query);
             // Redirection vers la page de banissement
             $url_ban = 'ban.php?ip_ban=' . $banned_ip;
-            if(!empty($user)){
+            if(!nkHasVisitor()){
                 $url_ban .= '&user=' . urlencode($GLOBALS['user']['nickName']);
             }
             redirect($url_ban, 0);
         }
     }
-}
-
-// DISPLAY ALL BLOCKS
-function get_blok($side){
-    global $user, $nuked;
-
-    if ($side == 'gauche') {
-        $active = 1;
-        $nuked['IsBlok'] = TRUE;
-    } else if ($side == 'droite') {
-        $active = 2;
-        $nuked['IsBlok'] = TRUE;
-    } else if ($side == 'centre') {
-        $active = 3;
-    } else if ($side == 'bas') {
-        $active = 4;
-    }
-
-    $aff_good_bl = 'block_' . $side;
-
-    $sql = mysql_query('SELECT bid, active, position, module, titre, content, type, nivo, page FROM ' . BLOCK_TABLE . ' WHERE active = ' . $active . ' ORDER BY position');
-    while ($blok = mysql_fetch_assoc($sql)){
-        $blok['titre'] = printSecuTags($blok['titre']);
-        $test_page = '';
-        $blok['page'] = explode('|', $blok['page']);
-        $size = count($blok['page']);
-        for($i=0; $i<$size; $i++){
-            if (isset($_REQUEST['file']) && $_REQUEST['file'] == $blok['page'][$i] || $blok['page'][$i] == 'Tous') $test_page = 'ok';
-        }
-
-        $visiteur = $user ? $GLOBALS['user']['idGroup'] : 0;
-
-        if ($visiteur >= $blok['nivo'] && $test_page == 'ok'){
-            if(file_exists('Includes/blocks/block_' . $blok['type'] . '.php'))
-                include_once('Includes/blocks/block_' . $blok['type'] . '.php');
-            $function = 'affich_block_' . $blok['type'];
-            $blok = $function($blok);
-
-            if (!empty($blok['content'])) $aff_good_bl($blok);
-        }
-    }
-    $nuked['IsBlok'] = FALSE;
 }
 
 // QUERY IMAGE, BLOCK ALL IMAGE FILE (PHP, HTML ..)
@@ -827,6 +772,12 @@ function number($count, $each, $link){
 function nbvisiteur(){
     global $user, $nuked, $userIp;
 
+    /**
+     * @todo : mettre à jour avec le systeme de groupes
+     *         utiliser les fonctions nkHasVisitor(), nkHasMember(), nkHasAdmin()
+     *         pour déterminer le type d'utilisateur
+     */
+
     $limite = time() + $nuked['nbc_timeout'];
     $time = time();
 
@@ -842,61 +793,44 @@ function nbvisiteur(){
         $req = mysql_query("SELECT IP FROM " . NBCONNECTE_TABLE . " " . $where);
         $query = mysql_num_rows($req);
 
+        if(nkHasVisitor()){
+            $type = '0';
+        }
+        elseif(nkHasMember()){
+            $type = '1';
+        }
+        elseif(nkHasAdmin()){
+            $type = '2';
+        }
+        else{
+            $type = '0';
+        }
+
         if ($query > 0){
             if (isset($GLOBALS['user']['id'])){
-                $req = mysql_query("UPDATE " . NBCONNECTE_TABLE . " SET date = '" . $limite . "', type = '" . $GLOBALS['user']['idGroup'] . "', IP = '" . $userIp . "', username = '" . $GLOBALS['user']['nickName'] . "' WHERE user_id = '" . $GLOBALS['user']['id'] . "'");
+                $req = mysql_query("UPDATE " . NBCONNECTE_TABLE . " SET date = '" . $limite . "', type = '".$type."', IP = '" . $userIp . "', username = '" . $GLOBALS['user']['nickName'] . "' WHERE user_id = '" . $GLOBALS['user']['id'] . "'");
             }
             else{
-                $req = mysql_query("UPDATE " . NBCONNECTE_TABLE . " SET date = '" . $limite . "', type = '', user_id = '', username = 'visitor' WHERE IP = '" . $userIp . "'");
+                $req = mysql_query("UPDATE " . NBCONNECTE_TABLE . " SET date = '" . $limite . "', type = '0', user_id = '', username = 'visitor' WHERE IP = '" . $userIp . "'");
             }
         }
         else{
             $del = mysql_query("DELETE FROM " . NBCONNECTE_TABLE . " WHERE IP = '" . $userIp . "'");
             if (isset($GLOBALS['user']['id'])){
-                $req = mysql_query("INSERT INTO " . NBCONNECTE_TABLE . " ( `IP` , `type` , `date` , `user_id` , `username` ) VALUES ( '" . $userIp . "' , '" . $GLOBALS['user']['idGroup'] . "' , '" . $limite . "' , '" . $GLOBALS['user']['id'] . "' , '" . $GLOBALS['user']['nickName'] . "' )");
+                $req = mysql_query("INSERT INTO " . NBCONNECTE_TABLE . " ( `IP` , `type` , `date` , `user_id` , `username` ) VALUES ( '" . $userIp . "' , '".$type."' , '" . $limite . "' , '" . $GLOBALS['user']['id'] . "' , '" . $GLOBALS['user']['nickName'] . "' )");
             }
         }
     }
 
     $res = mysql_query("SELECT type FROM " . NBCONNECTE_TABLE . " WHERE type = 0");
     $count[0] = mysql_num_rows($res);
-    $res = mysql_query("SELECT type FROM " . NBCONNECTE_TABLE . " WHERE type BETWEEN 1 AND 2");
+    $res = mysql_query("SELECT type FROM " . NBCONNECTE_TABLE . " WHERE type = 1");
     $count[1] = mysql_num_rows($res);
-    $res = mysql_query("SELECT type FROM " . NBCONNECTE_TABLE . " WHERE type > 2");
+    $res = mysql_query("SELECT type FROM " . NBCONNECTE_TABLE . " WHERE type = 2");
     $count[2] = mysql_num_rows($res);
     $count[3] = $count[1] + $count[2];
     $count[4] = $count[0] + $count[3];
     return $count;
-}
-
-function nivo_mod($mod){
-    $sql = mysql_query("SELECT niveau FROM " . MODULES_TABLE . " WHERE nom = '" . $mod . "'");
-    if (mysql_num_rows($sql) == 0){
-        return false;
-    }
-    else{
-        list($niveau) = mysql_fetch_array($sql);
-        return $niveau;
-    }
-}
-
-function admin_mod($mod){
-    $sql = mysql_query("SELECT admin FROM " . MODULES_TABLE . " WHERE nom = '" . $mod . "'");
-    list($admin) = mysql_fetch_array($sql);
-    return $admin;
-}
-
-function translate($file_lang){
-    global $nuked;
-
-    ob_start();
-    print eval(" include ('$file_lang'); ");
-    $lang_define = ob_get_contents();
-    $lang_define = htmlentities($lang_define, ENT_NOQUOTES, 'ISO-8859-1');
-    $lang_define = str_replace('&lt;', '<', $lang_define);
-    $lang_define = str_replace('&gt;', '>', $lang_define);
-    ob_end_clean();
-    return $lang_define;
 }
 
 function compteur($file){
@@ -957,7 +891,7 @@ function visits(){
     $timevisit = $nuked['visit_delay'] * 60;
     $limite = $time + $timevisit;
 
-    $sql_where = ($user) ? 'user_id = "' . $GLOBALS['user']['id'] : 'ip = "' . $userIp;
+    $sql_where = (!nkHasVisitor()) ? 'user_id = "' . $GLOBALS['user']['id'] : 'ip = "' . $userIp;
     $sql = mysql_query('SELECT id, date FROM ' . STATS_VISITOR_TABLE . ' WHERE ' . $sql_where . '" ORDER by date DESC LIMIT 0, 1');
 
     list($id, $date) = mysql_fetch_array($sql);
@@ -1224,49 +1158,309 @@ function initializeControlDB($prefixDB) {
     }
 }
 
+/**
+ *******************************************
+ *******************************************
+ * Functions 1.8
+ *******************************************
+ *******************************************
+ */
+
+/**
+ * Functions to add backward compatibility with PHP versions >= 5.4
+ */
+function nkHtmlEntityDecode($var){
+    return html_entity_decode($var,ENT_QUOTES,'ISO-8859-1');
+}
+
+function nkHtmlSpecialChars($var){
+    return htmlspecialchars($var,ENT_QUOTES,'ISO-8859-1');
+}
+
+function nkHtmlEntities($var){
+    return htmlentities($var,ENT_QUOTES,'ISO-8859-1');
+}
+
+$GLOBALS['includeLanguage'] = array();
+/**
+ * Backward compatibility translate function
+ * @param  string $fileLang path of lang file
+ * @return language constants
+ */
+function translate($fileLang){
+    if (!in_array($fileLang, $GLOBALS['includeLanguage'])) {
+        ob_start();
+        print eval(" include ('$fileLang'); ");
+        $lang_define = ob_get_contents();
+        $lang_define = htmlentities($lang_define, ENT_NOQUOTES, 'ISO-8859-1');
+        $lang_define = str_replace('&lt;', '<', $lang_define);
+        $lang_define = str_replace('&gt;', '>', $lang_define);
+        ob_end_clean();
+
+        $GLOBALS['includeLanguage'][] = $fileLang;
+
+        return $lang_define;
+    }
+
+    return false;
+}
+
+/**
+ * New translate function
+ * @param  string $fileLang path of lang file
+ */
+function nkTranslate($fileLang){
+    if (!in_array($fileLang, $GLOBALS['includeLanguage'])) {
+        if ($fileLang != 'lang/'.$GLOBALS['language'].'.lang.php') {
+            include_once $fileLang;
+        }
+
+        $arrayLang = $GLOBALS['arrayGlobalLang'];
+
+        if (isset($arrayAdminLang)) {
+            $arrayLang =  array_replace($arrayAdminLang);
+        }
+
+        if (isset($arrayModLang)) {
+            $arrayLang = array_replace($arrayModLang);
+        }
+
+        foreach ($arrayLang as $constant => $translation) {
+            if (!defined($constant)) {
+                define($constant, $translation);
+            }
+        }
+
+        $GLOBALS['includeLanguage'][] = $fileLang;
+    }
+}
+
+/**
+ * Backwards Compatibility
+ * @param  string $side which side to display
+ * @return New getBlock function
+ */
+function get_blok($side) {
+    $arrayOldSide = array('gauche' => 'left', 'droite' => 'right', 'centre' => 'center', 'bas' => 'bottom');
+
+    if (function_exists('block_'.$arrayOldSide[$side])) {
+        $side = $arrayOldSide[$side];
+    }
+
+    return getBlock($side);
+}
+
+
+function getBlock($side){
+
+    $nuked['IsBlok'] = false;
+
+    $arraySide = array('left' => 1, 'right' => 2, 'center' => 3, 'bottom' => 4, 'header' => 5, 'footer' => 6,
+                       'gauche' => 1, 'droite' => 2, 'centre' => 3, 'bas' => 4);
+
+    $active = $arraySide[$side];
+
+    if ($active == 1 || $active == 2) {
+        $nuked['IsBlok'] = true;
+    }
+
+    $functionThemeSide = 'block_'.$side;
+
+    $dbsBlock = 'SELECT bid, active, position, module, titre AS title, content, type, groups, pages
+                 FROM '.BLOCK_TABLE.'
+                 WHERE active = '.$active.'
+                 ORDER BY position';
+    $dbeBlock = mysql_query($dbsBlock);
+
+    while ($block = mysql_fetch_assoc($dbeBlock)) {
+        $block['title']  = printSecuTags($block['title']);
+        // Backwards compatibility
+        $block['titre']  = $block['title'];
+
+        $block['pages']  = explode('|', $block['pages']);
+        $block['groups'] = explode('|', $block['groups']);
+
+        $displayOnThisPage = false;
+
+        foreach ($block['pages'] as $page) {
+            if (isset($_REQUEST['file']) && $_REQUEST['file'] == $page) {
+                $displayOnThisPage = true;
+            }
+        }
+
+        $hasAccess = false;
+
+        $arrayGroupsUser = array(3);
+
+        if (nkHasVisitor() === false) {
+            $arrayGroupsUser = $GLOBALS['user']['ids_groups'];
+        }
+
+        foreach ($block['groups'] as $groupId) {
+            if (in_array($groupId, $arrayGroupsUser) || nkHasGod()) {
+                $hasAccess = true;
+            }
+        }
+
+        if ($hasAccess === true && $displayOnThisPage === true){
+            if (file_exists('Includes/blocks/block_'.$block['type'].'.php')) {
+                require_once 'Includes/blocks/block_'.$block['type'].'.php';
+            }
+
+            $function = 'affich_block_'.$block['type'];
+            $block = $function($block);
+
+            if (!empty($block['content'])) {
+                $functionThemeSide($block);
+            }
+        }
+    }
+}
+
+
+function groupsCheckbox($groups = null) {
+    if($groups === null){
+        $groups = array();
+    }
+    else{
+        $groups = explode('|', $groups);
+    }
+
+    $dbsGroups = "SELECT id, nameGroup AS name FROM ".GROUP_TABLE." ORDER BY name";
+    $dbeGroups = mysql_query($dbsGroups);
+?>
+        <tr>
+            <td align="center">
+                <strong><?php echo SELECT_GROUP; ?> :</strong>
+                <div class="checkboxSliderWrapper">
+                    <span><?php echo ALL; ?></span>
+                    <div class="onoffswitch">
+                        <input type="checkbox" name="groups[<?php echo ALL; ?>]" class="onoffswitch-checkbox" id="groupAll">
+                        <label class="onoffswitch-label" for="groupAll">
+                            <div class="onoffswitch-inner"></div>
+                            <div class="onoffswitch-switch"></div>
+                        </label>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td align="center">
+<?php
+
+    while($dataGroups = mysql_fetch_assoc($dbeGroups)){
+        $checked = null;
+
+        if(($dataGroups['id'] == 2 && count($groups) == 0) || in_array($dataGroups['id'], $groups)){
+            $checked = ' checked="checked" ';
+        }
+
+        if(defined($dataGroups['name'])) {
+            $dataGroups['name'] = constant($dataGroups['name']);
+        }
+
+        if($dataGroups['id'] != 1){
+?>
+            <div class="checkboxSliderWrapper">
+                <span><?php echo $dataGroups['name']; ?></span>
+                <div class="onoffswitch">
+                    <input <?php echo $checked; ?> type="checkbox" name="groups[<?php echo $dataGroups['id']; ?>]" class="onoffswitch-checkbox groupCheckbox" id="<?php echo $dataGroups['name']; ?>">
+                    <label class="onoffswitch-label" for="<?php echo $dataGroups['name']; ?>">
+                        <div class="onoffswitch-inner"></div>
+                        <div class="onoffswitch-switch"></div>
+                    </label>
+                </div>
+            </div>
+<?php
+        }
+    }
+?>
+        </td>
+    </tr>
+<?php
+}
+
+/**
+ * This function create an array that contains all enabled modules
+ * @return array enabled modules
+ */
+function nkModEnabled(){
+    $dbsMods = "SELECT name FROM ".MODULES_TABLE." WHERE status = 'on'";
+    $dbeMods = mysql_query($dbsMods) or die(mysql_error());
+
+    $arrayModsEnabled = array();
+    while($data = mysql_fetch_assoc($dbeMods)){
+        $arrayModsEnabled[] = $data['name'];
+    }
+
+    return $arrayModsEnabled;
+}
+
+$modsEnabled = nkModEnabled();
+
+/**
+ * This function checks if the module in parameter is enabled
+ * @param  string $module module to check
+ * @return boolean        activation status
+ */
+function nkIsModEnabled($module){
+    return in_array($module, $GLOBALS['modsEnabled']);
+}
+
+/**
+ * This function checks whether the user has admin access to the module passed as a parameter
+ * @param  string $module module to check
+ * @return boolean        access status
+ */
 function nkAccessAdmin($module) {
     if(array_key_exists('accessAdmin', $GLOBALS['user'])){
         $arrayUserAccessAdmin = explode('|', $GLOBALS['user']['accessAdmin']);
-    }
-    else{
-        $arrayUserAccessAdmin = array();
-    }
-    if(in_array($module, $arrayUserAccessAdmin) || in_array('ALL', $arrayUserAccessAdmin)){
-        return true;
+
+        if(in_array($module, $arrayUserAccessAdmin) || in_array('ALL', $arrayUserAccessAdmin)){
+            return true;
+        }
     }
 
     return false;
 }
 
+/**
+ * This function checks whether the user has access to the module passed as a parameter
+ * @param  string $module module to check
+ * @return boolean        access status
+ */
 function nkAccessModule($module) {
     if(array_key_exists('accessMods', $GLOBALS['user'])){
         $arrayUserAccessMods = explode('|', $GLOBALS['user']['accessMods']);
-    }
-    else{
-        $arrayUserAccessMods = array();
-    }
-    if(in_array($module, $arrayUserAccessMods) || in_array('ALL', $arrayUserAccessMods)){
-        return true;
+
+        if(in_array($module, $arrayUserAccessMods) || in_array('ALL', $arrayUserAccessMods) || $module == '404'){
+            return true;
+        }
     }
 
     return false;
 }
 
+/**
+ * This function checks if user is an admin
+ * @return boolean
+ */
 function nkHasAdmin(){
     if(array_key_exists('accessMods', $GLOBALS['user'])){
         $arrayUserAccessMods = explode('|', $GLOBALS['user']['accessMods']);
-    }
-    else{
-        $arrayUserAccessMods = array();
-    }
 
-    if(in_array('Admin', $arrayUserAccessMods) || in_array('ALL', $arrayUserAccessMods)){
-        return true;
+        if(in_array('Admin', $arrayUserAccessMods) || in_array('ALL', $arrayUserAccessMods)){
+            return true;
+        }
     }
 
     return false;
 }
 
+/**
+ * This function checks if user is a registered user
+ * @return boolean
+ */
 function nkHasMember(){
     if(array_key_exists('userType', $GLOBALS['user']) && is_array($GLOBALS['user']['userType'])){
         $userType = explode('|', $GLOBALS['user']['userType']);
@@ -1275,28 +1469,35 @@ function nkHasMember(){
         }
     }
 
-    if($GLOBALS['user']['userType'] == '2'){
-        return true;
-    }
-
     return false;
 }
 
+/**
+ * This function checks if user is a visitor
+ * @return boolean
+ */
 function nkHasVisitor(){
-    if(!array_key_exists('userType', $GLOBALS['user'])){
+    if(!array_key_exists('id', $GLOBALS['user'])){
         return true;
     }
 
     return false;
 }
 
+/**
+ * This function checks if user is an supreme admin
+ * @return boolean
+ */
+function nkHasGod(){
+    if(array_key_exists('accessMods', $GLOBALS['user'])){
+        $arrayUserAccessMods = explode('|', $GLOBALS['user']['accessMods']);
 
-function translateGroupName($groupId, $groupName){
-    if($groupId == 1 || $groupId == 2 || $groupId == 3){
-        return constant($groupName);
-    } else{
-        return $groupName;
+        if(in_array('ALL', $arrayUserAccessMods)){
+            return true;
+        }
     }
+
+    return false;
 }
 
 function colorGroup($userMainGroup) {
@@ -1309,10 +1510,19 @@ function colorGroup($userMainGroup) {
     }
 }
 
-function debug($content) {
-    echo'<pre style="background:#fff;color:#000;font-size:12px !important;">';
+/**
+ * This function format var dump display
+ * @param  string $content param to var dump
+ * @return formatted var dump
+ */
+function debug($content, $exitAfter = false) {
+    echo'<pre class="nkDebug">';
     var_dump($content);
     echo'</pre>';
+    
+    if ($exitAfter === true){
+        exit();
+    }
 }
 
 ?>
