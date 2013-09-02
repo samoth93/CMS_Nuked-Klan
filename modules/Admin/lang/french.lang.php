@@ -98,6 +98,13 @@ $arrayAdminLang = array(
     'GENERAL_SETTINGS_SAVED'    => 'Pr&eacute;f&eacute;rences g&eacute;n&eacute;rales sauvegard&eacute;es',
     'CHAR_NOT_ALLOW'            => 'Caract&egrave;re non autoris&eacute; !',
     #####################################
+    # Admin - PHP Info
+    #####################################
+    'PHPINFO_MANAGEMENT'        => 'Gestion PHP Info',
+    'SEE_INFOS'                 => 'Voir les informations',
+    'GLOBALES'                  => 'G&eacute;n&eacute;rales',
+    'ENVIRONMENT'               => 'Environnement',
+    #####################################
     # Admin - Actions
     #####################################
     'ACTIONS_MANAGEMENT'        => 'Gestion des actions',

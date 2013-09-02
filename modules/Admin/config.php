@@ -74,6 +74,7 @@
     $arrayPages =   array(
                         SETTINGS    =>  array(
                                             'settings' => array('title' => GENERAL_SETTINGS, 'link' => 'index.php?file=Admin&page=settings'),
+                                            'phpinfo'  => array('title' => PHPINFO, 'link' => 'index.php?file=Admin&page=phpinfo'),
                                             'subNav'   => $arraySettings
                                         ),
                         MANAGEMENTS =>  array(
