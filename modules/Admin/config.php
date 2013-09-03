@@ -9,7 +9,6 @@
     // Sous-Menu des préférences
     $arraySettings    = array(
                             GENERAL_SETTINGS => array('index.php?file=Admin&amp;page=settings', 'icon-general-settings'),
-                            MYSQL            => array('index.php?file=Admin&amp;page=mysql', 'icon-mysql'),
                             PHPINFO          => array('index.php?file=Admin&amp;page=phpinfo', 'icon-phpinfo'),
                             ACTIONS          => array('index.php?file=Admin&amp;page=actions', 'icon-actions'),
                             SQL_ERRORS       => array('index.php?file=Admin&amp;page=sql_errors', 'icon-warning')
