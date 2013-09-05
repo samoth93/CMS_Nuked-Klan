@@ -54,7 +54,7 @@ function post_book()
 
     if (!nkHasVisitor())
     {
-        $sql = mysql_query("SELECT url, email FROM " . USER_TABLE . " WHERE pseudo = '" . $GLOBALS['user']['nickName'] . "'");
+        $sql = mysql_query("SELECT url, email FROM " . USERS_TABLE . " WHERE pseudo = '" . $GLOBALS['user']['nickName'] . "'");
         list($url, $mail) = mysql_fetch_array($sql);
     }
 

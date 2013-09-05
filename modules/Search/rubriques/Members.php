@@ -32,7 +32,7 @@ else{
     $and .= ")";
 }
 
-$req = "SELECT pseudo, date FROM " . USER_TABLE . " WHERE " . $and. " AND niveau > 0 ORDER BY pseudo";
+$req = "SELECT pseudo, date FROM " . USERS_TABLE . " WHERE " . $and. " AND niveau > 0 ORDER BY pseudo";
 $sql_mb = mysql_query($req);
 
 $nb_mb = mysql_num_rows($sql_mb);

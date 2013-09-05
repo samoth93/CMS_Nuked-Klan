@@ -157,7 +157,7 @@ function com_index($module, $im_id){
             $texte = (!empty($row['titre'])) ? '<b>'.$row['titre'].'</b><br /><br />'.$row['comment'] : $row['comment'];
 
             if(!empty($row['autor_id'])){
-                $sql_member = mysql_query("SELECT pseudo, avatar, country FROM ".USER_TABLE." WHERE id = '{$row['autor_id']}'");
+                $sql_member = mysql_query("SELECT pseudo, avatar, country FROM ".USERS_TABLE." WHERE id = '{$row['autor_id']}'");
                 $test = mysql_num_rows($sql_member);
             }
 
@@ -283,7 +283,7 @@ function view_com($module, $im_id){
             $row['autor'] = nk_CSS($row['autor']);
 
             if(!empty($row['autor_id'])){
-                $sql_member = mysql_query("SELECT pseudo FROM ".USER_TABLE." WHERE id ='{$row['autor_id']}'");
+                $sql_member = mysql_query("SELECT pseudo FROM ".USERS_TABLE." WHERE id ='{$row['autor_id']}'");
                 $test = mysql_num_rows($sql_member);
             }
 
@@ -594,7 +594,7 @@ function edit_comment($cid){
         $titre = nkHtmlEntities($titre);
 
         if($autor_id != ""){
-            $sql_member = mysql_query("SELECT pseudo FROM " . USER_TABLE . " WHERE id = '" . $autor_id . "'");
+            $sql_member = mysql_query("SELECT pseudo FROM " . USERS_TABLE . " WHERE id = '" . $autor_id . "'");
             list($autor) = mysql_fetch_array($sql_member);
         }
         else{

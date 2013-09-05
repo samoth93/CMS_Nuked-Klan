@@ -36,7 +36,7 @@ function affich_block_roster($block){
     $block['content'] .= '<table style="width:100%;" cellspacing="0" cellpadding="1">';
 
     $dbsUser = 'SELECT pseudo AS nickName, mail, country
-                FROM '.USER_TABLE.' '.$where.'
+                FROM '.USERS_TABLE.' '.$where.'
                 ORDER BY ordre, pseudo';
     $dbeUser = mysql_query($dbsUser);
     while ($user = mysql_fetch_assoc($dbeUser)) {

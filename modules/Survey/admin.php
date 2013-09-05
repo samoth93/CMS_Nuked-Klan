@@ -217,7 +217,7 @@ function main(){
        . "<td align=\"center\"><b>" . _DEL . "</b></td></tr>\n";
 
    $dbsGroups = 'SELECT id, nameGroup
-                  FROM '.GROUP_TABLE;
+                  FROM '.GROUPS_TABLE;
     $dbeGroups = mysql_query($dbsGroups);
 
     $arrayGroups = array();

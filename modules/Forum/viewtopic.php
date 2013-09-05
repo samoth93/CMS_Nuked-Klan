@@ -275,7 +275,7 @@ $topic_ok = mysql_num_rows($sql2);
 
         if ($auteur_id != "")
         {
-            $sq_user = mysql_query("SELECT pseudo, niveau, rang, avatar, signature, date, email, icq, msn, aim, yim, url, country, count FROM " . USER_TABLE . " WHERE id = '" . $auteur_id . "'");
+            $sq_user = mysql_query("SELECT pseudo, niveau, rang, avatar, signature, date, email, icq, msn, aim, yim, url, country, count FROM " . USERS_TABLE . " WHERE id = '" . $auteur_id . "'");
             $test = mysql_num_rows($sq_user);
             list($autor, $user_level, $rang, $avatar, $signature, $date_member, $email, $icq, $msn, $aim, $yim, $homepage, $country, $nb_post) = mysql_fetch_array($sq_user);
 

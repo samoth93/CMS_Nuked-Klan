@@ -79,7 +79,7 @@ function getStats($nuked)
     $data['contact_flood'] = $nuked['contact_flood'];
 
     for($i=1; $i<=9; $i++) $data['user_count_'. $i] = 0;
-    $sql = mysql_query("SELECT count(id),niveau FROM ". USER_TABLE ." GROUP BY niveau");
+    $sql = mysql_query("SELECT count(id),niveau FROM ". USERS_TABLE ." GROUP BY niveau");
     while($rep = mysql_fetch_array($sql))
     {
         $data['user_count_'. $rep[1]] = $rep[0];

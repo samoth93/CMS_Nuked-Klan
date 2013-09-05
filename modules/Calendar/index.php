@@ -111,7 +111,7 @@ function index(){
 					$where = "";
 				}
 
-				$query3 = "SELECT user_id, age, pseudo FROM " . USER_DETAIL_TABLE . " INNER JOIN " . USER_TABLE . " ON user_id = id " . $where;
+				$query3 = "SELECT user_id, age, pseudo FROM " . USER_DETAIL_TABLE . " INNER JOIN " . USERS_TABLE . " ON user_id = id " . $where;
 				$data3 = mysql_query($query3);
 
 				if (!$data3) echo mysql_error() . ": " . mysql_errno();
@@ -316,7 +316,7 @@ function show_event(){
 	global $bgcolor2, $user, $nuked, $theme, $language;
 
 	if ($_REQUEST['type'] == "birthday" && ctype_alnum($_REQUEST['eid'])) {
-		$sql = mysql_query("SELECT pseudo FROM " . USER_TABLE . " WHERE id = '" . $_REQUEST['eid'] . "'");
+		$sql = mysql_query("SELECT pseudo FROM " . USERS_TABLE . " WHERE id = '" . $_REQUEST['eid'] . "'");
 		list($pseudo) = mysql_fetch_array($sql);
 
 		$sql2 = mysql_query("SELECT prenom, age FROM " . USER_DETAIL_TABLE . " WHERE user_id = '" . $_REQUEST['eid'] . "'");
@@ -394,7 +394,7 @@ function show_event(){
 		echo "</td></tr><tr><td>&nbsp;</td></tr>\n";
 
 		if($user && $etat != 1){
-			$sql_dispo = mysql_query("SELECT team FROM " . USER_TABLE . " WHERE id = '" . $GLOBALS['user']['id'] . "'");
+			$sql_dispo = mysql_query("SELECT team FROM " . USERS_TABLE . " WHERE id = '" . $GLOBALS['user']['id'] . "'");
 			list($user_team) = mysql_fetch_array($sql_dispo);
 			if ($user_team > 0 || nkHasAdmin()) dispo($warid, $_REQUEST['type']);
 		}
@@ -441,7 +441,7 @@ function dispo($warid, $type){
 
 	for($i = 0;$i <= $nb_dispo;$i++){
 		if ($pseudos[$i] == $GLOBALS['user']['id']) $selected = 1;
-		$sql2 = mysql_query("SELECT pseudo FROM " . USER_TABLE . " WHERE id = '" . $pseudos[$i] . "'");
+		$sql2 = mysql_query("SELECT pseudo FROM " . USERS_TABLE . " WHERE id = '" . $pseudos[$i] . "'");
 		list($pseudo) = mysql_fetch_array($sql2);
 		if ($i > 0) echo ", ";
 		echo "<b>" . $pseudo . "</b>";
@@ -454,7 +454,7 @@ function dispo($warid, $type){
 
 	for($l = 0;$l <= $nb_no_dispo;$l++){
 		if ($pseudos2[$l] == $GLOBALS['user']['id']) $selected = 1;
-		$sql3 = mysql_query("SELECT pseudo FROM " . USER_TABLE . " WHERE id = '" . $pseudos2[$l] . "'");
+		$sql3 = mysql_query("SELECT pseudo FROM " . USERS_TABLE . " WHERE id = '" . $pseudos2[$l] . "'");
 		list($pseudo2) = mysql_fetch_array($sql3);
 		if ($l > 0) echo ", ";
 		echo "<b>" . $pseudo2 . "</b>";

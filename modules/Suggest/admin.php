@@ -48,7 +48,7 @@ function main(){
     while (list($sug_id, $mod_name, $date, $id_user) = mysql_fetch_array($sql)){
         $date = nkDate($date);
 
-        $sql2 = mysql_query("SELECT id, pseudo FROM " . USER_TABLE . " WHERE id = '" . $id_user . "'");
+        $sql2 = mysql_query("SELECT id, pseudo FROM " . USERS_TABLE . " WHERE id = '" . $id_user . "'");
         $nb_user = mysql_num_rows($sql2);
 
         if ($nb_user > 0){
@@ -81,7 +81,7 @@ function show_suggest($sug_id){
     $date = nkDate($date);
     $content = explode('|', $proposition);
 
-    $sql2 = mysql_query("SELECT id, pseudo FROM " . USER_TABLE . " WHERE id = '" . $id_user . "'");
+    $sql2 = mysql_query("SELECT id, pseudo FROM " . USERS_TABLE . " WHERE id = '" . $id_user . "'");
     $nb_user = mysql_num_rows($sql2);
 
     if ($nb_user > 0){

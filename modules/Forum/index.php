@@ -731,7 +731,7 @@ else $captcha = 1;
 			{
 				if($usermail != $auteur_id)
 				{
-							$getmail = mysql_query("SELECT mail FROM " . USER_TABLE . " WHERE id = '" . $usermail . "'");
+							$getmail = mysql_query("SELECT mail FROM " . USERS_TABLE . " WHERE id = '" . $usermail . "'");
 							list($email) = mysql_fetch_row($getmail);
 							$subject = _MESSAGE . " : " . $_REQUEST['titre'];
 							$corps = _EMAILNOTIFYMAIL . "\r\n" . $nuked['url'] . "/index.php?file=Forum&page=viewtopic&forum_id=" . $_REQUEST['forum_id'] . "&thread_id=" . $_REQUEST['thread_id'] . "\r\n\r\n\r\n" . $nuked['name'] . " - " . $nuked['slogan'];
@@ -748,10 +748,10 @@ else $captcha = 1;
 
 		if (!nkHasVisitor())
 		{
-			$sql_count = mysql_query("SELECT count FROM " . USER_TABLE . " WHERE id = '" . $GLOBALS['user']['id'] . "'");
+			$sql_count = mysql_query("SELECT count FROM " . USERS_TABLE . " WHERE id = '" . $GLOBALS['user']['id'] . "'");
 			list($count) = mysql_fetch_row($sql_count);
 			$newcount = $count + 1;
-			$upd = mysql_query("UPDATE " . USER_TABLE . " SET count = '" . $newcount . "' WHERE id = '" . $GLOBALS['user']['id'] . "'");
+			$upd = mysql_query("UPDATE " . USERS_TABLE . " SET count = '" . $newcount . "' WHERE id = '" . $GLOBALS['user']['id'] . "'");
 		}
 
 		$sql_page = mysql_query("SELECT id FROM " . FORUM_MESSAGES_TABLE . " WHERE thread_id = '" . $_REQUEST['thread_id'] . "'");
@@ -940,10 +940,10 @@ else $captcha = 1;
           }
         if (!nkHasVisitor())
         {
-            $sql_count = mysql_query("SELECT count FROM " . USER_TABLE . " WHERE id = '" . $GLOBALS['user']['id'] . "'");
+            $sql_count = mysql_query("SELECT count FROM " . USERS_TABLE . " WHERE id = '" . $GLOBALS['user']['id'] . "'");
             list($count) = mysql_fetch_row($sql_count);
             $newcount = $count + 1;
-            $upd = mysql_query("UPDATE " . USER_TABLE . " SET count = '" . $newcount . "' WHERE id = '" . $GLOBALS['user']['id'] . "'");
+            $upd = mysql_query("UPDATE " . USERS_TABLE . " SET count = '" . $newcount . "' WHERE id = '" . $GLOBALS['user']['id'] . "'");
         }
 
         /**

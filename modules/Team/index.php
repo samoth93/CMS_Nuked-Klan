@@ -67,7 +67,7 @@ function index()
 
         if($team != "") $where="WHERE team = '" . $team . "' OR team2 = '" . $team . "' OR team3 = '" . $team . "'"; else $where = "WHERE niveau > 1";
 
-        $sql2 = mysql_query("SELECT id, pseudo, email, icq, msn, aim, yim, rang, country FROM " . USER_TABLE . " " . $where . " AND niveau > 0 ORDER BY ordre, pseudo");
+        $sql2 = mysql_query("SELECT id, pseudo, email, icq, msn, aim, yim, rang, country FROM " . USERS_TABLE . " " . $where . " AND niveau > 0 ORDER BY ordre, pseudo");
         $nb_members = mysql_num_rows($sql2);
         if ($nb_members > 0)
         {
@@ -209,7 +209,7 @@ function detail($autor)
 
     $autor = htmlentities($autor, ENT_QUOTES, 'ISO-8859-1');
 
-    $sql = mysql_query("SELECT id, icq, msn, aim, yim, email, url, game, country FROM " . USER_TABLE . " WHERE pseudo = '" . $autor . "'");
+    $sql = mysql_query("SELECT id, icq, msn, aim, yim, email, url, game, country FROM " . USERS_TABLE . " WHERE pseudo = '" . $autor . "'");
     $test = mysql_num_rows($sql);
 
     if ($test > 0)

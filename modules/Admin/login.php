@@ -49,7 +49,7 @@ if (nkAccessModule('Admin') === true) {
         $nickName  = mysql_real_escape_string($GLOBALS['user']['nickName']);
 
         $dbsLogin  = 'SELECT mail, pass
-                     FROM '.USER_TABLE.'
+                     FROM '.USERS_TABLE.'
                      WHERE pseudo = "'.$nickName.'"
                      LIMIT 1';
         $dbeLogin  = mysql_query($dbsLogin) or die(mysql_error());

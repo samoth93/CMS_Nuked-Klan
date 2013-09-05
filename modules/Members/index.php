@@ -31,7 +31,7 @@ function index(){
         $and = "";
     }
 
-    $sql2 = mysql_query("SELECT pseudo FROM " . USER_TABLE . " WHERE team = '' AND niveau > 0 " . $and);
+    $sql2 = mysql_query("SELECT pseudo FROM " . USERS_TABLE . " WHERE team = '' AND niveau > 0 " . $and);
     $count = mysql_num_rows($sql2);
 
     if(array_key_exists('p', $_REQUEST)){
@@ -88,7 +88,7 @@ function index(){
 			. "<td style=\"width: 10%;\" align=\"center\"><b>" . _YIM . "</b></td>\n"
 			. "<td style=\"width: 25%;\" align=\"center\"><b>" . _URL . "</b></td></tr>\n";
 
-    $sql = mysql_query("SELECT pseudo, url, email, icq, msn, aim, yim, rang, country FROM " . USER_TABLE . " WHERE team = '' " . $and . " AND niveau > 0 ORDER BY pseudo LIMIT " . $start . ", " . $nb_membres);
+    $sql = mysql_query("SELECT pseudo, url, email, icq, msn, aim, yim, rang, country FROM " . USERS_TABLE . " WHERE team = '' " . $and . " AND niveau > 0 ORDER BY pseudo LIMIT " . $start . ", " . $nb_membres);
     $j = 0;
     while (list($pseudo, $url, $email, $icq, $msn, $aim, $yim, $rang, $country) = mysql_fetch_array($sql)){
         list ($pays, $ext) = explode ('.', $country);
@@ -190,7 +190,7 @@ function index(){
         echo "<br /><div style=\"text-align: center;\">" . _THEREARE . "&nbsp;" . $count . "&nbsp;" . _MEMBERSREG . "&nbsp;" . $date_install . "<br />\n";
 
         if ($count > 0){
-            $sql_member = mysql_query("SELECT pseudo FROM " . USER_TABLE . " WHERE team = '' ORDER BY date DESC LIMIT 0, 1");
+            $sql_member = mysql_query("SELECT pseudo FROM " . USERS_TABLE . " WHERE team = '' ORDER BY date DESC LIMIT 0, 1");
             list($member) = mysql_fetch_array($sql_member);
             echo _LASTMEMBER . " <a href=\"index.php?file=Members&amp;op=detail&amp;autor=" . urlencode($member) . "\"><b>" . $member . "</b></a></div><br />\n";
         }
@@ -209,7 +209,7 @@ function detail($autor){
 
     $autor = htmlentities($autor, ENT_QUOTES, 'ISO-8859-1');
 
-    $sql = mysql_query("SELECT U.id, U.icq, U.msn, U.aim, U.yim, U.email, U.url, U.date, U.game, U.country, S.date FROM " . USER_TABLE . " AS U LEFT OUTER JOIN " . SESSIONS_TABLE . " AS S ON U.id = S.user_id WHERE U.pseudo = '" . $autor . "'");
+    $sql = mysql_query("SELECT U.id, U.icq, U.msn, U.aim, U.yim, U.email, U.url, U.date, U.game, U.country, S.date FROM " . USERS_TABLE . " AS U LEFT OUTER JOIN " . SESSIONS_TABLE . " AS S ON U.id = S.user_id WHERE U.pseudo = '" . $autor . "'");
     $test = mysql_num_rows($sql);
 
     if ($test > 0){
@@ -392,7 +392,7 @@ function listing($q,$type='right',$limit=100){
 	if ($type=='full') $left = '%';
 	else $left = '';
 
-	$req_list = "SELECT pseudo FROM " . USER_TABLE . " WHERE lower(pseudo) like '" . $left . $q . "%' ORDER BY pseudo DESC " . $str_limit;
+	$req_list = "SELECT pseudo FROM " . USERS_TABLE . " WHERE lower(pseudo) like '" . $left . $q . "%' ORDER BY pseudo DESC " . $str_limit;
 	$sql_list = mysql_query($req_list);
 
 	while (list($pseudo) = mysql_fetch_array($sql_list)){

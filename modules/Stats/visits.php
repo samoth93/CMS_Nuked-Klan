@@ -102,7 +102,7 @@ if (nkAccessModule('Stats') && $nuked['level_analys']!= -1) {
                     }
 
                     if (!empty($v_user_id)) {
-                        $sql_member = mysql_query("SELECT pseudo FROM " . USER_TABLE . " WHERE  id = '" . $v_user_id . "'");
+                        $sql_member = mysql_query("SELECT pseudo FROM " . USERS_TABLE . " WHERE  id = '" . $v_user_id . "'");
                         list($pseudo) = mysql_fetch_array($sql_member);
                         $v_pseudo = '<a href="index.php?file=Members&amp;op=detail&amp;autor=' . urlencode($pseudo) . '">' . $pseudo . '</a>';
                     }
@@ -460,7 +460,7 @@ function view_all() {
         }
 
         if (!empty($user_id)) {
-            $sql_member = mysql_query('SELECT pseudo FROM ' . USER_TABLE . ' WHERE  id = "' . $user_id . '"');
+            $sql_member = mysql_query('SELECT pseudo FROM ' . USERS_TABLE . ' WHERE  id = "' . $user_id . '"');
             list($pseudo) = mysql_fetch_array($sql_member);
             $v_pseudo = '<a href="index.php?file=Members&amp;op=detail&amp;autor=' . urlencode($pseudo) .'" onclick="window.open(this.href); return false;">' . $pseudo . '</a>';
         }

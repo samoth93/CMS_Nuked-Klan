@@ -36,7 +36,7 @@ function affich_block_login($block){
 		else{
 			$block['content'] = '<div style="text-align: center;">' . WELCOME . ', <b>' . $GLOBALS['user']['nickName'] . '</b><br /><br />'."\n";
 			if ($showavatar != 'off'){
-				$sql_avatar=mysql_query('SELECT avatar FROM ' . USER_TABLE . ' WHERE id = \'' . $GLOBALS['user']['id'] . '\' ');
+				$sql_avatar=mysql_query('SELECT avatar FROM ' . USERS_TABLE . ' WHERE id = \'' . $GLOBALS['user']['id'] . '\' ');
 				list($avatar_url) = mysql_fetch_array($sql_avatar);
 				if($avatar_url) $block['content'] .= '<img src="' . $avatar_url . '" style="border:1px ' . $bgcolor3 . ' dashed; width:100px; background:' . $bgcolor1 . '; padding:2px;" alt="' . $GLOBALS['user']['nickName'] . ' avatar" /><br /><br />';
 			}
@@ -75,13 +75,13 @@ function affich_block_login($block){
 
     	$block['content'] .= '&nbsp;<img width="16" height="13" src="images/memberslist.gif" alt="" />&nbsp;<span style="text-decoration: underline"><b>' . MEMBERS . '</b></span><br />'."\n";
 
-    	$sql_users = mysql_query('SELECT id FROM ' . USER_TABLE . ' WHERE niveau < 3');
+    	$sql_users = mysql_query('SELECT id FROM ' . USERS_TABLE . ' WHERE niveau < 3');
     	$nb_users = mysql_num_rows($sql_users);
 
-    	$sql_admin = mysql_query('SELECT id FROM ' . USER_TABLE . ' WHERE niveau > 2');
+    	$sql_admin = mysql_query('SELECT id FROM ' . USERS_TABLE . ' WHERE niveau > 2');
     	$nb_admin = mysql_num_rows($sql_admin);
 
-    	$sql_lastmember = mysql_query('SELECT pseudo FROM ' . USER_TABLE . ' ORDER BY date DESC LIMIT 0, 1');
+    	$sql_lastmember = mysql_query('SELECT pseudo FROM ' . USERS_TABLE . ' ORDER BY date DESC LIMIT 0, 1');
     	list($lastmember) = mysql_fetch_array($sql_lastmember);
 
     	$block['content'] .= '&nbsp;<b><big>·</big></b>&nbsp;' . ADMINISTRATOR . ' : <b>' . $nb_admin . '</b><br />&nbsp;<b><big>·</big></b>&nbsp;' . MEMBERS . ' :'

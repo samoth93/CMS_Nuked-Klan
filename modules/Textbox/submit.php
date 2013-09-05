@@ -35,7 +35,7 @@ else
     $_REQUEST['auteur'] = htmlentities($_REQUEST['auteur'], ENT_QUOTES, 'ISO-8859-1');
     $_REQUEST['auteur'] = verif_pseudo($_REQUEST['auteur']);
 
-    if (mysql_result(mysql_query('SELECT COUNT(*) FROM ' . USER_TABLE . ' WHERE pseudo LIKE \'' . mysql_real_escape_string($_REQUEST['auteur']) . '\''), 0))
+    if (mysql_result(mysql_query('SELECT COUNT(*) FROM ' . USERS_TABLE . ' WHERE pseudo LIKE \'' . mysql_real_escape_string($_REQUEST['auteur']) . '\''), 0))
     {
         echo "<br /><br /><div id=\"ajax_message\" style=\"text-align: center;\">" . nkHtmlEntities(_PSEUDOFAILDED) . "</div><br /><br />";
         redirect($redirection, 2);

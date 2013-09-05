@@ -34,7 +34,7 @@ function index(){
                 . '<a href="index.php?file=User&amp;op=change_theme">' . _THEMESELECT . '</a> | ',"\n"
                 . '<a href="index.php?file=User&amp;nuked_nude=index&amp;op=logout">' . _USERLOGOUT . '</a></b></div><br />',"\n";
 
-        $sql3 = mysql_query('SELECT U.pseudo, U.url, U.mail, U.date, U.avatar, U.count, S.last_used FROM ' . USER_TABLE . ' AS U LEFT OUTER JOIN ' . SESSIONS_TABLE . ' AS S ON U.id = S.user_id WHERE U.id = "' . $GLOBALS['user']['id'] . '"');
+        $sql3 = mysql_query('SELECT U.pseudo, U.url, U.mail, U.date, U.avatar, U.count, S.last_used FROM ' . USERS_TABLE . ' AS U LEFT OUTER JOIN ' . SESSIONS_TABLE . ' AS S ON U.id = S.user_id WHERE U.id = "' . $GLOBALS['user']['id'] . '"');
         $user_data = mysql_fetch_array($sql3);
 
         $last_used = $user_data['last_used'] > 0 ? nkDate($user_data['last_used']) : 'N/A';
@@ -351,7 +351,7 @@ function edit_account(){
     define('EDITOR_CHECK', 1);
 
     if (!nkHasVisitor()){
-        $sql = mysql_query("SELECT pseudo, pass, url, mail, email, icq, msn, aim, yim, avatar, signature, country, game FROM " . USER_TABLE . " WHERE id = '" . $GLOBALS['user']['id'] . "'");
+        $sql = mysql_query("SELECT pseudo, pass, url, mail, email, icq, msn, aim, yim, avatar, signature, country, game FROM " . USERS_TABLE . " WHERE id = '" . $GLOBALS['user']['id'] . "'");
         list($nick, $pass, $url, $mail, $email, $icq, $msn, $aim, $yim, $avatar, $signature, $pays, $jeu) = mysql_fetch_array($sql);
 
         echo "<br /><div style=\"text-align: center;\"><big><b>" . _YOURACCOUNT . "</b></big></div><br />\n"
@@ -668,7 +668,7 @@ function edit_pref(){
 
         echo "</select></td></tr>\n";
 
-        $sql2 = mysql_query("SELECT team, team2, team3, game FROM " . USER_TABLE . " WHERE id = '" . $GLOBALS['user']['id'] . "'");
+        $sql2 = mysql_query("SELECT team, team2, team3, game FROM " . USERS_TABLE . " WHERE id = '" . $GLOBALS['user']['id'] . "'");
         list($team, $team2, $team3, $game_id) = mysql_fetch_array($sql2);
 
         if ($team != "" || $team2 != "" || $team3 != ""){
@@ -942,7 +942,7 @@ function reg($pseudo, $mail, $email, $pass_reg, $pass_conf, $game, $country){
         exit();
     }
 
-    $sql2 = mysql_query("SELECT mail FROM " . USER_TABLE . " WHERE mail = '" . $mail . "'");
+    $sql2 = mysql_query("SELECT mail FROM " . USERS_TABLE . " WHERE mail = '" . $mail . "'");
     $reserved_email = mysql_num_rows($sql2);
 
     $sql3 = mysql_query("SELECT email FROM " . BANNED_TABLE . " WHERE email = '" . $mail . "'");
@@ -989,7 +989,7 @@ function reg($pseudo, $mail, $email, $pass_reg, $pass_conf, $game, $country){
 
     do{
         $user_id = substr(sha1(uniqid()), 0, 20);
-        $sql = mysql_query('SELECT * FROM ' . USER_TABLE . ' WHERE id=\'' . $user_id . '\'');
+        $sql = mysql_query('SELECT * FROM ' . USERS_TABLE . ' WHERE id=\'' . $user_id . '\'');
     } while (mysql_num_rows($sql) != 0);
 
     $email = mysql_real_escape_string(stripslashes($email));
@@ -1005,7 +1005,7 @@ function reg($pseudo, $mail, $email, $pass_reg, $pass_conf, $game, $country){
         $country = "France.gif";
     }
     $date2 = nkDate(time());
-    $add = mysql_query("INSERT INTO " . USER_TABLE . " ( `id` , `team` , `team2` , `team3` , `rang` , `ordre` , `pseudo` , `mail` , `email` , `icq` , `msn` , `aim` , `yim` , `url` , `pass` , `niveau` , `date` , `avatar` , `signature` , `user_theme` , `user_langue` , `game` , `country` , `count`, `idGroup`, `groupMain` ) VALUES ( '" . $user_id . "' , '' , '' , '' , '' , '' , '" . $pseudo . "' , '" . $mail . "' , '" . $email . "' , '' , '' , '' , '' , '' , '" . $cryptpass . "' , '" . $niveau . "' , '" . $date . "' , '' , '' , '' , '' , '" . $game . "' , '" . $country . "' , '', '2', '2' )");
+    $add = mysql_query("INSERT INTO " . USERS_TABLE . " ( `id` , `team` , `team2` , `team3` , `rang` , `ordre` , `pseudo` , `mail` , `email` , `icq` , `msn` , `aim` , `yim` , `url` , `pass` , `niveau` , `date` , `avatar` , `signature` , `user_theme` , `user_langue` , `game` , `country` , `count`, `idGroup`, `groupMain` ) VALUES ( '" . $user_id . "' , '' , '' , '' , '' , '' , '" . $pseudo . "' , '" . $mail . "' , '" . $email . "' , '' , '' , '' , '' , '' , '" . $cryptpass . "' , '" . $niveau . "' , '" . $date . "' , '' , '' , '' , '' , '" . $game . "' , '" . $country . "' , '', '2', '2' )");
 
     // Mark read all topics in the forum
     $_COOKIE['cookie_forum'] = '';
@@ -1094,7 +1094,7 @@ function login($pseudo, $pass, $remember_me){
     global $captcha, $bgcolor3, $bgcolor2, $bgcolor1, $nuked, $theme, $timelimit;
     $cookiename = $nuked['cookiename'];
 
-    $sql = mysql_query("SELECT id, pass, user_theme, user_langue, niveau, erreur FROM " . USER_TABLE . " WHERE pseudo = '" . htmlentities($pseudo, ENT_QUOTES, 'ISO-8859-1') . "'");
+    $sql = mysql_query("SELECT id, pass, user_theme, user_langue, niveau, erreur FROM " . USERS_TABLE . " WHERE pseudo = '" . htmlentities($pseudo, ENT_QUOTES, 'ISO-8859-1') . "'");
     $check = mysql_num_rows($sql);
 
     if($check > 0){
@@ -1138,13 +1138,13 @@ function login($pseudo, $pass, $remember_me){
         if ($niveau > 0){
             if (!Check_Hash($pass, $dbpass)){
                 $error = 2;
-                $sql = 'UPDATE ' . USER_TABLE . ' SET erreur = ' . ($count + 1) . ' WHERE pseudo = \'' . htmlentities($pseudo, ENT_QUOTES, 'ISO-8859-1') . '\'';
+                $sql = 'UPDATE ' . USERS_TABLE . ' SET erreur = ' . ($count + 1) . ' WHERE pseudo = \'' . htmlentities($pseudo, ENT_QUOTES, 'ISO-8859-1') . '\'';
                 $req = mysql_query($sql);
                 $url = "index.php?file=User&op=login_screen&error=" . $error;
                 redirect($url, 0);
             }
             else{
-                $sql = 'UPDATE ' . USER_TABLE . ' SET erreur = 0 WHERE pseudo = \'' . htmlentities($pseudo, ENT_QUOTES, 'ISO-8859-1') . '\'';
+                $sql = 'UPDATE ' . USERS_TABLE . ' SET erreur = 0 WHERE pseudo = \'' . htmlentities($pseudo, ENT_QUOTES, 'ISO-8859-1') . '\'';
                 $req = mysql_query($sql);
                 sessionNew($id_user, $remember_me);
 
@@ -1277,14 +1277,14 @@ function update($nick, $pass, $mail, $email, $url, $pass_reg, $pass_conf, $pass_
         $mail = mysql_real_escape_string(stripslashes($mail));
         $mail = nkHtmlEntities($mail);
 
-        $sql = mysql_query("SELECT pseudo, mail, pass FROM " . USER_TABLE . " WHERE id = '" . $GLOBALS['user']['id'] . "'");
+        $sql = mysql_query("SELECT pseudo, mail, pass FROM " . USERS_TABLE . " WHERE id = '" . $GLOBALS['user']['id'] . "'");
         list($old_pseudo, $old_mail, $old_pass) = mysql_fetch_array($sql);
 
         if ($nick != $old_pseudo){
             $sql1 = mysql_query("SELECT pseudo FROM " . BANNED_TABLE . " WHERE pseudo = '" . $nick . "'");
             $banned_nick = mysql_num_rows($sql1);
 
-            $sql2 = mysql_query("SELECT pseudo FROM " . USER_TABLE . " WHERE pseudo = '" . $nick . "' AND id != '" . $GLOBALS['user']['id'] . "'");
+            $sql2 = mysql_query("SELECT pseudo FROM " . USERS_TABLE . " WHERE pseudo = '" . $nick . "' AND id != '" . $GLOBALS['user']['id'] . "'");
             $reserved_name = mysql_num_rows($sql2);
 
             if (!$nick || ($nick == "") || (preg_match("`[\$\^\(\)'\"?%#<>,;:]`", $nick))){
@@ -1323,12 +1323,12 @@ function update($nick, $pass, $mail, $email, $url, $pass_reg, $pass_conf, $pass_
                 exit();
             }
             else{
-                $upd = mysql_query("UPDATE " . USER_TABLE . " SET pseudo = '" . $nick . "' WHERE id = '" . $GLOBALS['user']['id'] . "'");
+                $upd = mysql_query("UPDATE " . USERS_TABLE . " SET pseudo = '" . $nick . "' WHERE id = '" . $GLOBALS['user']['id'] . "'");
             }
         }
 
         if ($mail != $old_mail){
-            $sql3 = mysql_query("SELECT mail FROM " . USER_TABLE . " WHERE mail = '" . $mail . "' AND id != '" .$GLOBALS['user']['id'] . "'");
+            $sql3 = mysql_query("SELECT mail FROM " . USERS_TABLE . " WHERE mail = '" . $mail . "' AND id != '" .$GLOBALS['user']['id'] . "'");
             $reserved_email = mysql_num_rows($sql3);
 
             $sql4 = mysql_query("SELECT email FROM " . BANNED_TABLE . " WHERE email = '" . $mail . "'");
@@ -1357,7 +1357,7 @@ function update($nick, $pass, $mail, $email, $url, $pass_reg, $pass_conf, $pass_
                 exit();
             }
             else{
-                $upd1 = mysql_query("UPDATE " . USER_TABLE . " SET mail = '" . $mail . "' WHERE id = '" . $GLOBALS['user']['id'] . "'");
+                $upd1 = mysql_query("UPDATE " . USERS_TABLE . " SET mail = '" . $mail . "' WHERE id = '" . $GLOBALS['user']['id'] . "'");
             }
         }
 
@@ -1378,7 +1378,7 @@ function update($nick, $pass, $mail, $email, $url, $pass_reg, $pass_conf, $pass_
             }
             else{
                 $cryptpass = nk_hash($pass_reg);
-                $upd2 = mysql_query("UPDATE " . USER_TABLE . " SET pass = '" . $cryptpass . "' WHERE id = '" . $GLOBALS['user']['id'] . "'");
+                $upd2 = mysql_query("UPDATE " . USERS_TABLE . " SET pass = '" . $cryptpass . "' WHERE id = '" . $GLOBALS['user']['id'] . "'");
             }
         }
 
@@ -1456,7 +1456,7 @@ function update($nick, $pass, $mail, $email, $url, $pass_reg, $pass_conf, $pass_
         if (!(file_exists("images/flags/".$country.""))){
             $country = "France.gif";
         }
-        $upd3 = mysql_query("UPDATE " . USER_TABLE . " SET icq = '" . $icq . "', msn = '" . $msn . "', aim = '" . $aim . "', yim = '" . $yim . "', email = '" . $email . "', url = '" . $url . "', avatar = '" . $url_avatar . "', signature = '" . $signature . "', game = '" . $game . "', country = '" . $country . "' WHERE id = '" . $GLOBALS['user']['id'] . "'");
+        $upd3 = mysql_query("UPDATE " . USERS_TABLE . " SET icq = '" . $icq . "', msn = '" . $msn . "', aim = '" . $aim . "', yim = '" . $yim . "', email = '" . $email . "', url = '" . $url . "', avatar = '" . $url_avatar . "', signature = '" . $signature . "', game = '" . $game . "', country = '" . $country . "' WHERE id = '" . $GLOBALS['user']['id'] . "'");
         echo "<br /><br /><div style=\"text-align: center;\">" . _INFOMODIF . "</div><br /><br />";
         redirect("index.php?file=User", 1);
     }
@@ -1550,7 +1550,7 @@ function update_pref($prenom, $jour, $mois, $an, $sexe, $ville, $motherboard, $c
         $sql = mysql_query("INSERT INTO " . USER_DETAIL_TABLE . " ( `user_id` , `prenom` , `age` , `sexe` , `ville` , `photo` , `motherboard` , `cpu` , `ram` , `video` , `resolution` , `son` , `ecran` , `souris` , `clavier` , `connexion` , `system` , `pref_1` , `pref_2` , `pref_3` , `pref_4` , `pref_5` ) VALUES( '" . $GLOBALS['user']['id'] . "' , '" . $prenom . "' , '" . $age . "' , '" . $sexe . "' , '" . $ville . "' , '" . $url_photo . "' , '" . $motherboard . "' , '" . $cpu . "' , '" . $ram . "' , '" . $video . "' , '" . $resolution . "' , '" . $sons . "' , '" . $ecran . "' , '" . $souris . "' , '" . $clavier . "' , '" . $connexion . "' , '" . $osystem . "' , '' , '' , '' , '' , '' )");
     }
 
-    $sql_game = mysql_query("SELECT game FROM " . USER_TABLE . " WHERE id = '" . $GLOBALS['user']['id'] . "'");
+    $sql_game = mysql_query("SELECT game FROM " . USERS_TABLE . " WHERE id = '" . $GLOBALS['user']['id'] . "'");
     list($game) = mysql_fetch_array($sql_game);
 
     if (!$game_id){
@@ -1695,7 +1695,7 @@ function envoi_mail($email){
         exit();
     }
 
-    $sql = mysql_query('SELECT pseudo, token, token_time FROM '.USER_TABLE.' WHERE mail = \''.$email.'\' ');
+    $sql = mysql_query('SELECT pseudo, token, token_time FROM '.USERS_TABLE.' WHERE mail = \''.$email.'\' ');
     $count = mysql_num_rows($sql);
     $data = mysql_fetch_assoc($sql);
 
@@ -1709,7 +1709,7 @@ function envoi_mail($email){
         }
         elseif($data['token'] == null || ($data['token'] != null && (time() - $data['token_time']) > 3600)){
             $new_token = uniqid();
-            mysql_query('UPDATE '.USER_TABLE.' SET token = \''.$new_token.'\', token_time = \''.time().'\' WHERE mail = \''.mysql_real_escape_string($email).'\' ');
+            mysql_query('UPDATE '.USERS_TABLE.' SET token = \''.$new_token.'\', token_time = \''.time().'\' WHERE mail = \''.mysql_real_escape_string($email).'\' ');
 
             $link = '<a href="'.$nuked['url'].'/index.php?file=User&op=envoi_pass&email='.$email.'&token='.$new_token.'">'.$nuked['url'].'/index.php?file=User&op=envoi_pass&email='.$email.'&token='.$new_token.'</a>';
 
@@ -1754,7 +1754,7 @@ function envoi_pass($email, $token){
         exit();
     }
 
-    $sql = mysql_query('SELECT pseudo, token, token_time FROM '.USER_TABLE.' WHERE mail = \''.$email.'\' ');
+    $sql = mysql_query('SELECT pseudo, token, token_time FROM '.USERS_TABLE.' WHERE mail = \''.$email.'\' ');
     $count = mysql_num_rows($sql);
     $data = mysql_fetch_assoc($sql);
 
@@ -1775,7 +1775,7 @@ function envoi_pass($email, $token){
 
                 $new_pass = nk_hash($new_pass);
 
-                mysql_query('UPDATE '.USER_TABLE.' SET pass = \''.$new_pass.'\', token = \'null\', token_time = \'0\' WHERE mail = \''.mysql_real_escape_string($email).'\' ');
+                mysql_query('UPDATE '.USERS_TABLE.' SET pass = \''.$new_pass.'\', token = \'null\', token_time = \'0\' WHERE mail = \''.mysql_real_escape_string($email).'\' ');
 
                 echo '<div style="text-align:center;margin:30px;">'._NEWPASSSEND.'</div>';
                 redirect("index.php?file=User&op=login_screen", 3);
@@ -1910,7 +1910,7 @@ function modif_theme(){
         setcookie($GLOBALS['cookieTheme'], $_REQUEST['user_theme'], $timelimit);
 
         if (!nkHasVisitor()){
-            $upd = mysql_query("UPDATE " . USER_TABLE . " SET user_theme = '" . $_REQUEST['user_theme'] . "' WHERE id = '" . $GLOBALS['user']['id'] . "'");
+            $upd = mysql_query("UPDATE " . USERS_TABLE . " SET user_theme = '" . $_REQUEST['user_theme'] . "' WHERE id = '" . $GLOBALS['user']['id'] . "'");
         }
     }
 
@@ -1924,7 +1924,7 @@ function modif_langue(){
         setcookie($GLOBALS['cookieLang'], $_REQUEST['user_langue'], $timelimit);
 
         if (!nkHasVisitor()){
-            $upd = mysql_query("UPDATE " . USER_TABLE . " SET user_langue = '" . $_REQUEST['user_langue'] . "' WHERE id = '" . $GLOBALS['user']['id'] . "'");
+            $upd = mysql_query("UPDATE " . USERS_TABLE . " SET user_langue = '" . $_REQUEST['user_langue'] . "' WHERE id = '" . $GLOBALS['user']['id'] . "'");
         }
     }
 
@@ -1935,7 +1935,7 @@ function validation() {
     global $user, $nuked;
 
     if ($nuked['validation'] == 'mail') {
-        $sql = mysql_query('SELECT niveau FROM ' . USER_TABLE . ' WHERE id = "' . $_REQUEST['id_user'] . '"');
+        $sql = mysql_query('SELECT niveau FROM ' . USERS_TABLE . ' WHERE id = "' . $_REQUEST['id_user'] . '"');
         list($niveau) = mysql_fetch_array($sql);
 
         if ($niveau > 0) {
@@ -1943,7 +1943,7 @@ function validation() {
             redirect('index.php?file=User', 3);
         }
         else {
-            $upd = mysql_query('UPDATE ' . USER_TABLE . ' SET niveau = 1 WHERE id = "' . $_REQUEST['id_user'] . '"');
+            $upd = mysql_query('UPDATE ' . USERS_TABLE . ' SET niveau = 1 WHERE id = "' . $_REQUEST['id_user'] . '"');
 
             echo '<br /><br /><div style="text-align: center">' . _VALIDUSER . '</div><br /><br />';
             redirect('index.php?file=User&op=login_screen', 3);
@@ -1996,12 +1996,12 @@ function del_account($pass){
     global $user, $nuked;
 
     if ($pass != "" && $nuked[user_delete] == "on"){
-        $sql = mysql_query("SELECT pass FROM " . USER_TABLE . " WHERE id = '" . $GLOBALS['user']['id'] . "'");
+        $sql = mysql_query("SELECT pass FROM " . USERS_TABLE . " WHERE id = '" . $GLOBALS['user']['id'] . "'");
         $dbpass = mysql_fetch_row($sql);
         if (Check_Hash($pass, $dbpass[0])){
             $del1 = delModerator($GLOBALS['user']['id']);
             $del2 = mysql_query("DELETE FROM " . SESSIONS_TABLE . " WHERE user_id = '" . $GLOBALS['user']['id'] . "'");
-            $del3 = mysql_query("DELETE FROM " . USER_TABLE . " WHERE id = '" . $GLOBALS['user']['id'] . "'");
+            $del3 = mysql_query("DELETE FROM " . USERS_TABLE . " WHERE id = '" . $GLOBALS['user']['id'] . "'");
             echo "<br /><br /><div style=\"text-align: center;\">" . _ACCOUNTDELETE . "</div><br /><br />";
             redirect("index.php", 2);
         }

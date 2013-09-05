@@ -226,11 +226,11 @@ function index()
 
             $block_text = icon($block_text);
 
-            $sql_aut = mysql_query("SELECT id FROM " . USER_TABLE . " WHERE pseudo = '" . $auteur . "'");
+            $sql_aut = mysql_query("SELECT id FROM " . USERS_TABLE . " WHERE pseudo = '" . $auteur . "'");
             list($user_id) = mysql_fetch_array($sql_aut);
             $test_aut = mysql_num_rows($sql_aut);
 
-            $sqlc = mysql_query("SELECT `country` FROM `" . USER_TABLE . "` WHERE pseudo = '" . $auteur . "'");
+            $sqlc = mysql_query("SELECT `country` FROM `" . USERS_TABLE . "` WHERE pseudo = '" . $auteur . "'");
             list($country) = mysql_fetch_array($sqlc);
 
             $pays = ($country) ? '<img src="images/flags/' . $country . '" alt="' . $country . '" />' : '';
@@ -240,7 +240,7 @@ function index()
 
             $online = (isset($user_id) && $count_ok == 1) ? '<img src="modules/Textbox/images/on.jpg" alt="online" />' : '<img src="modules/Textbox/images/off.jpg" alt="offline" />';
 
-            $sql2 = mysql_query("SELECT niveau FROM " . USER_TABLE . " WHERE pseudo = '" . $auteur . "'");
+            $sql2 = mysql_query("SELECT niveau FROM " . USERS_TABLE . " WHERE pseudo = '" . $auteur . "'");
             list($niveau) = mysql_fetch_array($sql2);
 
             $coloring = ($niveau >= 2) ? 'fa1200' : '8452bf';

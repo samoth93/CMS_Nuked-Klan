@@ -68,8 +68,8 @@ function secure(){
 
         if ($dataSession['validSession']  == 1) {
             $dbsUser = "SELECT A.pseudo AS nickName, A.ids_group, A.main_group, A.avatar, B.color AS nickColor
-                        FROM ".USER_TABLE." AS A
-                        LEFT JOIN ".GROUP_TABLE." AS B
+                        FROM ".USERS_TABLE." AS A
+                        LEFT JOIN ".GROUPS_TABLE." AS B
                         ON B.id = A.main_group
                         WHERE A.id = '".$userId."' ";
             $dbeUser = mysql_query($dbsUser);
@@ -105,7 +105,7 @@ function secure(){
                     $whereId .= 'id = '.intval($id);
                 }
                 if(!empty($whereId)){
-                    $dbsGroups = "SELECT id, access, accessAdmin FROM ".GROUP_TABLE." ".$whereId." ";
+                    $dbsGroups = "SELECT id, access, accessAdmin FROM ".GROUPS_TABLE." ".$whereId." ";
                     $dbeGroups = mysql_query($dbsGroups);
 
                     $arrayAccess = array();

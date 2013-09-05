@@ -23,7 +23,7 @@ function edit_com($cid){
     $titre = nkHtmlEntities($titre);
 
     if($autor_id != ""){
- 	    $sql_member = mysql_query("SELECT pseudo FROM " . USER_TABLE . " WHERE id = '" . $autor_id . "'");
+ 	    $sql_member = mysql_query("SELECT pseudo FROM " . USERS_TABLE . " WHERE id = '" . $autor_id . "'");
         $test = mysql_num_rows($sql_member);
     }
 
@@ -142,7 +142,7 @@ function main(){
         $auteur = nkHtmlSpecialChars($auteur);
 
         if($autor_id != ""){
-            $sql_member = mysql_query("SELECT pseudo FROM " . USER_TABLE . " WHERE id = '" . $autor_id . "'");
+            $sql_member = mysql_query("SELECT pseudo FROM " . USERS_TABLE . " WHERE id = '" . $autor_id . "'");
             $test = mysql_num_rows($sql_member);
         }
 

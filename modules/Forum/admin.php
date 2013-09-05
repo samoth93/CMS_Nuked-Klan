@@ -275,7 +275,7 @@ admintop();
         . "<tr><td><b>" . _MODERATEUR . " :</b> <select name=\"modo\"><option value=\"\">" . _NONE . "</option>\n";
 
 
-        $sql = mysql_query("SELECT id, pseudo FROM " . USER_TABLE . " WHERE niveau > 0 ORDER BY niveau DESC, pseudo");
+        $sql = mysql_query("SELECT id, pseudo FROM " . USERS_TABLE . " WHERE niveau > 0 ORDER BY niveau DESC, pseudo");
         while (list($id_user, $pseudo) = mysql_fetch_row($sql)){
 
             echo "<option value=\"" . $id_user . "\">" . $pseudo . "</option>\n";
@@ -366,7 +366,7 @@ admintop();
             $moderateurs = explode('|', $modo);
             for ($i = 0;$i < count($moderateurs);$i++){
                 if ($i > 0) $sep = ', ';
-                $sql2 = mysql_query("SELECT id, pseudo FROM " . USER_TABLE . " WHERE id = '" . $moderateurs[$i] . "'");
+                $sql2 = mysql_query("SELECT id, pseudo FROM " . USERS_TABLE . " WHERE id = '" . $moderateurs[$i] . "'");
                 list($id_user, $modo_pseudo) = mysql_fetch_row($sql2);
                 $modos .= $sep . $modo_pseudo . "&nbsp;(<a href=\"index.php?file=Forum&amp;page=admin&amp;op=del_modo&amp;uid=" . $id_user . "&amp;forum_id=" . $id . "\"><img width=\"7\" style=\"border: 0;\" src=\"modules/Forum/images/del.gif\" alt=\"\" title=\"" . _DELTHISMODO . "\" /></a>)";
             }
@@ -434,7 +434,7 @@ admintop();
         . "<tr><td><b>" . _MODO . " :</b> " . $modos . "</td></tr>\n"
         . "<tr><td><b>" . _ADDMODO . " :</b> <select name=\"modo\"><option value=\"\">" . _NONE . "</option>\n";
 
-        $sql = mysql_query("SELECT id, pseudo FROM " . USER_TABLE . " WHERE niveau > 0 ORDER BY niveau DESC, pseudo");
+        $sql = mysql_query("SELECT id, pseudo FROM " . USERS_TABLE . " WHERE niveau > 0 ORDER BY niveau DESC, pseudo");
         while (list($id_user, $pseudo) = mysql_fetch_row($sql)){
             if (!is_int(strpos($modos, $id_user))){
                 echo "<option value=\"" . $id_user . "\">" . $pseudo . "</option>\n";
@@ -503,7 +503,7 @@ admintop();
 
         $upd = mysql_query("UPDATE " . FORUM_TABLE . " SET moderateurs = '" . $modos . "' WHERE id = '" . $forum_id . "'");
 
-        $sql = mysql_query("SELECT pseudo FROM " . USER_TABLE . " WHERE id = '".$uid."'");
+        $sql = mysql_query("SELECT pseudo FROM " . USERS_TABLE . " WHERE id = '".$uid."'");
         list($pseudo) = mysql_fetch_array($sql);
         $pseudo = mysql_real_escape_string($pseudo);
         // Action

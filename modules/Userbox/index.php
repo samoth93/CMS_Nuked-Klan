@@ -15,7 +15,7 @@ translate('modules/Userbox/lang/'.$language.'.lang.php');
 function select_user(){
     global $nuked;
 
-    $sql = mysql_query('SELECT id, pseudo, niveau FROM '.USER_TABLE.' WHERE niveau > 0 ORDER BY niveau DESC, pseudo');
+    $sql = mysql_query('SELECT id, pseudo, niveau FROM '.USERS_TABLE.' WHERE niveau > 0 ORDER BY niveau DESC, pseudo');
     while($row = mysql_fetch_assoc($sql)){
 
         if ($row['niveau'] == 9) $nivo = "****";
@@ -31,7 +31,7 @@ function post_message(){
     define('EDITOR_CHECK', 1);
 
     if (!empty($_REQUEST['for']) && preg_match("`^[a-zA-Z0-9]+$`", $_REQUEST['for'])){
-        $sql = mysql_query("SELECT pseudo FROM ".USER_TABLE." WHERE id = '{$_REQUEST['for']}'");
+        $sql = mysql_query("SELECT pseudo FROM ".USERS_TABLE." WHERE id = '{$_REQUEST['for']}'");
         list($pseudo) = mysql_fetch_array($sql);
     }
 
@@ -75,7 +75,7 @@ function send_message($titre, $user_for, $message){
     }else{
 
         if (!empty($user_for) && ctype_alnum($user_for)) {
-            $sql2 = mysql_query("SELECT pseudo FROM " . USER_TABLE . " WHERE id = '$user_for'");
+            $sql2 = mysql_query("SELECT pseudo FROM " . USERS_TABLE . " WHERE id = '$user_for'");
             $nb = mysql_num_rows($sql2);
         }
         else $nb = 0;
@@ -129,7 +129,7 @@ function show_message($mid){
 
         if(strlen($row['titre']) >= 50) $row['titre'] = substr($row['titre'], 0, 47)."...";
 
-        $sql_member = mysql_query("SELECT pseudo FROM " . USER_TABLE . " WHERE id = '{$row['user_from']}'");
+        $sql_member = mysql_query("SELECT pseudo FROM " . USERS_TABLE . " WHERE id = '{$row['user_from']}'");
         list($pseudo) = mysql_fetch_array($sql_member);
 
         echo '<table style="margin:0 auto;text-align:left;background:'.$bgcolor3.';" width="90%" cellspacing="1" cellpadding="4">
@@ -211,7 +211,7 @@ function del_message_form($mid, $del_oui){
                 $row = mysql_fetch_assoc($sql_mess);
                 $row['date'] = nkDate($row['date']);
 
-                $sql_member = mysql_query("SELECT pseudo FROM " . USER_TABLE . " WHERE id = '{$row['user_from']}'");
+                $sql_member = mysql_query("SELECT pseudo FROM " . USERS_TABLE . " WHERE id = '{$row['user_from']}'");
                 list($pseudo) = mysql_fetch_array($sql_member);
 
                 echo '<b><big>·</big></b>&nbsp;'._OF.'&nbsp;'.$pseudo.' ( '.$row['date'].' )<br />
@@ -250,7 +250,7 @@ function index(){
 
             $row['titre'] = printSecuTags($row['titre']);
 
-            $sql_member = mysql_query("SELECT pseudo FROM " . USER_TABLE . " WHERE id = '{$row['user_from']}'");
+            $sql_member = mysql_query("SELECT pseudo FROM " . USERS_TABLE . " WHERE id = '{$row['user_from']}'");
             list($pseudo) = mysql_fetch_array($sql_member);
 
             $etat = ($row['status'] == 1) ? _READ : _NOTREAD;

@@ -1,75 +1,86 @@
 <?php
-// -------------------------------------------------------------------------//
-// Nuked-KlaN - PHP Portal                                                  //
-// http://www.nuked-klan.org                                                //
-// -------------------------------------------------------------------------//
-// This program is free software. you can redistribute it and/or modify     //
-// it under the terms of the GNU General Public License as published by     //
-// the Free Software Foundation; either version 2 of the License.           //
-// -------------------------------------------------------------------------//
-defined('INDEX_CHECK') or die ('You can\'t run this file alone.');
+/**
+ * constants.php
+ *
+ * Create constants for tables names
+ *
+ * @version 1.8
+ * @link http://www.nuked-klan.org Clan Management System for Gamers
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @copyright 2001-2013 Nuked-Klan (Registred Trademark)
+ */
+
+if (!defined("INDEX_CHECK")) exit('You can\'t run this file alone.');
 
 //Update param
 define('UPDATE_URL', 'http://nuked-klan.org/');
 
-// Table names
-define('BANNED_TABLE', $nuked['prefix'] . '_banned');
-define('BLOCK_TABLE', $nuked['prefix'] . '_block');
-define('CALENDAR_TABLE', $nuked['prefix'] . '_calendar');
-define('COMMENT_TABLE', $nuked['prefix'] . '_comment');
-define('CONFIG_TABLE', $nuked['prefix'] . '_config');
-define('DEFY_TABLE', $nuked['prefix'] . '_defie');
-define('DEFY_PREF_TABLE', $nuked['prefix'] . '_defie_pref');
-define('DOWNLOAD_TABLE', $nuked['prefix'] . '_downloads');
-define('DOWNLOAD_CAT_TABLE', $nuked['prefix'] . '_downloads_cat');
-define('FORUM_TABLE', $nuked['prefix'] . '_forums');
-define('FORUM_CAT_TABLE', $nuked['prefix'] . '_forums_cat');
-define('FORUM_MESSAGES_TABLE', $nuked['prefix'] . '_forums_messages');
-define('FORUM_OPTIONS_TABLE', $nuked['prefix'] . '_forums_options');
-define('FORUM_POLL_TABLE', $nuked['prefix'] . '_forums_poll');
-define('FORUM_RANK_TABLE', $nuked['prefix'] . '_forums_rank');
-define('FORUM_READ_TABLE', $nuked['prefix'] . '_forums_read');
-define('FORUM_THREADS_TABLE', $nuked['prefix'] . '_forums_threads');
-define('FORUM_VOTE_TABLE', $nuked['prefix'] . '_forums_vote');
-define('GALLERY_TABLE', $nuked['prefix'] . '_gallery');
-define('GALLERY_CAT_TABLE', $nuked['prefix'] . '_gallery_cat');
-define('GAMES_TABLE', $nuked['prefix'] . '_games');
-define('GAMES_PREFS_TABLE', $nuked['prefix'] . '_games_prefs');
-define('GUESTBOOK_TABLE', $nuked['prefix'] . '_guestbook');
-define('IRC_AWARDS_TABLE', $nuked['prefix'] . '_irc_awards');
-define('LINKS_TABLE', $nuked['prefix'] . '_liens');
-define('LINKS_CAT_TABLE', $nuked['prefix'] . '_liens_cat');
-define('MODULES_TABLE', $nuked['prefix'] . '_modules');
-define('NBCONNECTE_TABLE', $nuked['prefix'] . '_nbconnecte');
-define('NEWS_TABLE', $nuked['prefix'] . '_news');
-define('NEWS_CAT_TABLE', $nuked['prefix'] . '_news_cat');
-define('NOTIFICATIONS_TABLE', $nuked['prefix'] . '_notification');
-define('RECRUIT_TABLE', $nuked['prefix'] . '_recrute');
-define('RECRUIT_PREF_TABLE', $nuked['prefix'] . '_recrute_pref');
-define('SECTIONS_TABLE', $nuked['prefix'] . '_sections');
-define('SECTIONS_CAT_TABLE', $nuked['prefix'] . '_sections_cat');
-define('SERVER_TABLE', $nuked['prefix'] . '_serveur');
-define('SERVER_CAT_TABLE', $nuked['prefix'] . '_serveur_cat');
-define('SESSIONS_TABLE', $nuked['prefix'] . '_sessions');
-define('SMILIES_TABLE', $nuked['prefix'] . '_smilies');
-define('STATS_TABLE', $nuked['prefix'] . '_stats');
-define('STATS_VISITOR_TABLE', $nuked['prefix'] . '_stats_visitor');
-define('SUGGEST_TABLE', $nuked['prefix'] . '_suggest');
-define('SURVEY_TABLE', $nuked['prefix'] . '_sondage');
-define('SURVEY_CHECK_TABLE', $nuked['prefix'] . '_sondage_check');
-define('SURVEY_DATA_TABLE', $nuked['prefix'] . '_sondage_data');
-define('TEAM_TABLE', $nuked['prefix'] . '_team');
-define('TMPSES_TABLE', $nuked['prefix'] . '_tmpses');
-define('TEAM_RANK_TABLE', $nuked['prefix'] . '_team_rank');
-define('TEXTBOX_TABLE', $nuked['prefix'] . '_shoutbox');
-define('USERBOX_TABLE', $nuked['prefix'] . '_userbox');
-define('USER_TABLE', $nuked['prefix'] . '_users');
-define('USER_DETAIL_TABLE', $nuked['prefix'] . '_users_detail');
-define('VOTE_TABLE', $nuked['prefix'] . '_vote');
-define('WARS_TABLE', $nuked['prefix'] . '_match');
-define('WARS_FILES_TABLE', $nuked['prefix'] . '_match_files');
-define('CONTACT_TABLE', $nuked['prefix'] . '_contact');
-define('PAGE_TABLE', $nuked['prefix'] . '_page');
-define('ACTION_TABLE', $nuked['prefix'] . '_action');
-define('GROUP_TABLE', $nuked['prefix'] . '_group');
+$arrayConstants =   array(
+    'ACTIONS_TABLE'        => '_actions',
+    'BANNED_TABLE'         => '_banned',
+    'BLOCK_TABLE'          => '_block',
+    'CALENDAR_TABLE'       => '_calendar',
+    'COMMENT_TABLE'        => '_comment',
+    'CONFIG_TABLE'         => '_config',
+    'CONTACT_TABLE'        => '_contact',
+    'DEFY_TABLE'           => '_defie',
+    'DEFY_PREF_TABLE'      => '_defie_pref',
+    'DOWNLOAD_TABLE'       => '_downloads',
+    'DOWNLOAD_CAT_TABLE'   => '_downloads_cat',
+    'FORUM_TABLE'          => '_forums',
+    'FORUM_CAT_TABLE'      => '_forums_cat',
+    'FORUM_MESSAGES_TABLE' => '_forums_messages',
+    'FORUM_OPTIONS_TABLE'  => '_forums_options',
+    'FORUM_POLL_TABLE'     => '_forums_poll',
+    'FORUM_RANK_TABLE'     => '_forums_rank',
+    'FORUM_READ_TABLE'     => '_forums_read',
+    'FORUM_THREADS_TABLE'  => '_forums_threads',
+    'FORUM_VOTE_TABLE'     => '_forums_vote',
+    'GALLERY_TABLE'        => '_gallery',
+    'GALLERY_CAT_TABLE'    => '_gallery_cat',
+    'GAMES_TABLE'          => '_games',
+    'GAMES_PREFS_TABLE'    => '_games_prefs',
+    'GROUPS_TABLE'         => '_groups',
+    'GUESTBOOK_TABLE'      => '_guestbook',
+    'IRC_AWARDS_TABLE'     => '_irc_awards',
+    'LINKS_TABLE'          => '_liens',
+    'LINKS_CAT_TABLE'      => '_liens_cat',
+    'MODULES_TABLE'        => '_modules',
+    'NBCONNECTE_TABLE'     => '_nbconnecte',
+    'NEWS_TABLE'           => '_news',
+    'NEWS_CAT_TABLE'       => '_news_cat',
+    'NOTIFICATIONS_TABLE'  => '_notification',
+    'PAGE_TABLE'           => '_page',
+    'RECRUIT_TABLE'        => '_recrute',
+    'RECRUIT_PREF_TABLE'   => '_recrute_pref',
+    'SECTIONS_TABLE'       => '_sections',
+    'SECTIONS_CAT_TABLE'   => '_sections_cat',
+    'SERVER_TABLE'         => '_serveur',
+    'SERVER_CAT_TABLE'     => '_serveur_cat',
+    'SESSIONS_TABLE'       => '_sessions',
+    'SMILIES_TABLE'        => '_smilies',
+    'STATS_TABLE'          => '_stats',
+    'STATS_VISITOR_TABLE'  => '_stats_visitor',
+    'SUGGEST_TABLE'        => '_suggest',
+    'SURVEY_TABLE'         => '_sondage',
+    'SURVEY_CHECK_TABLE'   => '_sondage_check',
+    'SURVEY_DATA_TABLE'    => '_sondage_data',
+    'TEAM_TABLE'           => '_team',
+    'TMPSES_TABLE'         => '_tmpses',
+    'TEAM_RANK_TABLE'      => '_team_rank',
+    'TEXTBOX_TABLE'        => '_shoutbox',
+    'USERBOX_TABLE'        => '_userbox',
+    'USERS_TABLE'          => '_users',
+    'USERS_DETAIL_TABLE'   => '_users_detail',
+    'VOTE_TABLE'           => '_vote',
+    'WARS_TABLE'           => '_match',
+    'WARS_FILES_TABLE'     => '_match_files'
+);
+
+foreach ($arrayConstants as $constant => $tableName) {
+    define($constant, $GLOBALS['nuked']['prefix'].$tableName);
+}
+
+unset($arrayConstants);
+
 ?>

@@ -71,7 +71,7 @@ function index(){
         $TabCat = mysql_fetch_assoc($sql3);
 
         if (!empty($autor_id)) {
-            $sql4 = mysql_query("SELECT pseudo FROM ".USER_TABLE." WHERE id = '{$TabNews['auteur_id']}'");
+            $sql4 = mysql_query("SELECT pseudo FROM ".USERS_TABLE." WHERE id = '{$TabNews['auteur_id']}'");
             $test = mysql_num_rows($sql4);
         }
 
@@ -216,7 +216,7 @@ function pdf($news_id) {
     $text = $row['texte'].'<br><br>'.$row['suite'];
 
     if (!empty($row['auteur_id'])) {
-        $sql2 = mysql_query("SELECT pseudo FROM ".USER_TABLE." WHERE id = '".$row['auteur_id']."' ");
+        $sql2 = mysql_query("SELECT pseudo FROM ".USERS_TABLE." WHERE id = '".$row['auteur_id']."' ");
         $test = mysql_num_rows($sql2);
     }
 

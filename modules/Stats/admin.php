@@ -41,7 +41,7 @@ function main()
     . "<div class=\"tab-content\" id=\"tab2\" style=\"width: " . $width_div . "%; margin: auto\"><br /><br />\n";
 
     $sql = mysql_query('SELECT
-        (SELECT COUNT(id) FROM ' . USER_TABLE . ') AS nb_us,
+        (SELECT COUNT(id) FROM ' . USERS_TABLE . ') AS nb_us,
         (SELECT COUNT(id) FROM ' . NEWS_TABLE . ') AS nb_nw,
         (SELECT COUNT(artid) FROM ' . SECTIONS_TABLE . ') AS nb_sc,
         (SELECT COUNT(id) FROM ' . COMMENT_TABLE . ') AS nb_cm,

@@ -21,7 +21,7 @@ $margin = ($active == 3 or $active == 4) ? '5px' : '11px';
 
 echo '<ul style="margin:5px ' . $margin . ';padding:5px;' . $listStyle . '">';
 
-$Sql = mysql_query("SELECT N.id, N.titre, N.date, N.auteur, N.auteur_id, U.pseudo FROM " . NEWS_TABLE . " N, " . USER_TABLE . " U WHERE '$day' >= N.date AND U.id = N.auteur_id ORDER BY date DESC LIMIT 0, 5");
+$Sql = mysql_query("SELECT N.id, N.titre, N.date, N.auteur, N.auteur_id, U.pseudo FROM " . NEWS_TABLE . " N, " . USERS_TABLE . " U WHERE '$day' >= N.date AND U.id = N.auteur_id ORDER BY date DESC LIMIT 0, 5");
 while ($row = mysql_fetch_assoc($Sql)) {
 
 	$row['date'] = nkDate($row['date']);

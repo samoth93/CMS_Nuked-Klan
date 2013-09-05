@@ -68,7 +68,7 @@ else
         for ($i = 0;$i < count($moderateurs);$i++)
         {
             if ($i > 0) $sep = ",&nbsp;";
-            $sql2 = mysql_query("SELECT pseudo FROM " . USER_TABLE . " WHERE id = '" . $moderateurs[$i] . "'");
+            $sql2 = mysql_query("SELECT pseudo FROM " . USERS_TABLE . " WHERE id = '" . $moderateurs[$i] . "'");
             list($modo_pseudo) = mysql_fetch_row($sql2);
             $modo .= $sep . $modo_pseudo;
         }
@@ -273,7 +273,7 @@ else
 
         if ($auteur_id != "")
         {
-            $sql5 = mysql_query("SELECT pseudo, country FROM " . USER_TABLE . " WHERE id = '" . $auteur_id . "'");
+            $sql5 = mysql_query("SELECT pseudo, country FROM " . USERS_TABLE . " WHERE id = '" . $auteur_id . "'");
             $test = mysql_num_rows($sql5);
             list($autor, $country) = mysql_fetch_array($sql5);
 
@@ -307,7 +307,7 @@ else
 
         if ($last_auteur_id != "")
         {
-            $sql8 = mysql_query("SELECT pseudo, country FROM " . USER_TABLE . " WHERE id = '" . $last_auteur_id . "'");
+            $sql8 = mysql_query("SELECT pseudo, country FROM " . USERS_TABLE . " WHERE id = '" . $last_auteur_id . "'");
             $test1 = mysql_num_rows($sql8);
             list($last_autor, $last_country) = mysql_fetch_array($sql8);
 

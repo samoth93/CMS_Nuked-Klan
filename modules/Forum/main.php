@@ -139,7 +139,7 @@ while (list($nom_cat, $cid) = mysql_fetch_row($main))
         if ($num_mess > 0){
             if ($auteur_id != "")
             {
-                $sq_user = mysql_query("SELECT pseudo, country FROM " . USER_TABLE . " WHERE id = '" . $auteur_id . "'");
+                $sq_user = mysql_query("SELECT pseudo, country FROM " . USERS_TABLE . " WHERE id = '" . $auteur_id . "'");
                 $test = mysql_num_rows($sq_user);
                 list($author, $country) = mysql_fetch_array($sq_user);
 

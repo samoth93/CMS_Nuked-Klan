@@ -132,7 +132,7 @@ function main(){
         }
 
         if ($autor_id != ""){
-           $sql4 = mysql_query("SELECT pseudo FROM " . USER_TABLE . " WHERE id = '" . $autor_id . "'");
+           $sql4 = mysql_query("SELECT pseudo FROM " . USERS_TABLE . " WHERE id = '" . $autor_id . "'");
            $test = mysql_num_rows($sql4);
         }
 

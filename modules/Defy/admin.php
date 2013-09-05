@@ -174,7 +174,7 @@ function edit_pref() {
        . "<tr><td><b>" . _MAILAVERT . "</b> : <input type=\"text\" size=\"30\" name=\"defie_mail\" value=\"" . $nuked['defie_mail'] . "\" /></td></tr>\n"
        . "<tr><td><b>" . _INBOXAVERT . "</b> : <select name=\"defie_inbox\"><option value=\"\">" . _OFF . "</option>\n";
 
-    $sql2 = mysql_query("SELECT id, pseudo FROM " . USER_TABLE . " WHERE niveau > 1 ORDER BY niveau DESC");
+    $sql2 = mysql_query("SELECT id, pseudo FROM " . USERS_TABLE . " WHERE niveau > 1 ORDER BY niveau DESC");
     $checked = '';
     while (list($id_user, $pseudo) = mysql_fetch_array($sql2)) {
         if ($nuked['defie_inbox'] == $id_user) {

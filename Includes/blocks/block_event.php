@@ -132,7 +132,7 @@ function affich_block_event($blok){
                         $and = '';
                     }
 
-                    $sql_test = mysql_query('SELECT pseudo FROM ' . USER_TABLE . ' WHERE id = \'' . $tuid . '\' '. $and);
+                    $sql_test = mysql_query('SELECT pseudo FROM ' . USERS_TABLE . ' WHERE id = \'' . $tuid . '\' '. $and);
                     $test = mysql_num_rows($sql_test);
 
                     if ($tmois == $month && $tjour == $event_date && $test > 0){
@@ -222,7 +222,7 @@ function affich_block_event($blok){
                                     $age = $age-1;
                                 }
 
-                                $sql5 = mysql_query('SELECT pseudo FROM ' . USER_TABLE . ' WHERE id = \'' . $id_user . '\' ' . $and);
+                                $sql5 = mysql_query('SELECT pseudo FROM ' . USERS_TABLE . ' WHERE id = \'' . $id_user . '\' ' . $and);
                                 list($pseudo) = mysql_fetch_array($sql5);
 
                                 if ($prenom != ""){

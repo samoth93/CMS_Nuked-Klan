@@ -55,7 +55,7 @@ if ($active == 3 || $active == 4)
 
         if ($auteur_id != "")
         {
-            $sql6 = mysql_query("SELECT pseudo FROM " . USER_TABLE . " WHERE id = '" . $auteur_id . "'");
+            $sql6 = mysql_query("SELECT pseudo FROM " . USERS_TABLE . " WHERE id = '" . $auteur_id . "'");
             $test = mysql_num_rows($sql6);
             list($autor) = mysql_fetch_array($sql6);
 
@@ -75,7 +75,7 @@ if ($active == 3 || $active == 4)
 
         if ($last_auteur_id != "")
         {
-            $sql7 = mysql_query("SELECT pseudo FROM " . USER_TABLE . " WHERE id = '" . $last_auteur_id . "'");
+            $sql7 = mysql_query("SELECT pseudo FROM " . USERS_TABLE . " WHERE id = '" . $last_auteur_id . "'");
             $test1 = mysql_num_rows($sql7);
             list($last_autor) = mysql_fetch_array($sql7);
 
@@ -150,7 +150,7 @@ else
 
         if ($auteur_id != "")
         {
-            $sql4 = mysql_query("SELECT pseudo FROM " . USER_TABLE . " WHERE id = '" . $auteur_id . "'");
+            $sql4 = mysql_query("SELECT pseudo FROM " . USERS_TABLE . " WHERE id = '" . $auteur_id . "'");
             list($autor) = mysql_fetch_array($sql4);
         }
         else

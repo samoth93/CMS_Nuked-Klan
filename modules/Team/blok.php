@@ -34,7 +34,7 @@ if ($active == 3 || $active == 4)
 
     if ($nb_team > 0) $where = "WHERE team > 0"; else $where = "WHERE niveau > 1";
 
-    $sql = mysql_query("SELECT pseudo, mail, icq, msn, aim, yim, rang FROM " . USER_TABLE . " " . $where . " ORDER BY ordre, pseudo");
+    $sql = mysql_query("SELECT pseudo, mail, icq, msn, aim, yim, rang FROM " . USERS_TABLE . " " . $where . " ORDER BY ordre, pseudo");
     while (list($pseudo, $mail, $icq, $msn, $aim, $yim, $rang) = mysql_fetch_array($sql))
     {
         $nick_team = $nuked['tag_pre'] . $pseudo . $nuked['tag_suf'];
@@ -130,7 +130,7 @@ else
 
     if ($nb_team > 0) $where = "WHERE team > 0"; else $where = "WHERE niveau > 1";
 
-    $sql = mysql_query("SELECT pseudo, mail, country FROM " . USER_TABLE . " " . $where . " ORDER BY ordre, pseudo");
+    $sql = mysql_query("SELECT pseudo, mail, country FROM " . USERS_TABLE . " " . $where . " ORDER BY ordre, pseudo");
     while (list($pseudo, $mail, $country) = mysql_fetch_array($sql))
     {
         list ($pays, $ext) = explode ('.', $country);

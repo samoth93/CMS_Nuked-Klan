@@ -186,7 +186,7 @@ if (nkIsModEnabled('Forum')) {
     . '<td style="width: 60%" align="center"><b>' . _PSEUDO . '</b></td>'."\n"
     . '<td style="width: 30%" align="center"><b>' . _POSTCOUNT . '</b></td></tr>'."\n";
 
-    $sql5 = mysql_query("SELECT pseudo, count FROM " . USER_TABLE . " ORDER BY count DESC LIMIT 0, 10");
+    $sql5 = mysql_query("SELECT pseudo, count FROM " . USERS_TABLE . " ORDER BY count DESC LIMIT 0, 10");
 
     $iuserf = 0;
     $j4 = 0;

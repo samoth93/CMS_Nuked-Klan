@@ -26,7 +26,7 @@ if ($active == 3 || $active == 4)
 
     echo "<div style=\"text-align: center;\">" . _WERECEICED . "&nbsp;" . $counter . "&nbsp;" . _PAGESEE . "&nbsp;" . $date_install . ".</div><br />\n";
 
-    $sql_users = mysql_query("SELECT id FROM " . USER_TABLE);
+    $sql_users = mysql_query("SELECT id FROM " . USERS_TABLE);
     $nb_users = mysql_num_rows($sql_users);
 
     echo "&nbsp;<b><big>·</big></b>&nbsp;<b>" . $nb_users . "</b> " . _MEMBERSRECORD . "<br />\n";
@@ -61,7 +61,7 @@ else
 
     $date_install = nkDate($nuked['date_install']);
 
-    $sql_users = mysql_query("SELECT id FROM " . USER_TABLE);
+    $sql_users = mysql_query("SELECT id FROM " . USERS_TABLE);
     $nb_users = mysql_num_rows($sql_users);
 
     echo "<div style=\"text-align: center;\">" . _PAGESEE . "<br />" . $date_install . " : " . $counter . "</div>\n"

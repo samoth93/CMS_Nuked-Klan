@@ -33,7 +33,7 @@ if (nkAccessModule('Stats') && $nuked['level_analys'] != -1) {
 echo '[ <a href="index.php?file=Stats&amp;page=top">' . _TOP . '</a> ]</div>'."\n";
 
 $sql = mysql_query('SELECT
-    (SELECT COUNT(id) FROM ' . USER_TABLE . ') AS nb_us,
+    (SELECT COUNT(id) FROM ' . USERS_TABLE . ') AS nb_us,
     (SELECT COUNT(id) FROM ' . NEWS_TABLE . ') AS nb_nw,
     (SELECT COUNT(artid) FROM ' . SECTIONS_TABLE . ') AS nb_sc,
     (SELECT COUNT(id) FROM ' . COMMENT_TABLE . ') AS nb_cm,

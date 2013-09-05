@@ -312,7 +312,7 @@ if ($hasAdminAccess === true){
         }
 
         $texteaction = $actionMsg.': '.$name;
-        mysql_query('INSERT INTO '.ACTION_TABLE.' VALUES ("", "'.time().'", "'.$GLOBALS['user']['id'].'", "'.$texteaction.'") ')or die (mysql_error());
+        mysql_query('INSERT INTO '.ACTIONS_TABLE.' VALUES ("", "'.time().'", "'.$GLOBALS['user']['id'].'", "'.$texteaction.'") ')or die (mysql_error());
 
         printMessage($successMsg, 'Success');
         redirect("index.php?file=Admin&page=smilies", 2);
@@ -335,7 +335,7 @@ if ($hasAdminAccess === true){
 
         // Action
         $texteaction = ACTION_DELETE_SMILEY .': '.$smiley['name'];
-        mysql_query('INSERT INTO '.ACTION_TABLE.' VALUES ("", "'.time().'", "'.$GLOBALS['user']['id'].'", "'.$texteaction.'") ')or die (mysql_error());
+        mysql_query('INSERT INTO '.ACTIONS_TABLE.' VALUES ("", "'.time().'", "'.$GLOBALS['user']['id'].'", "'.$texteaction.'") ')or die (mysql_error());
         //Fin action
 
         printMessage(SMILEY_DELETED, 'Success');

@@ -212,7 +212,7 @@ $url = "index.php?file=Forum&amp;page=search&amp;op=" . $op . "&amp;query=" . ur
 
                 if ($auteur_id != "")
                 {
-                    $sql_user = mysql_query("SELECT pseudo FROM " . USER_TABLE . " WHERE id = '" . $auteur_id . "'");
+                    $sql_user = mysql_query("SELECT pseudo FROM " . USERS_TABLE . " WHERE id = '" . $auteur_id . "'");
                     $test = mysql_num_rows($sql_user);
                     list($autors) = mysql_fetch_row($sql_user);
 
