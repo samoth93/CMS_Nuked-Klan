@@ -930,7 +930,7 @@ function verif_pseudo($string = null, $old_string = null) {
     }
 
     if($string != $old_string) {
-        $sql = mysql_query('SELECT pseudo FROM ' . USER_TABLE . ' WHERE pseudo = "' . $string . '"');
+        $sql = mysql_query('SELECT pseudo FROM ' . USERS_TABLE . ' WHERE pseudo = "' . $string . '"');
         $is_reg = mysql_num_rows($sql);
         if ($is_reg > 0) {
             return 'error2';
@@ -1326,7 +1326,7 @@ function groupsCheckbox($groups = null) {
         $groups = explode('|', $groups);
     }
 
-    $dbsGroups = "SELECT id, nameGroup AS name FROM ".GROUP_TABLE." ORDER BY name";
+    $dbsGroups = "SELECT id, nameGroup AS name FROM ".GROUPS_TABLE." ORDER BY name";
     $dbeGroups = mysql_query($dbsGroups);
 ?>
         <tr>
@@ -1502,7 +1502,7 @@ function nkHasGod(){
 
 function colorGroup($userMainGroup) {
     $dbsGroup = " SELECT color
-                  FROM ".GROUP_TABLE."
+                  FROM ".GROUPS_TABLE."
                   WHERE id = ".$userMainGroup." ";
     $dbeGroup = mysql_query($dbsGroup) or die(mysql_error());
     while ($data = mysql_fetch_assoc($dbeGroup)) {
@@ -1519,7 +1519,7 @@ function debug($content, $exitAfter = false) {
     echo'<pre class="nkDebug">';
     var_dump($content);
     echo'</pre>';
-    
+
     if ($exitAfter === true){
         exit();
     }
