@@ -1282,9 +1282,14 @@ function getBlock($side){
 
         $displayOnThisPage = false;
 
-        foreach ($block['pages'] as $page) {
-            if (isset($_REQUEST['file']) && $_REQUEST['file'] == $page) {
-                $displayOnThisPage = true;
+        if (in_array('ALL', $block['pages'])) {
+            $displayOnThisPage = true;
+        }
+        else {
+            foreach ($block['pages'] as $page) {
+                if (isset($_REQUEST['file']) && $_REQUEST['file'] == $page) {
+                    $displayOnThisPage = true;
+                }
             }
         }
 

@@ -61,7 +61,8 @@ $session  = sessionCheck();
 if($session === true){
     $user =  secure();
 }
-else{
+
+if ($session === false || count($user) == 0){
     $dbsVisitor = "SELECT access AS accessMods FROM ".GROUPS_TABLE." WHERE id = '3'";
     $dbeVisitor = mysql_query($dbsVisitor);
     $user = mysql_fetch_assoc($dbeVisitor);

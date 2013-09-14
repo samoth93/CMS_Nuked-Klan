@@ -1,13 +1,14 @@
 <?php
     switch($table){
-        case'action':
-                        $sql = "DROP TABLE IF EXISTS `" . $db_prefix . "_action`";
+        case'actions':
+                        $sql = "DROP TABLE IF EXISTS `" . $db_prefix . "_actions`";
                         $req = mysql_query($sql) or die (mysql_error());
-                        $sql = "CREATE TABLE `" . $db_prefix . "_action` (
+                        $sql = "CREATE TABLE `" . $db_prefix . "_actions` (
                           `id` int(11) NOT NULL auto_increment,
                           `date` varchar(30) NOT NULL default '0',
-                          `pseudo`  text NOT NULL,
-                          `action`  text NOT NULL,
+                          `user_id`  varchar(20) NOT NULL,
+                          `action_text`  varchar(255) NOT NULL,
+                          `action_value`  varchar(255) NOT NULL,
                           PRIMARY KEY  (`id`)
                         ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;";
                         $req = mysql_query($sql) or die (mysql_error());
@@ -40,24 +41,24 @@
                           `titre` text NOT NULL,
                           `content` text NOT NULL,
                           `type` varchar(30) NOT NULL default '0',
-                          `nivo` int(1) NOT NULL default '0',
-                          `page` text NOT NULL,
+                          `groups` text NOT NULL,
+                          `pages` text NOT NULL,
                           PRIMARY KEY  (`bid`)
                         ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;";
                         $req = mysql_query($sql) or die (mysql_error());
 
                         $sql = "INSERT INTO `" . $db_prefix . "_block` VALUES
-                            (1, 2, 1, '', '" . _BLOKLOGIN . "', '', 'login', 0, 'Tous'),
-                            (2, 1, 1, '', '" . _NAV . "', '[News]|" . _NAVNEWS . "||0|NEWLINE[Archives]|" . _NAVARCHIV . "||0|NEWLINE[Forum]|" . _NAVFORUM . "||0|NEWLINE[Download]|" . _NAVDOWNLOAD . "||0|NEWLINE[Members]|" . _NAVMEMBERS . "||0|NEWLINE[Team]|" . _NAVTEAM . "||0|NEWLINE[Defy]|" . _NAVDEFY . "||0|NEWLINE[Recruit]|" . _NAVRECRUIT . "||0|NEWLINE[Sections]|" . _NAVART . "||0|NEWLINE[Server]|" . _NAVSERVER . "||0|NEWLINE[Links]|" . _NAVLINKS . "||0|NEWLINE[Calendar]|" . _NAVCALENDAR . "||0|NEWLINE[Gallery]|" . _NAVGALLERY . "||0|NEWLINE[Wars]|" . _NAVMATCHS . "||0|NEWLINE[Irc]|" . _NAVIRC . "||0|NEWLINE[Guestbook]|" . _NAVGUESTBOOK . "||0|NEWLINE[Search]|" . _NAVSEARCH . "||0|NEWLINE|<b>" . _MEMBER . "</b>||1|NEWLINE[User]|" . _NAVACCOUNT . "||1|NEWLINE|<b>" . _ADMIN . "</b>||2|NEWLINE[Admin]|" . _NAVADMIN . "||2|', 'menu', 0, 'Tous'),
-                            (3, 1, 2, 'Search', '" . _BLOKSEARCH . "', '', 'module', 0, 'Tous'),
+                            (1, 2, 1, '', '" . _BLOKLOGIN . "', '', 'login', 1|2|3, 'ALL'),
+                            (2, 1, 1, '', '" . _NAV . "', '[News]|" . _NAVNEWS . "||0|NEWLINE[Archives]|" . _NAVARCHIV . "||0|NEWLINE[Forum]|" . _NAVFORUM . "||0|NEWLINE[Download]|" . _NAVDOWNLOAD . "||0|NEWLINE[Members]|" . _NAVMEMBERS . "||0|NEWLINE[Team]|" . _NAVTEAM . "||0|NEWLINE[Defy]|" . _NAVDEFY . "||0|NEWLINE[Recruit]|" . _NAVRECRUIT . "||0|NEWLINE[Sections]|" . _NAVART . "||0|NEWLINE[Server]|" . _NAVSERVER . "||0|NEWLINE[Links]|" . _NAVLINKS . "||0|NEWLINE[Calendar]|" . _NAVCALENDAR . "||0|NEWLINE[Gallery]|" . _NAVGALLERY . "||0|NEWLINE[Wars]|" . _NAVMATCHS . "||0|NEWLINE[Irc]|" . _NAVIRC . "||0|NEWLINE[Guestbook]|" . _NAVGUESTBOOK . "||0|NEWLINE[Search]|" . _NAVSEARCH . "||0|NEWLINE|<b>" . _MEMBER . "</b>||1|NEWLINE[User]|" . _NAVACCOUNT . "||1|NEWLINE|<b>" . _ADMIN . "</b>||2|NEWLINE[Admin]|" . _NAVADMIN . "||2|', 'menu', 1|2|3, 'ALL'),
+                            (3, 1, 2, 'Search', '" . _BLOKSEARCH . "', '', 'module', 1|2|3, 'ALL'),
                             (4, 2, 2, '', '" . _POLL . "', '', 'survey', 0, 'Tous'),
-                            (5, 2, 3, 'Wars', '" . _NAVMATCHS . "', '', 'module', 0, 'Tous'),
-                            (6, 1, 3, 'Stats', '" . _BLOKSTATS . "', '', 'module', 0, 'Tous'),
+                            (5, 2, 3, 'Wars', '" . _NAVMATCHS . "', '', 'module', 1|2|3, 'ALL'),
+                            (6, 1, 3, 'Stats', '" . _BLOKSTATS . "', '', 'module', 1|2|3, 'ALL'),
                             (7, 0, 0, 'Irc', '" . _IRCAWARD . "', '', 'module', 0, 'Tous'),
-                            (8, 0, 0, 'Server', '" . _SERVERMONITOR . "', '', 'module', 0, 'Tous'),
+                            (8, 0, 0, 'Server', '" . _SERVERMONITOR . "', '', 'module', 1|2|3, 'ALL'),
                             (9, 0, 0, '', '" . _SUGGEST . "', '', 'suggest', 1, 'Tous'),
-                            (10, 0, 0, 'Textbox', '" . _BLOKSHOUT . "', '', 'module', 0, 'Tous'),
-                            (11, 1, 4, '', '" . _BLOKPARTNERS . "', '<div style=\"text-align: center;padding: 10px;\"><a href=\"http://www.nuked-klan.org\" onclick=\"window.open(this.href); return false;\"><img style=\"border: 0;\" src=\"images/ban.png\" alt=\"\" title=\"Nuked-klaN CMS\" /></a></div><div style=\"text-align: center;padding: 10px;\"><a href=\"http://www.nitroserv.fr\" onclick=\"window.open(this.href); return false;\"><img style=\"border: 0;\" src=\"images/nitroserv.png\" alt=\"\" title=\"Location de serveurs de jeux\" /></a></div>', 'html', 0, 'Tous');";
+                            (10, 0, 0, 'Textbox', '" . _BLOKSHOUT . "', '', 'module', 1|2|3, 'ALL'),
+                            (11, 1, 4, '', '" . _BLOKPARTNERS . "', '<div style=\"text-align: center;padding: 10px;\"><a href=\"http://www.nuked-klan.org\" onclick=\"window.open(this.href); return false;\"><img style=\"border: 0;\" src=\"images/ban.png\" alt=\"\" title=\"Nuked-klaN CMS\" /></a></div><div style=\"text-align: center;padding: 10px;\"><a href=\"http://www.nitroserv.fr\" onclick=\"window.open(this.href); return false;\"><img style=\"border: 0;\" src=\"images/nitroserv.png\" alt=\"\" title=\"Location de serveurs de jeux\" /></a></div>', 'html', 1|2|3, 'ALL');";
                         $req = mysql_query($sql) or die (mysql_error());
                         echo 'OK';
         break;
@@ -576,10 +577,10 @@
                         echo 'OK';
         break;
 
-        case'group':
-                        $sql = "DROP TABLE IF EXISTS `" . $db_prefix . "_group`";
+        case'groups':
+                        $sql = "DROP TABLE IF EXISTS `" . $db_prefix . "_groups`";
                         $req = mysql_query($sql) or die (mysql_error());
-                        $sql="CREATE TABLE `" . $db_prefix . "_group` (
+                        $sql="CREATE TABLE `" . $db_prefix . "_groups` (
                           `id` int(11) NOT NULL auto_increment,
                           `name` varchar(20) NOT NULL,
                           `access` text NOT NULL,
@@ -591,11 +592,11 @@
                         ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;";
                         $req = mysql_query($sql) or die (mysql_error());
 
-                        $sql = "INSERT INTO `" . $db_prefix . "_group`
+                        $sql = "INSERT INTO `" . $db_prefix . "_groups`
                         VALUES
-                        ('', 'ADMINISTRATORS', 'ALL', 'ALL', '_DESCADMINISTRATORS', '#B70000'),
-                        ('', 'MEMBERS', 'Archives|Calendar|Comment|Contact|Defy|Download|Forum|Gallery|Guestbook|Irc|Links|Members|News|Recruit|Search|Sections|Server|Stats|Suggest|Survey|Team|Textbox|Userbox|Vote|Wars', '', '_DESCMEMBERS', '#0071E1'),
-                        ('', 'VISITORS', 'Archives|Calendar|Comment|Contact|Defy|Download|Forum|Gallery|Guestbook|Irc|Links|Members|News|Recruit|Search|Sections|Server|Stats|Suggest|Survey|Team|Textbox|Vote|Wars', '', '_DESCVISITORPADMIN', '');";
+                        ('', 'ADMINISTRATORS', 'ALL', 'ALL', 'DESC_ADMINISTRATORS', '#B70000', 0),
+                        ('', 'MEMBERS', 'Archives|Calendar|Comment|Contact|Defy|Download|Forum|Gallery|Guestbook|Irc|Links|Members|News|Recruit|Search|Sections|Server|Stats|Suggest|Survey|Team|Textbox|Userbox|Vote|Wars', '', 'DESC_MEMBERS', '#0071E1', 1),
+                        ('', 'VISITORS', 'Archives|Calendar|Comment|Contact|Defy|Download|Forum|Gallery|Guestbook|Irc|Links|Members|News|Recruit|Search|Sections|Server|Stats|Suggest|Survey|Team|Textbox|Vote|Wars', '', 'DESC_VISITORS', '', 2);";
                         $req = mysql_query($sql) or die (mysql_error());
 
                         echo 'OK';
@@ -717,7 +718,7 @@
                         $req = mysql_query($sql) or die (mysql_error());
                         $sql = "CREATE TABLE `" . $db_prefix . "_modules` (
                           `id` int(2) NOT NULL auto_increment,
-                          `nom` varchar(50) NOT NULL default '',
+                          `name` varchar(50) NOT NULL default '',
                           `status` varchar(3) NOT NULL default 'on',
                           PRIMARY KEY  (`id`)
                         ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;";
